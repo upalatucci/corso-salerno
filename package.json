@@ -1,0 +1,21 @@
+{
+  "name": "corso-salerno",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-plugin-astro": "^0.34.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0"
+  }
+}
