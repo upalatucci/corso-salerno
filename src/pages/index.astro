@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import flowerImage from "../assets/flower.png";
 ---
 
 <Layout title="Welcome to Astro.">
@@ -121,107 +123,180 @@ import Layout from "../layouts/Layout.astro";
         </div>
       </div>
     </div>
+
+    <div
+      class="d-flex container align-items-center justify-content-center mb-4"
+    >
+      <Image
+        src={flowerImage}
+        alt="1000 Daimoku"
+        width={40}
+        height={40}
+        class="me-2"
+      />
+      = 3.000 Daimoku
+      <span class="mx-2">= 1 Ora</span>
+    </div>
+    <div class="container d-flex flex-wrap-reverse">
+      <Image
+        class="flower-image"
+        src={flowerImage}
+        alt="1000 Daimoku"
+        width={40}
+        height={40}
+      />
+    </div>
   </main>
+</Layout>
 
-  <script is:inline>
-    function animateValue(obj, start, end, duration) {
-      let startTimestamp = null;
-      const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        obj.innerHTML = Math.floor(progress * (end - start) + start);
-        if (progress < 1) {
-          window.requestAnimationFrame(step);
-        }
-      };
-      window.requestAnimationFrame(step);
-    }
+<script is:inline>
+  function animateValue(obj, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      obj.innerHTML = Math.floor(progress * (end - start) + start);
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
 
-    const daimokuContainer = document.getElementById("daimoku");
+  const flowerImage = document.querySelector(".flower-image");
 
-    const initialDaimoku = localStorage.getItem("lastDaimoku");
+  const flowerImageContainer = flowerImage.parentElement;
 
-    daimokuContainer.innerText = initialDaimoku;
+  const daimokuContainer = document.getElementById("daimoku");
 
-    const spinner = document.getElementById("spinner");
+  const initialDaimoku = localStorage.getItem("lastDaimoku") || 0;
 
-    const errorModal = document.getElementById("errorModal");
-    const formModal = document.getElementById("daimokuForm");
-    const submitDaimokuModal = document.getElementById("submitDaimokuModal");
+  daimokuContainer.innerText = initialDaimoku;
 
-    var daimokuModal = document.getElementById("daimokuModal");
+  const spinner = document.getElementById("spinner");
 
-    daimokuModal.addEventListener("show.bs.modal", function () {
-      errorModal.classList.add("d-none");
-      formModal.classList.remove("d-none");
-      submitDaimokuModal.classList.remove("d-none");
-    });
+  const errorModal = document.getElementById("errorModal");
+  const formModal = document.getElementById("daimokuForm");
+  const submitDaimokuModal = document.getElementById("submitDaimokuModal");
 
-    document
-      .getElementById("daimoku-form")
-      .addEventListener("submit", (event) => {
-        event.preventDefault();
+  var daimokuModal = document.getElementById("daimokuModal");
 
-        spinner.classList.remove("d-none");
-        const formData = new FormData(event.target);
+  daimokuModal.addEventListener("show.bs.modal", function () {
+    errorModal.classList.add("d-none");
+    formModal.classList.remove("d-none");
+    submitDaimokuModal.classList.remove("d-none");
+  });
 
-        const hours = parseInt(formData.get("hours"));
-        const minutes = parseInt(formData.get("minutes"));
+  document
+    .getElementById("daimoku-form")
+    .addEventListener("submit", (event) => {
+      event.preventDefault();
 
-        const daimoku = (hours * 60 + minutes) * 50;
+      spinner.classList.remove("d-none");
+      const formData = new FormData(event.target);
 
-        fetch("/api/daimoku", {
-          method: "POST",
-          body: JSON.stringify({ daimoku }),
-        })
-          .then((response) => response.json())
-          .then((response) => {
-            document.getElementById("closeDaimokuModal").click();
+      const hours = parseInt(formData.get("hours"));
+      const minutes = parseInt(formData.get("minutes"));
 
-            if (response.daimoku) setDaimokuText(response.daimoku);
-          })
-          .catch(() => {
-            errorModal.classList.remove("d-none");
-            formModal.classList.add("d-none");
-            submitDaimokuModal.classList.add("d-none");
+      const daimoku = (hours * 60 + minutes) * 50;
 
-            document.getElementById("errorText").innerText =
-              "Qualcosa non e' andato a buon fine! Riprova piú tardi";
-          })
-          .finally(() => {
-            spinner.classList.add("d-none");
-          });
-      });
-
-    function getDaimoku() {
-      fetch("/api/daimoku")
+      fetch("/api/daimoku", {
+        method: "POST",
+        body: JSON.stringify({ daimoku }),
+      })
         .then((response) => response.json())
         .then((response) => {
+          document.getElementById("closeDaimokuModal").click();
+
           if (response.daimoku) {
             setDaimokuText(response.daimoku);
+            createFlowers(response.daimoku);
           }
+        })
+        .catch(() => {
+          errorModal.classList.remove("d-none");
+          formModal.classList.add("d-none");
+          submitDaimokuModal.classList.add("d-none");
+
+          document.getElementById("errorText").innerText =
+            "Qualcosa non e' andato a buon fine! Riprova piú tardi";
+        })
+        .finally(() => {
+          spinner.classList.add("d-none");
         });
+    });
+
+  function getDaimoku() {
+    fetch("/api/daimoku")
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.daimoku) {
+          setDaimokuText(response.daimoku);
+        }
+      });
+  }
+
+  getDaimoku();
+
+  function setDaimokuText(newDaimoku) {
+    const startDaimoku = parseInt(daimokuContainer.innerText);
+    animateValue(daimokuContainer, startDaimoku, newDaimoku, 1000);
+
+    localStorage.setItem("lastDaimoku", newDaimoku);
+  }
+
+  const getRandomAnimationDuration = () => {
+    const ms = Math.random() * 500 + 500;
+
+    return `${ms}ms`;
+  };
+
+  function createFlowers(daimokuString) {
+    const currentFlowers = flowerImageContainer.children.length;
+
+    const daimokuNumber = parseInt(daimokuString);
+
+    const flowersNumbers = isNaN(daimokuNumber) ? 0 : daimokuNumber / 3000;
+
+    new Array(Math.round(flowersNumbers - currentFlowers))
+      .fill(0)
+      .forEach(() => {
+        const newFlower = flowerImage.cloneNode(true);
+        newFlower.style.setProperty(
+          "--flower-duration",
+          getRandomAnimationDuration(),
+        );
+        flowerImageContainer.append(newFlower);
+      });
+  }
+
+  createFlowers(initialDaimoku);
+</script>
+
+<style>
+  .hero {
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  #daimoku {
+    font-size: 120px;
+    padding: 1rem 0;
+  }
+
+  .flower-image {
+    animation: daimokuFlower 1s ease-out;
+    animation-duration: var(--flower-duration);
+  }
+
+  @keyframes daimokuFlower {
+    0% {
+      transform: translateY(-150px);
+      opacity: 0;
     }
-
-    getDaimoku();
-
-    function setDaimokuText(newDaimoku) {
-      const startDaimoku = parseInt(daimokuContainer.innerText);
-      animateValue(daimokuContainer, startDaimoku, newDaimoku, 1000);
-
-      localStorage.setItem("lastDaimoku", newDaimoku);
+    100% {
+      transform: translateY(0);
+      opacity: 1;
     }
-  </script>
-
-  <style>
-    .hero {
-      padding: 3rem 1.5rem;
-      text-align: center;
-    }
-
-    #daimoku {
-      font-size: 120px;
-      padding: 1rem 0;
-    }
-  </style>
-</Layout>
+  }
+</style>
