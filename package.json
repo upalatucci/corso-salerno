@@ -10,12 +10,14 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@vercel/kv": "^1.0.1",
     "astro": "^4.6.2"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
     "eslint-plugin-astro": "^0.34.0",
     "prettier": "^3.2.5",
-    "prettier-plugin-astro": "^0.13.0"
+    "prettier-plugin-astro": "^0.13.0",
+    "vercel": "^34.1.1"
   }
 }

@@ -16,13 +16,114 @@ import Layout from "../layouts/Layout.astro";
         </ul>
       </div>
       <h2 id="daimoku">0</h2>
-      <button class="btn btn-primary" type="button"
-        >Aggiungi il tuo Daimoku</button
+      <input type="hidden" value="100" name="daimoku" />
+      <button
+        class="btn btn-primary"
+        type="submit"
+        data-bs-toggle="modal"
+        data-bs-target="#daimokuModal">Aggiungi il tuo Daimoku</button
       >
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="daimokuModal"
+        tabindex="-1"
+        aria-labelledby="daimokuModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="daimokuModalLabel">
+                Aggiungi daimoku
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                id="closeDaimokuModal"
+                aria-label="Chiudi"></button>
+            </div>
+            <div class="modal-body d-flex" id="daimokuForm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="2em"
+                height="2em"
+                viewBox="0 0 24 24"
+                ><path
+                  fill="currentColor"
+                  d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"
+                ></path></svg
+              >
+
+              <form
+                id="daimoku-form"
+                class="ms-4 d-flex justify-content-center align-items-center py-4 flex-fill"
+              >
+                <div class="w-100 px-2">
+                  <label for="hour" class="w-100 text-start">Ore</label><div
+                    class="mt-2"
+                  >
+                    <select id="hour" name="hours" class="w-100 form-select"
+                      ><option>0</option><option>1</option><option>2</option
+                      ><option>3</option><option>4</option><option>5</option
+                      ></select
+                    >
+                  </div>
+                </div>
+                <div class="w-100 px-2">
+                  <label for="hour" class="w-100 text-start">Minuti</label><div
+                    class="mt-2"
+                  >
+                    <select id="hour" name="minutes" class="w-100 form-select"
+                      ><option value="0">0</option><option value="5">5</option
+                      ><option value="10">10</option><option value="15"
+                        >15</option
+                      ><option value="20" selected>20</option><option value="25"
+                        >25</option
+                      ><option value="30">30</option><option value="35"
+                        >35</option
+                      ><option value="40">40</option><option value="45"
+                        >45</option
+                      ><option value="50">50</option><option value="55"
+                        >55</option
+                      ></select
+                    >
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div id="errorModal" class="modal-body">
+              <h3>Errore</h3>
+              <p id="errorText"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">Chiudi</button
+              >
+              <button
+                type="submit"
+                class="btn btn-primary"
+                form="daimoku-form"
+                id="submitDaimokuModal"
+              >
+                <span
+                  class="spinner-border spinner-border-sm d-none me-2"
+                  id="spinner"
+                  role="status"
+                  aria-hidden="true"></span>Aggiungi</button
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
-  <script>
+  <script is:inline>
     function animateValue(obj, start, end, duration) {
       let startTimestamp = null;
       const step = (timestamp) => {
@@ -36,10 +137,80 @@ import Layout from "../layouts/Layout.astro";
       window.requestAnimationFrame(step);
     }
 
-    const obj = document.getElementById("daimoku");
+    const daimokuContainer = document.getElementById("daimoku");
 
-    const startDaimoku = parseInt(obj.innerText);
-    animateValue(obj, startDaimoku, 100000, 1000);
+    const initialDaimoku = localStorage.getItem("lastDaimoku");
+
+    daimokuContainer.innerText = initialDaimoku;
+
+    const spinner = document.getElementById("spinner");
+
+    const errorModal = document.getElementById("errorModal");
+    const formModal = document.getElementById("daimokuForm");
+    const submitDaimokuModal = document.getElementById("submitDaimokuModal");
+
+    var daimokuModal = document.getElementById("daimokuModal");
+
+    daimokuModal.addEventListener("show.bs.modal", function () {
+      errorModal.classList.add("d-none");
+      formModal.classList.remove("d-none");
+      submitDaimokuModal.classList.remove("d-none");
+    });
+
+    document
+      .getElementById("daimoku-form")
+      .addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        spinner.classList.remove("d-none");
+        const formData = new FormData(event.target);
+
+        const hours = parseInt(formData.get("hours"));
+        const minutes = parseInt(formData.get("minutes"));
+
+        const daimoku = (hours * 60 + minutes) * 50;
+
+        fetch("/api/daimoku", {
+          method: "POST",
+          body: JSON.stringify({ daimoku }),
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            document.getElementById("closeDaimokuModal").click();
+
+            if (response.daimoku) setDaimokuText(response.daimoku);
+          })
+          .catch(() => {
+            errorModal.classList.remove("d-none");
+            formModal.classList.add("d-none");
+            submitDaimokuModal.classList.add("d-none");
+
+            document.getElementById("errorText").innerText =
+              "Qualcosa non e' andato a buon fine! Riprova piú tardi";
+          })
+          .finally(() => {
+            spinner.classList.add("d-none");
+          });
+      });
+
+    function getDaimoku() {
+      fetch("/api/daimoku")
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.daimoku) {
+            setDaimokuText(response.daimoku);
+          }
+        });
+    }
+
+    getDaimoku();
+
+    function setDaimokuText(newDaimoku) {
+      const startDaimoku = parseInt(daimokuContainer.innerText);
+      animateValue(daimokuContainer, startDaimoku, newDaimoku, 1000);
+
+      localStorage.setItem("lastDaimoku", newDaimoku);
+    }
   </script>
 
   <style>
