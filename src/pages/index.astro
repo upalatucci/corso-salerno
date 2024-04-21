@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import flowerImage from "../assets/flower.png";
+import Goals from "../components/Goals.astro";
+import Questions from "../components/Questions.astro";
 ---
 
 <Layout title="Welcome to Astro.">
@@ -124,6 +126,8 @@ import flowerImage from "../assets/flower.png";
       </div>
     </div>
 
+    <Questions />
+    <Goals />
     <div
       class="d-flex container align-items-center justify-content-center mb-4"
     >
@@ -279,9 +283,25 @@ import flowerImage from "../assets/flower.png";
     text-align: center;
   }
 
+  h1 {
+    background: -webkit-linear-gradient(45deg, #09009f, #00ff95 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: calc(2rem + 1.5vw);
+  }
+
   #daimoku {
-    font-size: 120px;
+    background: -webkit-linear-gradient(45deg, #09009f, #00ff95 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 64px;
     padding: 1rem 0;
+  }
+
+  @media (min-width: 768px) {
+    #daimoku {
+      font-size: 120px;
+    }
   }
 
   .flower-image {
