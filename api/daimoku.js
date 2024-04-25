@@ -26,12 +26,12 @@ const addDaimoku = async (daimoku) => {
 };
 
 export default async function handler(request, response) {
-  if (request.method === "GET") {
-    const daimoku = await getDaimoku();
-    return response.status(200).json({ daimoku });
-  }
-
   try {
+    if (request.method === "GET") {
+      const daimoku = await getDaimoku();
+      return response.status(200).json({ daimoku });
+    }
+
     const bodyParsed = JSON.parse(request.body);
     const newDaimoku = await addDaimoku(bodyParsed.daimoku);
 

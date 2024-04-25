@@ -1,13 +1,14 @@
 ---
 interface Props {
   title: string;
+  activeNav: string;
 }
 
-const { title } = Astro.props;
+const { title, activeNav } = Astro.props;
 
 const menuitems = [
   {
-    title: "Pagina Iniziale",
+    title: "Benvenuto",
     path: "/",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>`,
   },
@@ -60,7 +61,10 @@ const menuitems = [
           {
             menuitems.map((item) => (
               <li class="nav-item mx-3">
-                <a href={item.path} class="nav-link">
+                <a
+                  href={item.path}
+                  class={`nav-link ${activeNav === item.path ? "active" : ""}`}
+                >
                   <div class="d-flex justify-content-center d-md-none">
                     <Fragment set:html={item.icon} />
                   </div>
@@ -92,10 +96,10 @@ const menuitems = [
       rgb(var(--accent-light)) 30%,
       white 60%
     );
+    --bs-emphasis-color-rgb: #007bff;
   }
   html {
     font-family: system-ui, sans-serif;
-    background: #13151a;
     background-size: 224px;
   }
   code {
@@ -114,8 +118,16 @@ const menuitems = [
     min-height: 100vh;
   }
 
+  .hero {
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
   .nav-item-title {
-    font-size: 14px;
+    font-size: 0.8em;
+  }
+  .nav-link.active * {
+    color: var(--bs-emphasis-color-rgb);
   }
 
   @media (min-width: 768px) {
@@ -123,9 +135,6 @@ const menuitems = [
       padding-top: 5rem;
     }
 
-    .fixed-md-top.fixed-bottom {
-      height: 5rem;
-    }
     .fixed-md-top.fixed-bottom {
       position: fixed;
       top: 0;
@@ -140,6 +149,7 @@ const menuitems = [
     .fixed-md-top.fixed-bottom {
       position: fixed;
       bottom: 0;
+      padding: 0;
     }
   }
 </style>

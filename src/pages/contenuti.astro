@@ -2,21 +2,16 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Contenuti">
+<Layout title="Contenuti" activeNav="/contenuti">
   <main>
-    <div class="hero">
-      <h1>Contenuti</h1>
-      <p>
-        Non e' ancora presente il materiale della riunione. Quando sara'
-        presente, potrai visionarlo qui.
-      </p>
-    </div>
+    <section class="container my-4">
+      <div class="d-flex justify-content-center flex-column text-center">
+        <h2>Contenuti</h2>
+        <p>
+          Non e' ancora presente il materiale della riunione. Quando sara'
+          presente, potrai visionarlo qui.
+        </p>
+      </div>
+    </section>
   </main>
 </Layout>
-
-<style>
-  .hero {
-    padding: 3rem 1.5rem;
-    text-align: center;
-  }
-</style>
