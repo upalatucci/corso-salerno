@@ -8,14 +8,34 @@ import flowerImage from "../assets/flower.png";
   <main>
     <div class="hero">
       <h1>Corso del territorio Salerno</h1>
-      <p>Dal 27 al 29 Settembre</p>
-      <p class="lead">Obiettivi:</p>
+      <p class="lead">Dal 27 al 29 Settembre</p>
 
       <div class="row justify-content-center">
-        <ul class="col-2 text-start">
-          <li>Tanto daimoku</li>
-          <li>Tante persone nuove</li>
-        </ul>
+        <div class="col-10 col-md-8 col-xl-6 text-start lead">
+          <p class="">Obiettivi:</p>
+          <ul>
+            <li>Sfidarci a recitare 100’ di daimoku al giorno</li>
+            <li>
+              Portare almeno due persone nuove agli zadankai fino al corso, per
+              sostenere concretamente l’obiettivo di un giovane per gruppo
+            </li>
+            <li>
+              <a
+                href="https://esperiashop.it/libri-e-riviste/la-nuova-rivoluzione-umana-voll-5-6/"
+                target="_blank">Studiare insieme NRU vol. 5</a
+              >
+            </li>
+            <li>
+              “Poiché la legge è meravigliosa, la persona è degna di rispetto”:
+              impegniamoci concretamente per superare un conflitto personale
+              prima dell’inizio del corso
+            </li>
+            <li>
+              Raggiungiamo grandi traguardi nella vita personale e arriviamo al
+              corso con determinazione rinnovata
+            </li>
+          </ul>
+        </div>
       </div>
       <h2 id="daimoku">0</h2>
       <input type="hidden" value="100" name="daimoku" />
@@ -137,7 +157,7 @@ import flowerImage from "../assets/flower.png";
       = 3.000 Daimoku
       <span class="mx-2">= 1 Ora</span>
     </div>
-    <div class="container d-flex flex-wrap-reverse">
+    <div class="container d-flex flex-wrap-reverse mb-5 pb-5">
       <Image
         class="flower-image"
         src={flowerImage}
