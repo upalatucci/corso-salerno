@@ -10,9 +10,11 @@
       <textarea
         class="form-control mx-auto my-4"
         id="questions"
-        placeholder="Portare una grande esperienza al gruppo..."></textarea>
+        placeholder="Mi piacerebbe far parte dello staff..."></textarea>
 
-      <button class="btn btn-primary" type="submit" id="question-button">Invia</button>
+      <button class="btn btn-primary" type="submit" id="question-button"
+        >Invia</button
+      >
       <p id="question-feedback" style="display: none;"></p>
     </form>
   </div>
@@ -24,46 +26,48 @@
   }
 </style>
 
-
 <script>
   // Funzione per inviare l'obiettivo
 
-  const form = document.getElementById('formQuestions')
-  const submitButton = document.getElementById('question-button')
+  const form = document.getElementById("formQuestions");
+  const submitButton = document.getElementById("question-button");
 
-  form.addEventListener('submit', function(event) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
-    
-    const question = (document.getElementById('questions') as HTMLTextAreaElement).value
-    const feedbackElement = document.getElementById('question-feedback')
 
-    submitButton.setAttribute('disabled', 'true')
+    const question = (
+      document.getElementById("questions") as HTMLTextAreaElement
+    ).value;
+    const feedbackElement = document.getElementById("question-feedback");
 
-    feedbackElement.style.display = 'none'
+    submitButton.setAttribute("disabled", "true");
+
+    feedbackElement.style.display = "none";
     fetch("/api/questions", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ question })
+      body: JSON.stringify({ question }),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Errore durante l'invio della domanda.");
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data.message);
-      feedbackElement.innerText = "Domanda inviato con successo."
-      feedbackElement.style.display = 'block'
-    })
-    .catch(error => {
-      console.error("Errore durante l'invio della domanda:", error);
-      feedbackElement.innerText = "Errore durante l'invio della domanda."
-      feedbackElement.style.display = 'block'
-    }).finally(() => {
-      submitButton.removeAttribute('disabled')
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Errore durante l'invio della domanda.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.message);
+        feedbackElement.innerText = "Domanda inviato con successo.";
+        feedbackElement.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Errore durante l'invio della domanda:", error);
+        feedbackElement.innerText = "Errore durante l'invio della domanda.";
+        feedbackElement.style.display = "block";
+      })
+      .finally(() => {
+        submitButton.removeAttribute("disabled");
+      });
   });
-
+</script>

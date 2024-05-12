@@ -3,7 +3,7 @@
     <h2>Che obiettivi hai per questo corso?</h2>
     <p>
       Vuoi condividere i tuoi obiettivi con noi? Altri partecipanti potranno
-      vederli proprio qui sul sito.
+      vederli proprio qui sul sito in forma anonima.
     </p>
     <form id="formGoals">
       <textarea
@@ -11,7 +11,9 @@
         id="goals"
         placeholder="Portare una grande esperienza al gruppo..."></textarea>
 
-      <button class="btn btn-primary" type="submit" id="goal-button">Invia</button>
+      <button class="btn btn-primary" type="submit" id="goal-button"
+        >Invia</button
+      >
       <p id="goal-feedback" style="display: none;"></p>
     </form>
   </div>
@@ -23,47 +25,47 @@
   }
 </style>
 
-
 <script>
   // Funzione per inviare l'obiettivo
 
-  const form = document.getElementById('formGoals')
-  const submitButton = document.getElementById('goal-button')
+  const form = document.getElementById("formGoals");
+  const submitButton = document.getElementById("goal-button");
 
-  form.addEventListener('submit', function(event) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
-    
-    const goal = (document.getElementById('goals') as HTMLTextAreaElement).value
-    const feedbackElement = document.getElementById('goal-feedback')
 
-    submitButton.setAttribute('disabled', 'true')
+    const goal = (document.getElementById("goals") as HTMLTextAreaElement)
+      .value;
+    const feedbackElement = document.getElementById("goal-feedback");
 
-    feedbackElement.style.display = 'none'
+    submitButton.setAttribute("disabled", "true");
+
+    feedbackElement.style.display = "none";
     fetch("/api/goals", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ goal })
+      body: JSON.stringify({ goal }),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Errore durante l'invio dell'obiettivo.");
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data.message);
-      feedbackElement.innerText = "Obiettivo inviato con successo."
-      feedbackElement.style.display = 'block'
-    })
-    .catch(error => {
-      console.error("Errore durante l'invio dell'obiettivo:", error);
-      feedbackElement.innerText = "Errore durante l'invio dell'obiettivo."
-      feedbackElement.style.display = 'block'
-    }).finally(() => {
-      submitButton.removeAttribute('disabled')
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Errore durante l'invio dell'obiettivo.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.message);
+        feedbackElement.innerText = "Obiettivo inviato con successo.";
+        feedbackElement.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Errore durante l'invio dell'obiettivo:", error);
+        feedbackElement.innerText = "Errore durante l'invio dell'obiettivo.";
+        feedbackElement.style.display = "block";
+      })
+      .finally(() => {
+        submitButton.removeAttribute("disabled");
+      });
   });
-
-  </script>
+</script>
