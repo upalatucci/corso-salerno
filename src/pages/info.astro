@@ -1,10 +1,73 @@
 ---
 import Questions from "../components/Questions.astro";
 import Layout from "../layouts/Layout.astro";
+
+const faqs = [
+  {
+    question: "Quale sara' il programma?",
+    response:
+      "Stiamo organizzando tutti gli staff per rendere il corso il più coinvolgente possibile. A breve invieremo ulteriori informazioni sul materiale di studio che verrà approfondito durante le tre giornate. Ogni comunicazione sarà prima condivisa per messaggio e poi pubblicata sull'app Conta Daimoku.",
+  },
+  {
+    question: "Possono partecipare persone non membri (mariti, fidanzati ecc)?",
+    response:
+      "Al momento, possono partecipare tutti i membri del territorio Salerno. Dopo il 31 maggio, verificheremo i singoli casi.",
+  },
+  {
+    question: "Sono disabile, posso far partecipare mia madre/assistente?",
+    response:
+      "Certo, in questo caso occorre far compilare la scheda anche alla persona che accompagna, specificando il nome della persona accompagnata e dell'accompagnatore nella sezione dedicata ai componenti della camera della singola scheda.",
+  },
+  {
+    question: "Posso portare animali?",
+    response:
+      "Non è previsto. Organizzare la cura a casa dei propri animali può essere una sfida di fede affinché ci si possa dedicare al corso.",
+  },
+  {
+    question:
+      "Posso uscire dal corso, anche per una sola giornata, per impegni personali?",
+    response:
+      "Il corso estivo è una tradizione della Soka Gakkai con l'obiettivo di approfondire la fede, la pratica e lo studio. Per motivi di protezione, sconsigliamo di lasciare la struttura. Consigliamo di pregare e fare un’esperienza di fede per prendere la decisione più saggia, trasformando questa difficoltà in un'opportunità per realizzare una grande vittoria. L'assicurazione legata al corso copre solo eventi e infortuni che possono accadere all'interno della struttura.",
+  },
+  {
+    question: "Perché solo per i membri e non far partecipare i principianti?",
+    response:
+      "Dopo numerosi incontri, abbiamo deciso di organizzare un corso per nuovi e “vecchi” membri, specialmente dopo il lungo periodo di inattività causato dal Covid. I nuovi membri, infatti, non conoscono ancora bene l’organizzazione. Questo corso serve a trasmettere lo spirito e le tradizioni Soka del corso estivo. Inoltre, non sarebbe facile decidere quali simpatizzanti far partecipare e quali no.",
+  },
+];
 ---
 
 <Layout title="Informazioni" activeNav="/info">
   <main>
     <Questions />
+
+    <section>
+      {
+        faqs.map((faq) => (
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                {faq.question}
+              </button>
+            </h2>
+            <div
+              id="collapseOne"
+              class="accordion-collapse collapse show"
+              aria-labelledby="headingOne"
+              data-bs-parent="#accordionExample"
+            >
+              <div class="accordion-body">{faq.response}</div>
+            </div>
+          </div>
+        ))
+      }
+    </section>
   </main>
 </Layout>
