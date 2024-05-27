@@ -1,10 +1,31 @@
 ---
 import Goals from "../components/Goals.astro";
 import Layout from "../layouts/Layout.astro";
+
+const goals = [
+  "Conoscere la figlia del mio compagno e creare insieme un ambiente familiare allargato pieno di gioia, rispetto, serenità e armonia.",
+  "Sentire che il cuore di tutti noi,e' in sintonia con il cuore di Sensei Ikeda",
+  "Comprare l'auto per Kosen-Rufu!!",
+  "Entro la data del corso, far emergere il terzo gruppo sul territorio agropolese (SA) Italy",
+  "Indipendenza",
+];
 ---
 
 <Layout title="Obiettivi" activeNav="/obiettivi">
-  <main>
+  <main class="mb-5">
     <Goals />
+
+    <section class="d-flex flex-wrap container my-4">
+      {
+        goals.map((goal) => (
+          <div class="card m-4">
+            <div class="card-header">Obiettivo</div>
+            <div class="card-body">
+              <blockquote class="blockquote mb-0">{goal}</blockquote>
+            </div>
+          </div>
+        ))
+      }
+    </section>
   </main>
 </Layout>
