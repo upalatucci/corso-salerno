@@ -39,9 +39,58 @@ const faqs = [
 
 <Layout title="Informazioni" activeNav="/info">
   <main>
-    <Questions />
-
     <section class="container my-4">
+      <div class="d-flex justify-content-center flex-column text-center">
+        <h2>Informazioni</h2>
+      </div>
+
+      <p class="lead">
+        Ricordiamo che per concretizzare la partecipazione occorre effettuare il
+        pagamento dell’anticipo del <strong
+          >40% entro e non oltre il 20 giugno</strong
+        >, fermo restando la possibilità di effettuare il saldo dell’intera
+        quota.
+      </p>
+
+      <div class="row justify-content-center mb-4">
+        <div class="col-10 col-md-8 col-xl-6 text-start lead">
+          <p class="">
+            <strong
+              >Acconti per tipologia di camera (Costo intero della quota):</strong
+            >
+          </p>
+          <ul>
+            <li>Camera singola: 100 euro (250 euro intera quota)</li>
+            <li>Camera doppia 66 euro (165 euro intera quota)</li>
+            <li>Camera tripla 62 euro (155 euro intera quota)</li>
+            <li>Camera quadrupla 60 euro (150 euro intera quota)</li>
+          </ul>
+          Per il letto aggiuntivo per i minori dai 3 ai 12 anni c'e' uno sconto del
+          50% mentre e' gratuito per i bambini dai 0 fino ai 3 anni.
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-10 col-md-8 col-xl-6 text-start lead">
+          <p class=""><strong>Metodi di pagamento:</strong></p>
+          <ul>
+            <li>
+              Bonifico bancario: Dapro Viaggi Tour Operator Sas
+              IT90J0837815201000000417266
+            </li>
+            <li>
+              Con Carta di credito direttamente in agenzia: <a
+                href="https://maps.app.goo.gl/rVoH9XgQkqxxEfth7"
+                target="_blank"
+                >Agenzia Dapro Viaggi P.zza M. Galdi, 17 - Salerno</a
+              >
+              <a href="tel:089271698">Tel. 089/271698</a> o all’ indirizzo mail:
+              <a href="mailto:anna@daproviaggi.it">anna@daproviaggi.it</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <Questions />
       <div class="accordion" id="accordionExample">
         {
           faqs.map((faq, index) => (
