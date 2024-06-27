@@ -42,12 +42,7 @@ const randomOrderGoals = goals
       >
         <h2 class="mb-5">Obiettivi dei membri</h2>
 
-        <button
-          class="btn btn-primary"
-          onclick="location.href = location.origin + location.pathname + location.search"
-        >
-          Rimescola
-        </button>
+        <button class="btn btn-primary" id="shuffle"> Rimescola </button>
       </div>
     </section>
 
@@ -64,4 +59,11 @@ const randomOrderGoals = goals
       }
     </section>
   </main>
+
+  <script>
+    document.querySelector("#shuffle").addEventListener("click", () => {
+      window.location.reload(true);
+      return false;
+    });
+  </script>
 </Layout>
