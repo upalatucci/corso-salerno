@@ -1,0 +1,81 @@
+<div class="row text-center mb-5">
+  <h3>INIZIO CORSO</h3>
+
+  <div id="countdown" class="countdown">
+    <div class="time">
+      <h2 class="text-gradient" id="weeks">00</h2>
+      <small>Settimane</small>
+    </div>
+    <div class="time">
+      <h2 class="text-gradient" id="days">00</h2>
+      <small>Giorni</small>
+    </div>
+    <div class="time">
+      <h2 class="text-gradient" id="hours">00</h2>
+      <small>Ore</small>
+    </div>
+    <div class="time">
+      <h2 class="text-gradient" id="minutes">00</h2>
+      <small>Minuti</small>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  const MINUTES_IN_MS = 1000 * 60;
+  const HOURS_IN_MS = 60 * MINUTES_IN_MS;
+  const DAYS_IN_MS = 24 * HOURS_IN_MS;
+  const WEEKS_IN_MS = DAYS_IN_MS * 7;
+
+  const courseDate = new Date(2024, 8, 27, 15, 0);
+
+  function updateCountDown() {
+    const now = new Date();
+
+    const deltaTime = courseDate.getTime() - now.getTime();
+
+    const deltaWeeks = Math.trunc(deltaTime / WEEKS_IN_MS);
+    const remainingDays = deltaTime % WEEKS_IN_MS;
+
+    const deltaDays = Math.trunc(remainingDays / DAYS_IN_MS);
+
+    const remainingHours = remainingDays % DAYS_IN_MS;
+
+    const deltaHours = Math.trunc(remainingHours / HOURS_IN_MS);
+    const remainingMinutes = remainingHours % HOURS_IN_MS;
+
+    const deltaMinutes = Math.trunc(remainingMinutes / MINUTES_IN_MS);
+
+    document.querySelector("#weeks").textContent = deltaWeeks.toString();
+    document.querySelector("#days").textContent = deltaDays.toString();
+    document.querySelector("#hours").textContent = deltaHours.toString();
+    document.querySelector("#minutes").textContent = deltaMinutes.toString();
+  }
+
+  updateCountDown();
+  setInterval(updateCountDown, 1000 * 60);
+</script>
+
+<style>
+  .countdown {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    .time {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      & h2 {
+        margin: 10px 0;
+        font-size: 6.5rem;
+      }
+      & small {
+        font-size: 1.8rem;
+        font-weight: 500;
+        text-transform: capitalize;
+        color: #1b1564;
+      }
+    }
+  }
+</style>

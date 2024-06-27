@@ -1,34 +1,28 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Countdown from "../components/Countdown.astro";
 import { Image } from "astro:assets";
 import flowerImage from "../assets/flower.png";
+import Header from "../assets/header-home.png";
 ---
 
 <Layout title="Corso Salerno 2024" activeNav="/">
   <main>
+    <Image
+      src={Header}
+      alt="La vittoria del discepolo é la vittoria del maestro"
+      width={1980}
+      height={1080}
+      class="w-100 header-image"
+    />
     <div class="hero">
-      <h1>Corso del territorio Salerno</h1>
-      <p class="lead">
-        É partita l'organizzazione del corso estivo del Territorio Salerno che
-        si terrà dal 27 al 29 settembre 2024 all'<a
-          href="https://www.google.com/maps/place/Happy+Village/@40.0037609,15.3520203,17z/data=!4m21!1m11!3m10!1s0x133ebed229cede37:0x8e6f8b60cf7e5969!2sHappy+Village!5m2!4m1!1i2!8m2!3d40.0037568!4d15.3545952!10e1!16s%2Fg%2F1td8dr7q!3m8!1s0x133ebed229cede37:0x8e6f8b60cf7e5969!5m2!4m1!1i2!8m2!3d40.0037568!4d15.3545952!16s%2Fg%2F1td8dr7q?entry=ttu"
-          target="_blank">Happy Village a Marina di Camerota</a
-        >
-      </p>
-
       <p class="lead container">
-        Le adesioni al momento sono chiuse. Siamo felici di informarvi che hanno
-        aderito <strong>312</strong> persone! Grazie di cuore per tutti gli sforzi
-        fatti. Ricordiamo che per concretizzare la partecipazione occorre effettuare
-        il pagamento dell’anticipo del <strong
-          >40% entro e non oltre il 20 giugno</strong
-        >.<br />
-
         <a href="/info">Informazioni sul pagamento</a>
       </p>
 
       <div class="row justify-content-center">
         <div class="col-10 col-md-8 col-xl-6 text-start lead">
+          <Countdown />
           <p class="">Obiettivi:</p>
           <ul>
             <li>sfidarsi a recitare 100’ di daimoku al giorno</li>
@@ -351,5 +345,9 @@ import flowerImage from "../assets/flower.png";
       transform: translateY(0);
       opacity: 1;
     }
+  }
+
+  .header-image {
+    height: 600px;
   }
 </style>
