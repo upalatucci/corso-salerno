@@ -4,6 +4,7 @@ import Countdown from "../components/Countdown.astro";
 import { Image } from "astro:assets";
 import flowerImage from "../assets/flower.png";
 import Header from "../assets/header-home.png";
+import HeaderMobile from "../assets/header-home-mobile.png";
 ---
 
 <Layout title="Corso Salerno 2024" activeNav="/">
@@ -14,6 +15,13 @@ import Header from "../assets/header-home.png";
       width={1980}
       height={1080}
       class="w-100 header-image"
+    />
+    <Image
+      src={HeaderMobile}
+      alt="La vittoria del discepolo é la vittoria del maestro"
+      width={1980}
+      height={1080}
+      class="w-100 header-image-mobile"
     />
     <div class="hero">
       <p class="lead container">
@@ -347,8 +355,29 @@ import Header from "../assets/header-home.png";
     }
   }
 
+  .header-image-mobile {
+    height: 300px;
+    object-fit: fill;
+  }
+
   .header-image {
+    display: none;
     height: fit-content;
     object-fit: contain;
+  }
+
+  @media (min-width: 500px) {
+    .header-image-mobile {
+      height: 500px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .header-image-mobile {
+      display: none;
+    }
+    .header-image {
+      display: block;
+    }
   }
 </style>
