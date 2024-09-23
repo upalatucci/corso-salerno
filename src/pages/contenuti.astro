@@ -7,10 +7,46 @@ import Layout from "../layouts/Layout.astro";
     <section class="container my-4">
       <div class="d-flex justify-content-center flex-column text-center">
         <h2>Contenuti</h2>
-        <p>
-          Non e' ancora presente il materiale del corso. Quando lo sara', potrai
-          visionarlo qui.
-        </p>
+
+        <div>
+          <div class="row justify-content-center my-4">
+            <a
+              class="d-flex flex-column text-center col-6"
+              href="/programma.pdf"
+              download
+            >
+              <img src="/pdf-icon.svg" width="100" class="mx-auto" />
+              <span>Programma</span>
+            </a>
+
+            <a
+              class="d-flex flex-column text-center col-6"
+              href="/mappa.pdf"
+              download
+            >
+              <img src="/pdf-icon.svg" width="100" class="mx-auto" />
+              <span>Mappa</span>
+            </a>
+          </div>
+          <div class="row justify-content-center my-4">
+            <a
+              class="d-flex flex-column text-center col-6"
+              href="/poster.pdf"
+              download
+            >
+              <img src="/pdf-icon.svg" width="100" class="mx-auto" />
+              <span>Poster</span>
+            </a>
+            <a
+              class="d-flex flex-column text-center col-6"
+              href="/sfondo-telefono.pdf"
+              download
+            >
+              <img src="/pdf-icon.svg" width="100" class="mx-auto" />
+              <span>Sfondo</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
