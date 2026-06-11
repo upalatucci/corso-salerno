@@ -1,6 +1,6 @@
 ---
-import Goals from "../components/Goals.astro";
-import Layout from "../layouts/Layout.astro";
+import Goals from "../../components/Goals.astro";
+import Layout from "../../layouts/Layout2024.astro";
 
 const goals = [
   "Vedere tante persone sorridenti, appassionate, determinare a vincere sul proprio karma. Ci auguro di mirare alla vittoria assoluta e di decidere di recitare fino all'ultimo istante della nostra vita\n",
@@ -62,7 +62,7 @@ const randomOrderGoals = goals
   .map(({ value }) => value);
 ---
 
-<Layout title="Obiettivi" activeNav="/obiettivi">
+<Layout title="Obiettivi" activeNav="/2024/obiettivi">
   <main class="mb-5">
     <Goals />
 

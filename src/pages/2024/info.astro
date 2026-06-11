@@ -1,0 +1,138 @@
+---
+import Questions from "../../components/Questions.astro";
+import Layout from "../../layouts/Layout2024.astro";
+
+const faqs = [
+  {
+    question: "Quale sara' il programma?",
+    response:
+      "Stiamo organizzando tutti gli staff per rendere il corso il più coinvolgente possibile. A breve invieremo ulteriori informazioni sul materiale di studio che verrà approfondito durante le tre giornate. Ogni comunicazione sarà prima condivisa per messaggio e poi pubblicata sull'app Conta Daimoku.",
+  },
+  {
+    question: "Possono partecipare persone non membri (mariti, fidanzati ecc)?",
+    response:
+      "Al momento, possono partecipare tutti i membri del territorio Salerno e i simpatizzanti giovani. Dopo il 31 maggio, verificheremo i singoli casi.",
+  },
+  {
+    question: "Sono disabile, posso far partecipare mia madre/assistente?",
+    response:
+      "Certo, in questo caso occorre far compilare la scheda anche alla persona che accompagna, specificando il nome della persona accompagnata e dell'accompagnatore nella sezione dedicata ai componenti della camera della singola scheda.",
+  },
+  {
+    question: "Posso portare animali?",
+    response:
+      "Non è previsto. Organizzare la cura a casa dei propri animali può essere una sfida di fede affinché ci si possa dedicare al corso.",
+  },
+  {
+    question:
+      "Posso uscire dal corso, anche per una sola giornata, per impegni personali?",
+    response:
+      "Il corso estivo è una tradizione della Soka Gakkai con l'obiettivo di approfondire la fede, la pratica e lo studio. Per motivi di protezione, sconsigliamo di lasciare la struttura. Consigliamo di pregare e fare un’esperienza di fede per prendere la decisione più saggia, trasformando questa difficoltà in un'opportunità per realizzare una grande vittoria. L'assicurazione legata al corso copre solo eventi e infortuni che possono accadere all'interno della struttura.",
+  },
+];
+---
+
+<Layout title="Informazioni" activeNav="/2024/info">
+  <main>
+    <section class="container my-4">
+      <div class="d-flex justify-content-center flex-column text-center mb-4">
+        <h2>Informazioni</h2>
+      </div>
+
+      <div class="col-10 col-md-8 col-xl-6 text-start lead mx-auto">
+        BUS SALERNO CAMEROTA PARTENZE:
+        <ul>
+          <li>
+            1)Baronissi Hotel dei Principati appuntamento ore <strong
+              >h.10.20</strong
+            >, partenza
+            <strong>h.10.30</strong>
+          </li>
+          <li>
+            2) Salerno Parco Pinocchio bar/bistrot Caruso, appuntamento <strong
+              >h.10.50</strong
+            >, partenza ore <strong>h.11.00</strong>.
+          </li>
+          <li>
+            3) Battipaglia ospedale, appuntamento <strong>h.11.20</strong>,
+            partenza <strong>h.11.30</strong>.
+          </li>
+          <li>
+            4) Agropoli sud uscita, appuntamento <strong>h.12:10</strong>,
+            partenza <strong>h.12.20</strong>.
+          </li>
+          <li>
+            5) Vallo della Lucania stazione dei pullman largo Calcinai (zona
+            mercato), appuntamento <strong>h. 13.00</strong>,partenza<strong>
+              h.13.10</strong
+            >.
+          </li>
+          <li>6) Arrivo Happy Village <strong>h.14.00</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="col-10 col-md-8 col-xl-6 text-start lead mx-auto">
+        BUS SALERNO CAMEROTA RITORNO il 29 SETTEMBRE:
+        <ul>
+          <li>Partenza Happy Village <strong>h. 15.30</strong></li>
+          <li>
+            Vallo della Lucania stazione dei pullman largo Calcinai (zona
+            mercato), appuntamento <strong>h. 16.15</strong>.
+          </li>
+
+          <li>
+            Agropoli sud uscita, appuntamento <strong>h. 17.00</strong>.
+          </li>
+          <li>
+            Battipaglia ospedale, appuntamento <strong>h. 17.45</strong>.
+          </li>
+          <li>
+            Salerno Parco Pinocchio bar/bistrot Caruso, appuntamento <strong
+              >h. 18.10</strong
+            >.
+          </li>
+          <li>
+            Baronissi Hotel dei Principati appuntamento ore <strong
+              >h. 18.30</strong
+            >.
+          </li>
+        </ul>
+      </div>
+
+      <hr class="my-5" />
+
+      <Questions />
+
+      <hr class="my-5" />
+
+      <div class="accordion" id="accordionExample">
+        {
+          faqs.map((faq, index) => (
+            <div class="accordion-item">
+              <h2 class="accordion-header" id={`heading${index}`}>
+                <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target={`#collapse${index}`}
+                  aria-expanded="false"
+                  aria-controls={`collapse${index}`}
+                >
+                  {faq.question}
+                </button>
+              </h2>
+              <div
+                id={`collapse${index}`}
+                class={`accordion-collapse collapse ${index === 0 ? "show" : ""}`}
+                aria-labelledby={`heading${index}`}
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">{faq.response}</div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</Layout>

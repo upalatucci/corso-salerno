@@ -1,138 +1,149 @@
 ---
-import Questions from "../components/Questions.astro";
 import Layout from "../layouts/Layout.astro";
-
-const faqs = [
-  {
-    question: "Quale sara' il programma?",
-    response:
-      "Stiamo organizzando tutti gli staff per rendere il corso il più coinvolgente possibile. A breve invieremo ulteriori informazioni sul materiale di studio che verrà approfondito durante le tre giornate. Ogni comunicazione sarà prima condivisa per messaggio e poi pubblicata sull'app Conta Daimoku.",
-  },
-  {
-    question: "Possono partecipare persone non membri (mariti, fidanzati ecc)?",
-    response:
-      "Al momento, possono partecipare tutti i membri del territorio Salerno e i simpatizzanti giovani. Dopo il 31 maggio, verificheremo i singoli casi.",
-  },
-  {
-    question: "Sono disabile, posso far partecipare mia madre/assistente?",
-    response:
-      "Certo, in questo caso occorre far compilare la scheda anche alla persona che accompagna, specificando il nome della persona accompagnata e dell'accompagnatore nella sezione dedicata ai componenti della camera della singola scheda.",
-  },
-  {
-    question: "Posso portare animali?",
-    response:
-      "Non è previsto. Organizzare la cura a casa dei propri animali può essere una sfida di fede affinché ci si possa dedicare al corso.",
-  },
-  {
-    question:
-      "Posso uscire dal corso, anche per una sola giornata, per impegni personali?",
-    response:
-      "Il corso estivo è una tradizione della Soka Gakkai con l'obiettivo di approfondire la fede, la pratica e lo studio. Per motivi di protezione, sconsigliamo di lasciare la struttura. Consigliamo di pregare e fare un’esperienza di fede per prendere la decisione più saggia, trasformando questa difficoltà in un'opportunità per realizzare una grande vittoria. L'assicurazione legata al corso copre solo eventi e infortuni che possono accadere all'interno della struttura.",
-  },
-];
+import { course2026 } from "../data/course2026";
 ---
 
-<Layout title="Informazioni" activeNav="/info">
+<Layout title="Informazioni · Corso Salerno 2026" activeNav="/info">
   <main>
-    <section class="container my-4">
-      <div class="d-flex justify-content-center flex-column text-center mb-4">
-        <h2>Informazioni</h2>
+    <section class="info-header">
+      <div class="page-container">
+        <h1 class="info-title">Informazioni</h1>
+        <p class="info-subtitle">
+          Tutto quello che sappiamo finora sul corso autunnale 2026
+        </p>
+      </div>
+    </section>
+
+    <section class="section page-container">
+      <div class="card">
+        <h2 class="card-heading">Date e luogo</h2>
+        <p class="info-detail">
+          <strong>{course2026.dates}</strong><br />
+          {course2026.location}
+        </p>
+        <p class="info-detail muted">{course2026.startNote}</p>
       </div>
 
-      <div class="col-10 col-md-8 col-xl-6 text-start lead mx-auto">
-        BUS SALERNO CAMEROTA PARTENZE:
-        <ul>
-          <li>
-            1)Baronissi Hotel dei Principati appuntamento ore <strong
-              >h.10.20</strong
-            >, partenza
-            <strong>h.10.30</strong>
-          </li>
-          <li>
-            2) Salerno Parco Pinocchio bar/bistrot Caruso, appuntamento <strong
-              >h.10.50</strong
-            >, partenza ore <strong>h.11.00</strong>.
-          </li>
-          <li>
-            3) Battipaglia ospedale, appuntamento <strong>h.11.20</strong>,
-            partenza <strong>h.11.30</strong>.
-          </li>
-          <li>
-            4) Agropoli sud uscita, appuntamento <strong>h.12:10</strong>,
-            partenza <strong>h.12.20</strong>.
-          </li>
-          <li>
-            5) Vallo della Lucania stazione dei pullman largo Calcinai (zona
-            mercato), appuntamento <strong>h. 13.00</strong>,partenza<strong>
-              h.13.10</strong
-            >.
-          </li>
-          <li>6) Arrivo Happy Village <strong>h.14.00</strong>.</li>
+      <div class="card">
+        <h2 class="card-heading">Chi può partecipare</h2>
+        <ul class="card-list">
+          {
+            course2026.participants.map((item) => (
+              <li>{item}</li>
+            ))
+          }
         </ul>
       </div>
 
-      <div class="col-10 col-md-8 col-xl-6 text-start lead mx-auto">
-        BUS SALERNO CAMEROTA RITORNO il 29 SETTEMBRE:
-        <ul>
-          <li>Partenza Happy Village <strong>h. 15.30</strong></li>
-          <li>
-            Vallo della Lucania stazione dei pullman largo Calcinai (zona
-            mercato), appuntamento <strong>h. 16.15</strong>.
-          </li>
-
-          <li>
-            Agropoli sud uscita, appuntamento <strong>h. 17.00</strong>.
-          </li>
-          <li>
-            Battipaglia ospedale, appuntamento <strong>h. 17.45</strong>.
-          </li>
-          <li>
-            Salerno Parco Pinocchio bar/bistrot Caruso, appuntamento <strong
-              >h. 18.10</strong
-            >.
-          </li>
-          <li>
-            Baronissi Hotel dei Principati appuntamento ore <strong
-              >h. 18.30</strong
-            >.
-          </li>
-        </ul>
-      </div>
-
-      <hr class="my-5" />
-
-      <Questions />
-
-      <hr class="my-5" />
-
-      <div class="accordion" id="accordionExample">
+      <div class="card">
+        <h2 class="card-heading">Quote di partecipazione</h2>
+        <p class="card-subtext">A persona</p>
         {
-          faqs.map((faq, index) => (
-            <div class="accordion-item">
-              <h2 class="accordion-header" id={`heading${index}`}>
-                <button
-                  class="accordion-button"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#collapse${index}`}
-                  aria-expanded="false"
-                  aria-controls={`collapse${index}`}
-                >
-                  {faq.question}
-                </button>
-              </h2>
-              <div
-                id={`collapse${index}`}
-                class={`accordion-collapse collapse ${index === 0 ? "show" : ""}`}
-                aria-labelledby={`heading${index}`}
-                data-bs-parent="#accordionExample"
-              >
-                <div class="accordion-body">{faq.response}</div>
-              </div>
+          course2026.pricing.map(({ room, price, limited }) => (
+            <div class="price-row">
+              <span>
+                {room}
+                {limited && <span class="badge">Disponibilità limitata</span>}
+              </span>
+              <span class="price-amount">€{price}</span>
+            </div>
+          ))
+        }
+        <p class="card-footnote">
+          Le stanze singole, triple e quadruple hanno una disponibilità limitata.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-heading">Scadenze</h2>
+        {
+          course2026.deadlines.map(({ date, label }) => (
+            <div class="deadline-row">
+              <span class="deadline-date">Entro il {date}</span>
+              <span>{label}</span>
             </div>
           ))
         }
       </div>
+
+      <div class="card">
+        <h2 class="card-heading">Bambini</h2>
+        <ul class="card-list">
+          {
+            course2026.children.map((item) => (
+              <li>{item}</li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="card coming-soon">
+        <h2 class="card-heading">Prossimamente</h2>
+        <p>
+          Ulteriori informazioni, insieme alla scheda di adesione, arriveranno
+          quanto prima. Resta sintonizzato!
+        </p>
+      </div>
     </section>
   </main>
 </Layout>
+
+<style>
+  .info-header {
+    padding: 2.5rem 0 0;
+    text-align: center;
+  }
+
+  .info-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-subtitle {
+    color: var(--color-muted);
+    font-size: 1rem;
+  }
+
+  .info-detail {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .info-detail.muted {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+
+  .card-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .card-subtext {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .card-footnote {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  .coming-soon {
+    background: linear-gradient(135deg, #f3e8ff, #ffe4e6);
+    border: none;
+    text-align: center;
+  }
+
+  .coming-soon p {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+</style>

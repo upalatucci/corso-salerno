@@ -2,12 +2,12 @@
  * Defines the configuration for PWA webmanifest.
  */
 export const manifest = {
-  name: "Corso Salerno 2024", // Change this to your website's name.
-  short_name: "Corso Salerno", // Change this to your website's short name.
+  name: "Corso Salerno 2026",
+  short_name: "Corso Salerno",
   description:
-    "27, 28 e 29 settembre si terra' a Marina di Camerota il corso del Territorio Salerno", // Change this to your websites description.
-  theme_color: "#09009f", // Change this to your primary color.
-  background_color: "#ffffff", // Change this to your background color.
+    "9, 10 e 11 ottobre 2026 si terrà a Marina di Camerota il corso autunnale del Territorio Salerno",
+  theme_color: "#8B5CF6",
+  background_color: "#FFF9F5",
   display: "minimal-ui",
   icons: [
     {

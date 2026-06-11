@@ -1,410 +1,198 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Countdown from "../components/Countdown.astro";
-import { Image } from "astro:assets";
-import flowerImage from "../assets/flower.png";
-import Header from "../assets/header-home.png";
-import HeaderMobile from "../assets/header-home-mobile.png";
+import Countdown2026 from "../components/Countdown2026.astro";
+import { course2026 } from "../data/course2026";
 ---
 
-<Layout title="Corso Salerno 2024" activeNav="/">
+<Layout title="Corso Salerno 2026" activeNav="/">
   <main>
-    <Image
-      src={Header}
-      alt="La vittoria del discepolo é la vittoria del maestro"
-      width={1980}
-      height={1080}
-      class="w-100 header-image"
-    />
-    <Image
-      src={HeaderMobile}
-      alt="La vittoria del discepolo é la vittoria del maestro"
-      width={1980}
-      height={1080}
-      class="w-100 header-image-mobile"
-    />
-    <div class="hero">
-      <h2>Importanti informazioni per la partenza</h2>
-      <div class="col-10 col-md-8 col-xl-6 text-start lead mx-auto mb-4">
-        Vi informiamo che
-        <ul>
-          <li>
-            <strong>Materiale del corso</strong>: al check-in dell'Happy Village
-            saranno posizionati 4 Expo (come in foto) con il codice a barre
-            QrCode per scaricare il programma del corso e tutto il materiale
-            degli interventi di studio, se è di vostro interesse potrete
-            scansionarlo al check-in.
-          </li>
-          <li>
-            <strong>Consumazioni al bar</strong>: per le consumazioni al bar non
-            sarà possibile utilizzare denaro contante o bancomat, si dovrà
-            comprare al check-in una card ricaricabile del residence di taglio
-            non inferiore a 10.00 euro, in caso di eventuale residuo nella card,
-            quando si andrà via, si potrà chiedere la restituzione dei soldi.
-          </li>
-          <li>
-            <storng>Tassa di soggiorno</storng>: al check in si dovrà pagare la
-            tassa di soggiorno pari a due euro a testa. Grazie di cuore a
-            tutti/e.
-          </li>
-          <li>
-            <strong>Negozio Esperia</strong>: sara' prensente il nostro negozio
-            Soka!!!
-          </li>
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="page-container hero-content">
+        <p class="hero-eyebrow">Corso autunnale del Territorio Salerno</p>
+        <h1 class="hero-title">
+          <span class="hero-title-main">Salerno</span>
+          <span class="hero-title-year">2026</span>
+        </h1>
+        <p class="hero-dates">{course2026.dates}</p>
+        <p class="hero-location">{course2026.location}</p>
+        <p class="hero-note">{course2026.startNote}</p>
+
+        <div class="hero-countdown">
+          <Countdown2026 />
+        </div>
+
+        <a href="/info" class="cta-button">Scopri tutte le info</a>
+      </div>
+    </section>
+
+    <section class="section page-container">
+      <h2 class="section-title">Primi spoiler</h2>
+
+      <div class="card">
+        <h3 class="card-heading">Chi può partecipare</h3>
+        <ul class="card-list">
+          {
+            course2026.participants.map((item) => (
+              <li>{item}</li>
+            ))
+          }
         </ul>
-        Il comitato organizzatore
       </div>
 
-      <div class="row justify-content-center">
-        <div class="col-10 col-md-8 col-xl-6 text-start lead">
-          <Countdown />
-          <p class="">Obiettivi:</p>
-          <ul>
-            <li>sfidarsi a recitare 100’ di daimoku al giorno</li>
-            <li>
-              accompagnare almeno due persone nuove agli zadankai, per sostenere
-              concretamente l’obiettivo di un giovane per gruppo
-            </li>
-            <li>
-              <a
-                href="https://esperiashop.it/libri-e-riviste/la-nuova-rivoluzione-umana-voll-5-6/"
-                target="_blank">studiare insieme la NRU vol. 5</a
-              >
-            </li>
-            <li>
-              “Poiché la legge è meravigliosa, la persona è degna di rispetto”:
-              impegniamoci concretamente per superare un conflitto personale
-              prima dell’inizio del corso
-            </li>
-            <li>
-              I tuoi obiettivi personali sono importanti! <a href="/obiettivi"
-                >Scrivine uno nella sezione dedicata</a
-              >. La Vittoria di uno è la Vittoria di tutti
-            </li>
-          </ul>
-        </div>
+      <div class="card">
+        <h3 class="card-heading">Quote di partecipazione</h3>
+        <p class="card-subtext">A persona · stanze singole, triple e quadruple in disponibilità limitata</p>
+        {
+          course2026.pricing.map(({ room, price, limited }) => (
+            <div class="price-row">
+              <span>
+                {room}
+                {limited && <span class="badge">Limitata</span>}
+              </span>
+              <span class="price-amount">€{price}</span>
+            </div>
+          ))
+        }
       </div>
-      <h2 id="daimoku">0</h2>
-      <input type="hidden" value="100" name="daimoku" />
-      <button
-        class="btn btn-primary"
-        type="submit"
-        data-bs-toggle="modal"
-        data-bs-target="#daimokuModal">Aggiungi il tuo Daimoku</button
-      >
 
-      <!-- Modal -->
-      <div
-        class="modal fade"
-        id="daimokuModal"
-        tabindex="-1"
-        aria-labelledby="daimokuModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="daimokuModalLabel">
-                Aggiungi daimoku
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                id="closeDaimokuModal"
-                aria-label="Chiudi"></button>
-            </div>
-            <div class="modal-body d-flex" id="daimokuForm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="2em"
-                height="2em"
-                viewBox="0 0 24 24"
-                ><path
-                  fill="currentColor"
-                  d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"
-                ></path></svg
-              >
-
-              <form
-                id="daimoku-form"
-                class="ms-4 d-flex justify-content-center align-items-center py-4 flex-fill"
-              >
-                <div class="w-100 px-2">
-                  <label for="hour" class="w-100 text-start">Ore</label><div
-                    class="mt-2"
-                  >
-                    <select id="hour" name="hours" class="w-100 form-select"
-                      ><option>0</option><option>1</option><option>2</option
-                      ><option>3</option><option>4</option><option>5</option>
-
-                      <option>10</option>
-                      <option>15</option>
-                      <option>20</option>
-                      <option>25</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="w-100 px-2">
-                  <label for="hour" class="w-100 text-start">Minuti</label><div
-                    class="mt-2"
-                  >
-                    <select id="hour" name="minutes" class="w-100 form-select"
-                      ><option value="0">0</option><option value="5">5</option
-                      ><option value="10">10</option><option value="15"
-                        >15</option
-                      ><option value="20" selected>20</option><option value="25"
-                        >25</option
-                      ><option value="30">30</option><option value="35"
-                        >35</option
-                      ><option value="40">40</option><option value="45"
-                        >45</option
-                      ><option value="50">50</option><option value="55"
-                        >55</option
-                      ></select
-                    >
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div id="errorModal" class="modal-body">
-              <h3>Errore</h3>
-              <p id="errorText"></p>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal">Chiudi</button
-              >
-              <button
-                type="submit"
-                class="btn btn-primary"
-                form="daimoku-form"
-                id="submitDaimokuModal"
-              >
-                <span
-                  class="spinner-border spinner-border-sm d-none me-2"
-                  id="spinner"
-                  role="status"
-                  aria-hidden="true"></span>Aggiungi</button
-              >
-            </div>
-          </div>
-        </div>
+      <div class="card highlight-card">
+        <p class="highlight-text">
+          La scheda di iscrizione online arriverà a stretto giro — stay tuned!
+        </p>
       </div>
-    </div>
-
-    <div
-      class="d-flex container align-items-center justify-content-center mb-4"
-    >
-      <Image
-        src={flowerImage}
-        alt="1000 Daimoku"
-        width={40}
-        height={40}
-        class="me-2"
-      />
-      = 3.000 Daimoku
-      <span class="mx-2">= 1 Ora</span>
-    </div>
-    <div class="container d-flex flex-wrap-reverse mb-5 pb-5">
-      <Image
-        class="flower-image"
-        src={flowerImage}
-        alt="1000 Daimoku"
-        width={40}
-        height={40}
-      />
-    </div>
+    </section>
   </main>
 </Layout>
 
-<script is:inline>
-  function animateValue(obj, start, end, duration) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      obj.innerHTML = Math.floor(progress * (end - start) + start);
-      if (progress < 1) {
-        window.requestAnimationFrame(step);
-      }
-    };
-    window.requestAnimationFrame(step);
-  }
-
-  const flowerImage = document.querySelector(".flower-image");
-
-  const flowerImageContainer = flowerImage.parentElement;
-
-  const daimokuContainer = document.getElementById("daimoku");
-
-  const initialDaimoku = localStorage.getItem("lastDaimoku") || 0;
-
-  daimokuContainer.innerText = initialDaimoku;
-
-  const spinner = document.getElementById("spinner");
-
-  const errorModal = document.getElementById("errorModal");
-  const formModal = document.getElementById("daimokuForm");
-  const submitDaimokuModal = document.getElementById("submitDaimokuModal");
-
-  var daimokuModal = document.getElementById("daimokuModal");
-
-  daimokuModal.addEventListener("show.bs.modal", function () {
-    errorModal.classList.add("d-none");
-    formModal.classList.remove("d-none");
-    submitDaimokuModal.classList.remove("d-none");
-  });
-
-  document
-    .getElementById("daimoku-form")
-    .addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      spinner.classList.remove("d-none");
-      const formData = new FormData(event.target);
-
-      const hours = parseInt(formData.get("hours"));
-      const minutes = parseInt(formData.get("minutes"));
-
-      const daimoku = (hours * 60 + minutes) * 50;
-
-      fetch("/api/daimoku", {
-        method: "POST",
-        body: JSON.stringify({ daimoku }),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          document.getElementById("closeDaimokuModal").click();
-
-          if (response.daimoku) {
-            setDaimokuText(response.daimoku);
-            createFlowers(response.daimoku);
-          }
-        })
-        .catch(() => {
-          errorModal.classList.remove("d-none");
-          formModal.classList.add("d-none");
-          submitDaimokuModal.classList.add("d-none");
-
-          document.getElementById("errorText").innerText =
-            "Qualcosa non e' andato a buon fine! Riprova piú tardi";
-        })
-        .finally(() => {
-          spinner.classList.add("d-none");
-        });
-    });
-
-  function getDaimoku() {
-    fetch("/api/daimoku")
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.daimoku) {
-          setDaimokuText(response.daimoku);
-        }
-      });
-  }
-
-  getDaimoku();
-
-  function setDaimokuText(newDaimoku) {
-    const startDaimoku = parseInt(daimokuContainer.innerText);
-    animateValue(daimokuContainer, startDaimoku, newDaimoku, 1000);
-
-    localStorage.setItem("lastDaimoku", newDaimoku);
-  }
-
-  const getRandomAnimationDuration = () => {
-    const ms = Math.random() * 500 + 500;
-
-    return `${ms}ms`;
-  };
-
-  function createFlowers(daimokuString) {
-    const currentFlowers = flowerImageContainer.children.length;
-
-    const daimokuNumber = parseInt(daimokuString);
-
-    const flowersNumbers = isNaN(daimokuNumber) ? 0 : daimokuNumber / 3000;
-
-    new Array(Math.round(flowersNumbers - currentFlowers))
-      .fill(0)
-      .forEach(() => {
-        const newFlower = flowerImage.cloneNode(true);
-        newFlower.style.setProperty(
-          "--flower-duration",
-          getRandomAnimationDuration(),
-        );
-        flowerImageContainer.append(newFlower);
-      });
-  }
-
-  createFlowers(initialDaimoku);
-</script>
-
 <style>
-  h1 {
-    background: -webkit-linear-gradient(45deg, #09009f, #00ff95 80%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: calc(2rem + 1.5vw);
+  .hero {
+    position: relative;
+    padding: 3rem 0 2.5rem;
+    overflow: hidden;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
   }
 
-  #daimoku {
-    background: -webkit-linear-gradient(45deg, #09009f, #00ff95 80%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 64px;
-    padding: 1rem 0;
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-hero);
+    z-index: 0;
   }
 
-  @media (min-width: 768px) {
-    #daimoku {
-      font-size: 120px;
-    }
+  .hero-bg::before,
+  .hero-bg::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
   }
 
-  .flower-image {
-    animation: daimokuFlower 1s ease-out;
-    animation-duration: var(--flower-duration);
-  }
-
-  @keyframes daimokuFlower {
-    0% {
-      transform: translateY(-150px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  .header-image-mobile {
+  .hero-bg::before {
+    width: 300px;
     height: 300px;
-    object-fit: fill;
+    background: #c4b5fd;
+    top: -80px;
+    right: -60px;
   }
 
-  .header-image {
-    display: none;
-    height: fit-content;
-    object-fit: contain;
+  .hero-bg::after {
+    width: 250px;
+    height: 250px;
+    background: #fca5a5;
+    bottom: -40px;
+    left: -40px;
   }
 
-  @media (min-width: 500px) {
-    .header-image-mobile {
-      height: 500px;
-    }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
   }
 
-  @media (min-width: 768px) {
-    .header-image-mobile {
-      display: none;
-    }
-    .header-image {
-      display: block;
-    }
+  .hero-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
   }
+
+  .hero-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .hero-title-main {
+    font-size: clamp(3rem, 12vw, 5.5rem);
+    font-weight: 800;
+    color: var(--color-text);
+  }
+
+  .hero-title-year {
+    font-size: clamp(4rem, 16vw, 7rem);
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-dates {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.35rem;
+  }
+
+  .hero-location {
+    font-size: 1rem;
+    color: var(--color-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-note {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    max-width: 28rem;
+    margin: 0 auto 2rem;
+    line-height: 1.5;
+  }
+
+  .hero-countdown {
+    margin-bottom: 2rem;
+  }
+
+  .card-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .card-subtext {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .highlight-card {
+    background: linear-gradient(135deg, #f3e8ff, #ffe4e6);
+    border: none;
+    text-align: center;
+  }
+
+  .highlight-text {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+
 </style>
