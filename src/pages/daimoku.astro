@@ -1,0 +1,731 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import flowerImage from "../assets/flower.png";
+
+const durationOptions = [
+  { value: 5, label: "5 minuti" },
+  { value: 10, label: "10 minuti" },
+  { value: 15, label: "15 minuti" },
+  { value: 20, label: "20 minuti" },
+  { value: 30, label: "30 minuti" },
+  { value: 45, label: "45 minuti" },
+  { value: 60, label: "1 ora" },
+  { value: 90, label: "1 ora e 30" },
+  { value: 120, label: "2 ore" },
+];
+---
+
+<Layout title="Conta Daimoku · Corso Salerno 2026" activeNav="/daimoku">
+  <main>
+    <section class="daimoku-header">
+      <div class="page-container">
+        <p class="daimoku-eyebrow">Contatore condiviso</p>
+        <h1 class="daimoku-title">Conta Daimoku</h1>
+        <p class="daimoku-subtitle">
+          Unisciti agli altri praticanti del Territorio Salerno nel contare il
+          Daimoku verso il corso autunnale 2026
+        </p>
+      </div>
+    </section>
+
+    <section class="section page-container">
+      <div id="active-chanters" class="active-chanters hidden">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span id="active-chanters-text"></span>
+      </div>
+
+      <div class="counter-card">
+        <p class="counter-label">Daimoku totali</p>
+        <h2 id="daimoku-counter" class="counter-value">0</h2>
+
+        <div id="chanting-status" class="chanting-status hidden">
+          <span class="chanting-badge">Stai recitando</span>
+          <span id="chanting-timer" class="chanting-timer"></span>
+        </div>
+
+        <div class="counter-actions">
+          <button type="button" id="start-chanting-btn" class="btn btn-green">
+            Sto recitando
+          </button>
+          <button type="button" id="add-daimoku-btn" class="btn btn-primary">
+            Aggiungi Daimoku già fatto
+          </button>
+        </div>
+      </div>
+
+      <div class="legend card">
+        <div class="legend-item">
+          <Image src={flowerImage} alt="" width={32} height={32} />
+          <span>= 3.000 Daimoku = 1 ora</span>
+        </div>
+      </div>
+
+      <div id="flowers-container" class="flowers-container" aria-hidden="true">
+        <Image
+          class="flower-template"
+          src={flowerImage}
+          alt=""
+          width={40}
+          height={40}
+        />
+      </div>
+    </section>
+  </main>
+
+  <dialog id="duration-dialog" class="dialog">
+    <div class="dialog-content">
+      <h3 class="dialog-title">Per quanto tempo reciterai?</h3>
+      <p class="dialog-note">
+        La conta verrà aggiornata automaticamente: 1 minuto = 50 daimoku (es. 5
+        min = 250 daimoku).
+      </p>
+      <div class="duration-grid">
+        {
+          durationOptions.map((opt) => (
+            <button
+              type="button"
+              class="duration-option"
+              data-duration={opt.value}
+            >
+              {opt.label}
+            </button>
+          ))
+        }
+      </div>
+      <button type="button" class="dialog-close" data-close-dialog>
+        Annulla
+      </button>
+    </div>
+  </dialog>
+
+  <dialog id="add-daimoku-dialog" class="dialog">
+    <div class="dialog-content">
+      <h3 class="dialog-title">Aggiungi daimoku</h3>
+      <form id="add-daimoku-form" class="add-form">
+        <div class="form-field">
+          <label for="hours">Ore</label>
+          <select id="hours" name="hours">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="minutes">Minuti</label>
+          <select id="minutes" name="minutes">
+            <option value="0">0</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20" selected>20</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+            <option value="35">35</option>
+            <option value="40">40</option>
+            <option value="45">45</option>
+            <option value="50">50</option>
+            <option value="55">55</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="dialog-close" data-close-dialog>
+            Annulla
+          </button>
+          <button type="submit" class="btn btn-primary">Aggiungi</button>
+        </div>
+      </form>
+      <p id="add-success" class="dialog-success hidden">
+        Grazie! Stai incoraggiando anche tante altre persone a fare daimoku.
+      </p>
+      <p id="add-error" class="dialog-error hidden">
+        Qualcosa non ha funzionato. Riprova più tardi.
+      </p>
+    </div>
+  </dialog>
+</Layout>
+
+<script is:inline>
+  const DAIMOKU_PER_MINUTE = 50;
+  const CHANTING_STORAGE_KEY = "chanting-ends-at-salerno";
+  const LAST_DAIMOKU_KEY = "lastDaimoku-salerno";
+
+  const counterEl = document.getElementById("daimoku-counter");
+  const activeChantersEl = document.getElementById("active-chanters");
+  const activeChantersTextEl = document.getElementById("active-chanters-text");
+  const chantingStatusEl = document.getElementById("chanting-status");
+  const chantingTimerEl = document.getElementById("chanting-timer");
+  const startChantingBtn = document.getElementById("start-chanting-btn");
+  const addDaimokuBtn = document.getElementById("add-daimoku-btn");
+  const durationDialog = document.getElementById("duration-dialog");
+  const addDaimokuDialog = document.getElementById("add-daimoku-dialog");
+  const addDaimokuForm = document.getElementById("add-daimoku-form");
+  const addSuccessEl = document.getElementById("add-success");
+  const addErrorEl = document.getElementById("add-error");
+  const flowersContainer = document.getElementById("flowers-container");
+  const flowerTemplate = flowersContainer?.querySelector(".flower-template");
+
+  let endsAt = null;
+  let timerInterval = null;
+
+  function animateValue(start, end, duration = 1000) {
+    if (!counterEl) return;
+    let startTimestamp = null;
+
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      counterEl.textContent = Math.floor(
+        progress * (end - start) + start,
+      ).toLocaleString("it-IT");
+      if (progress < 1) window.requestAnimationFrame(step);
+    };
+
+    window.requestAnimationFrame(step);
+  }
+
+  function setDaimokuText(newDaimoku) {
+    if (!counterEl) return;
+    const start = parseInt(counterEl.textContent.replace(/\./g, "")) || 0;
+    animateValue(start, newDaimoku);
+    localStorage.setItem(LAST_DAIMOKU_KEY, String(newDaimoku));
+    createFlowers(newDaimoku);
+  }
+
+  function createFlowers(daimokuNumber) {
+    if (!flowersContainer || !flowerTemplate) return;
+
+    const currentFlowers = flowersContainer.querySelectorAll(
+      ".flower-image:not(.flower-template)",
+    ).length;
+    const targetFlowers = Math.round(daimokuNumber / 3000);
+
+    for (let i = currentFlowers; i < targetFlowers; i++) {
+      const flower = flowerTemplate.cloneNode(true);
+      flower.classList.remove("flower-template");
+      flower.classList.add("flower-image");
+      flower.style.setProperty(
+        "--flower-duration",
+        `${Math.random() * 500 + 500}ms`,
+      );
+      flowersContainer.append(flower);
+    }
+  }
+
+  async function fetchDaimoku() {
+    try {
+      const res = await fetch("/api/daimoku");
+      const data = await res.json();
+      if (data.daimoku !== undefined) setDaimokuText(data.daimoku);
+    } catch {
+      const cached = localStorage.getItem(LAST_DAIMOKU_KEY);
+      if (cached && counterEl) {
+        counterEl.textContent = parseInt(cached).toLocaleString("it-IT");
+        createFlowers(parseInt(cached));
+      }
+    }
+  }
+
+  async function addDaimoku(amount) {
+    const res = await fetch("/api/daimoku", {
+      method: "POST",
+      body: JSON.stringify({ daimoku: amount }),
+    });
+    const data = await res.json();
+    if (data.daimoku !== undefined) setDaimokuText(data.daimoku);
+    return data;
+  }
+
+  async function fetchActiveChanters() {
+    try {
+      const res = await fetch("/api/chanting");
+      const data = await res.json();
+      const count = data.count ?? 0;
+
+      if (!activeChantersEl || !activeChantersTextEl) return;
+
+      if (count > 0) {
+        activeChantersEl.classList.remove("hidden");
+        activeChantersTextEl.textContent =
+          count === 1
+            ? "1 persona sta recitando ora"
+            : `${count} persone stanno recitando ora`;
+      } else {
+        activeChantersEl.classList.add("hidden");
+      }
+    } catch {
+      activeChantersEl?.classList.add("hidden");
+    }
+  }
+
+  async function startChanting(duration) {
+    await fetch("/api/chanting", {
+      method: "POST",
+      body: JSON.stringify({ duration }),
+    });
+
+    try {
+      await addDaimoku(duration * DAIMOKU_PER_MINUTE);
+    } catch {
+      // chanting start should not be blocked by daimoku increment
+    }
+
+    const expiresAt = Date.now() + duration * 60 * 1000;
+    localStorage.setItem(CHANTING_STORAGE_KEY, String(expiresAt));
+    setChantingState(expiresAt);
+    durationDialog?.close();
+    fetchActiveChanters();
+  }
+
+  function setChantingState(timestamp) {
+    endsAt = timestamp;
+
+    if (timestamp > Date.now()) {
+      chantingStatusEl?.classList.remove("hidden");
+      startChantingBtn?.classList.add("hidden");
+      updateTimer();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(updateTimer, 1000);
+    } else {
+      clearChantingState();
+    }
+  }
+
+  function clearChantingState() {
+    endsAt = null;
+    chantingStatusEl?.classList.add("hidden");
+    startChantingBtn?.classList.remove("hidden");
+    localStorage.removeItem(CHANTING_STORAGE_KEY);
+    if (timerInterval) clearInterval(timerInterval);
+  }
+
+  function updateTimer() {
+    if (!endsAt || !chantingTimerEl) return;
+
+    const diff = endsAt - Date.now();
+    if (diff <= 0) {
+      clearChantingState();
+      fetchActiveChanters();
+      return;
+    }
+
+    const mins = Math.floor(diff / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    chantingTimerEl.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  startChantingBtn?.addEventListener("click", () => durationDialog?.showModal());
+
+  addDaimokuBtn?.addEventListener("click", () => {
+    addSuccessEl?.classList.add("hidden");
+    addErrorEl?.classList.add("hidden");
+    addDaimokuForm?.classList.remove("hidden");
+    addDaimokuDialog?.showModal();
+  });
+
+  document.querySelectorAll("[data-close-dialog]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      durationDialog?.close();
+      addDaimokuDialog?.close();
+    });
+  });
+
+  document.querySelectorAll(".duration-option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const duration = parseInt(btn.getAttribute("data-duration") || "0");
+      if (duration > 0) startChanting(duration);
+    });
+  });
+
+  addDaimokuForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    addSuccessEl?.classList.add("hidden");
+    addErrorEl?.classList.add("hidden");
+
+    const formData = new FormData(event.target);
+    const hours = parseInt(formData.get("hours")?.toString() || "0");
+    const minutes = parseInt(formData.get("minutes")?.toString() || "0");
+    const daimoku = (hours * 60 + minutes) * DAIMOKU_PER_MINUTE;
+
+    try {
+      await addDaimoku(daimoku);
+      addDaimokuForm.classList.add("hidden");
+      addSuccessEl?.classList.remove("hidden");
+    } catch {
+      addErrorEl?.classList.remove("hidden");
+    }
+  });
+
+  const saved = localStorage.getItem(CHANTING_STORAGE_KEY);
+  if (saved) {
+    const ts = parseInt(saved);
+    if (ts > Date.now()) setChantingState(ts);
+    else localStorage.removeItem(CHANTING_STORAGE_KEY);
+  }
+
+  const cachedDaimoku = localStorage.getItem(LAST_DAIMOKU_KEY);
+  if (cachedDaimoku && counterEl) {
+    counterEl.textContent = parseInt(cachedDaimoku).toLocaleString("it-IT");
+    createFlowers(parseInt(cachedDaimoku));
+  }
+
+  fetchDaimoku();
+  fetchActiveChanters();
+  setInterval(fetchActiveChanters, 10000);
+</script>
+
+<style>
+  .daimoku-header {
+    padding: 2.5rem 0 0;
+    text-align: center;
+  }
+
+  .daimoku-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .daimoku-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .daimoku-subtitle {
+    color: var(--color-muted);
+    font-size: 1rem;
+    max-width: 32rem;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .active-chanters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.25rem;
+    background: rgba(6, 214, 160, 0.12);
+    border: 1px solid rgba(6, 214, 160, 0.3);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #047857;
+  }
+
+  .active-chanters.hidden {
+    display: none;
+  }
+
+  .pulse-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #06d6a0;
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(0.85);
+    }
+  }
+
+  .counter-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .counter-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .counter-value {
+    font-size: clamp(3rem, 14vw, 5.5rem);
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .chanting-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(6, 214, 160, 0.1);
+    border-radius: var(--radius-sm);
+  }
+
+  .chanting-status.hidden {
+    display: none;
+  }
+
+  .chanting-badge {
+    font-weight: 700;
+    color: #047857;
+    font-size: 0.9rem;
+  }
+
+  .chanting-timer {
+    font-family: monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .counter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    font-weight: 700;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    max-width: 20rem;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-green {
+    background: #059669;
+    color: white;
+    box-shadow: 0 8px 32px rgba(5, 150, 105, 0.25);
+  }
+
+  .btn-green:hover {
+    background: #047857;
+  }
+
+  .btn.hidden {
+    display: none;
+  }
+
+  .legend {
+    text-align: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+
+  .flowers-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    min-height: 3rem;
+  }
+
+  .flower-template {
+    display: none;
+  }
+
+  :global(.flower-image) {
+    animation: daimokuFlower 1s ease-out;
+    animation-duration: var(--flower-duration, 1s);
+  }
+
+  @keyframes daimokuFlower {
+    0% {
+      transform: translateY(-80px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .dialog {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0;
+    max-width: 28rem;
+    width: min(28rem, calc(100vw - 2rem));
+    max-height: min(90dvh, 640px);
+    overflow-y: auto;
+    box-shadow: var(--shadow-md);
+    margin: 0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .dialog::backdrop {
+    background: rgba(26, 16, 51, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .dialog-content {
+    padding: 1.75rem;
+  }
+
+  .dialog-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+
+  .dialog-note {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .duration-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .duration-option {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .duration-option:hover {
+    border-color: var(--color-primary);
+    background: rgba(139, 92, 246, 0.05);
+    color: var(--color-primary);
+  }
+
+  .dialog-close {
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--color-muted);
+  }
+
+  .add-form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-field label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  .form-field select {
+    padding: 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .form-actions .dialog-close {
+    flex: 1;
+  }
+
+  .form-actions .btn {
+    flex: 1;
+    width: auto;
+    max-width: none;
+  }
+
+  .dialog-success {
+    color: #047857;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .dialog-error {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+</style>

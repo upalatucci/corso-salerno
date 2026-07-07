@@ -9,7 +9,7 @@ import { course2026 } from "../data/course2026";
       <div class="page-container">
         <h1 class="info-title">Informazioni</h1>
         <p class="info-subtitle">
-          Tutto quello che sappiamo finora sul corso autunnale 2026
+          Corso autunnale del Territorio Salerno · 9–11 ottobre 2026
         </p>
       </div>
     </section>
@@ -19,9 +19,25 @@ import { course2026 } from "../data/course2026";
         <h2 class="card-heading">Date e luogo</h2>
         <p class="info-detail">
           <strong>{course2026.dates}</strong><br />
-          {course2026.location}
+          {course2026.locationAddress}
         </p>
-        <p class="info-detail muted">{course2026.startNote}</p>
+        <p class="info-detail">
+          <a
+            href={course2026.locationWebsite}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="external-link"
+          >
+            {course2026.locationWebsite}
+          </a>
+        </p>
+        <ul class="card-list">
+          {
+            course2026.schedule.map((item) => (
+              <li>{item}</li>
+            ))
+          }
+        </ul>
       </div>
 
       <div class="card">
@@ -36,31 +52,24 @@ import { course2026 } from "../data/course2026";
       </div>
 
       <div class="card">
-        <h2 class="card-heading">Quote di partecipazione</h2>
-        <p class="card-subtext">A persona</p>
+        <h2 class="card-heading">Costo del soggiorno per persona</h2>
+        <p class="card-subtext">Il costo comprende:</p>
+        <ul class="card-list included-list">
+          {
+            course2026.included.map((item) => (
+              <li>{item}</li>
+            ))
+          }
+        </ul>
         {
-          course2026.pricing.map(({ room, price, limited }) => (
+          course2026.pricing.map(({ room, price, rooms, limited }) => (
             <div class="price-row">
               <span>
                 {room}
+                <span class="room-count">({rooms} camere disponibili)</span>
                 {limited && <span class="badge">Disponibilità limitata</span>}
               </span>
               <span class="price-amount">€{price}</span>
-            </div>
-          ))
-        }
-        <p class="card-footnote">
-          Le stanze singole, triple e quadruple hanno una disponibilità limitata.
-        </p>
-      </div>
-
-      <div class="card">
-        <h2 class="card-heading">Scadenze</h2>
-        {
-          course2026.deadlines.map(({ date, label }) => (
-            <div class="deadline-row">
-              <span class="deadline-date">Entro il {date}</span>
-              <span>{label}</span>
             </div>
           ))
         }
@@ -77,12 +86,94 @@ import { course2026 } from "../data/course2026";
         </ul>
       </div>
 
-      <div class="card coming-soon">
-        <h2 class="card-heading">Prossimamente</h2>
-        <p>
-          Ulteriori informazioni, insieme alla scheda di adesione, arriveranno
-          quanto prima. Resta sintonizzato!
+      <div class="card" id="scadenze">
+        <h2 class="card-heading">Scadenze pagamento</h2>
+        <p class="card-subtext">
+          La quota di iscrizione può essere versata in 2 rate oppure in un'unica
+          soluzione entro il 31 luglio 2026.
         </p>
+        {
+          course2026.deadlines.map(({ date, label }) => (
+            <div class="deadline-row">
+              <span class="deadline-date">Entro il {date}</span>
+              <span>{label}</span>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="card">
+        <h2 class="card-heading">Metodo di pagamento</h2>
+        <div class="payment-block">
+          <p class="payment-label">Bonifico bancario intestato a:</p>
+          <p class="payment-detail"><strong>{course2026.payment.bankName}</strong></p>
+          <p class="payment-detail">
+            IBAN: <strong class="iban">{course2026.payment.iban}</strong>
+          </p>
+          <p class="payment-detail">Banca: {course2026.payment.bank}</p>
+          <p class="payment-detail">
+            Causale: <em>{course2026.payment.causale}</em>
+          </p>
+        </div>
+        <ul class="card-list">
+          {
+            course2026.payment.otherMethods.map((item) => (
+              <li>{item}</li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2 class="card-heading">Penali</h2>
+        <p class="card-subtext">
+          In caso di rinuncia al corso senza possibilità di sostituzione:
+        </p>
+        <ul class="card-list">
+          {
+            course2026.penalties.map((item) => (
+              <li>{item}</li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2 class="card-heading">Contatti</h2>
+        <div class="contact-block">
+          <p class="contact-label">{course2026.contacts.committee.label}</p>
+          <p class="contact-note">{course2026.contacts.committee.note}</p>
+          <a href={`mailto:${course2026.contacts.committee.email}`} class="contact-link">
+            {course2026.contacts.committee.email}
+          </a>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">{course2026.contacts.agency.label}</p>
+          <p class="contact-detail">{course2026.contacts.agency.address}</p>
+          <p class="contact-detail">
+            Tel. <a href={`tel:${course2026.contacts.agency.phone}`}>{course2026.contacts.agency.phone}</a>
+          </p>
+          <a href={`mailto:${course2026.contacts.agency.email}`} class="contact-link">
+            {course2026.contacts.agency.email}
+          </a>
+        </div>
+      </div>
+
+      <div class="card register-card">
+        <h2 class="card-heading">Iscrizione</h2>
+        <p>
+          Compila la scheda di iscrizione online per registrarti al corso.
+          Dopo la conferma riceverai una mail con il riepilogo dei dati e le
+          informazioni per il pagamento.
+        </p>
+        <a
+          href={course2026.registrationUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cta-button register-button"
+        >
+          Iscriviti al corso
+        </a>
       </div>
     </section>
   </main>
@@ -111,9 +202,14 @@ import { course2026 } from "../data/course2026";
     line-height: 1.6;
   }
 
-  .info-detail.muted {
-    color: var(--color-muted);
-    font-size: 0.9rem;
+  .external-link {
+    color: var(--color-primary);
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  .external-link:hover {
+    text-decoration: underline;
   }
 
   .card-heading {
@@ -128,22 +224,87 @@ import { course2026 } from "../data/course2026";
     margin-bottom: 0.75rem;
   }
 
-  .card-footnote {
-    font-size: 0.85rem;
-    color: var(--color-muted);
-    margin-top: 1rem;
-    font-style: italic;
+  .included-list {
+    margin-bottom: 1rem;
   }
 
-  .coming-soon {
+  .room-count {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    font-weight: 400;
+    margin-top: 0.15rem;
+  }
+
+  .payment-block {
+    margin-bottom: 1rem;
+  }
+
+  .payment-label {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .payment-detail {
+    font-size: 0.95rem;
+    margin-bottom: 0.35rem;
+    line-height: 1.5;
+  }
+
+  .iban {
+    font-family: monospace;
+    letter-spacing: 0.03em;
+  }
+
+  .contact-block {
+    margin-bottom: 1.25rem;
+  }
+
+  .contact-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .contact-label {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-note {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .contact-detail {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-link {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .contact-link:hover {
+    text-decoration: underline;
+  }
+
+  .register-card {
     background: linear-gradient(135deg, #f3e8ff, #ffe4e6);
     border: none;
     text-align: center;
   }
 
-  .coming-soon p {
+  .register-card p {
     font-weight: 500;
     color: var(--color-text);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
   }
 
+  .register-button {
+    margin-top: 0.5rem;
+  }
 </style>
