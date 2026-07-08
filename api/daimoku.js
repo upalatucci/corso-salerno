@@ -1,8 +1,10 @@
 import { kv } from "@vercel/kv";
 
+const DAIMOKU_KEY = "daimoku-salerno-2026";
+
 const getDaimoku = async () => {
   try {
-    return (await kv.get("daimoku")) || 0;
+    return (await kv.get(DAIMOKU_KEY)) || 0;
   } catch (error) {
     console.error(error);
     return 0;
@@ -18,7 +20,7 @@ const addDaimoku = async (daimoku) => {
       return await getDaimoku();
     }
 
-    return await kv.incrby("daimoku", daimoku);
+    return await kv.incrby(DAIMOKU_KEY, daimoku);
   } catch (error) {
     console.error(error);
     return await getDaimoku();
