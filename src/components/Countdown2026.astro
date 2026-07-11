@@ -75,11 +75,11 @@ import { course2026 } from "../data/course2026";
   }
 
   .countdown-label {
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-muted);
+    color: var(--viola);
     margin-bottom: 1.25rem;
   }
 
@@ -96,26 +96,25 @@ import { course2026 } from "../data/course2026";
     align-items: center;
     min-width: 4.5rem;
     padding: 1rem 0.75rem;
-    background: var(--color-surface);
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.6);
   }
 
   .time-value {
+    font-family: var(--font-serif);
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--viola-dark);
   }
 
   .time-unit {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    color: var(--color-muted);
+    color: var(--testo-light);
     margin-top: 0.35rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;

@@ -6,6 +6,7 @@ export const course2026 = {
     "Happy Village — Località Arconte snc, 84059 Marina di Camerota (SA)",
   locationWebsite: "https://www.happyvillage.it/",
   registrationUrl: "https://form.jotform.com/261656134013348",
+  whatsappChannelUrl: "https://whatsapp.com/channel/0029Vb83cr4KwqSXbUE9yP1o",
   startNote:
     "Check-in venerdì 9 ottobre dalle 13:00 alle 15:00 · Corso dalle 14:00 · Conclusione domenica 11 ottobre alle 12:30, a seguire il pranzo",
   courseDate: new Date(2026, 9, 9, 14, 0),

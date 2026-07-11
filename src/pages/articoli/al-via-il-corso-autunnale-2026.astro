@@ -1,0 +1,184 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleHeader from "../../components/ArticleHeader.astro";
+import ArticleFooter from "../../components/ArticleFooter.astro";
+import { getArticle } from "../../data/articles";
+import { course2026 } from "../../data/course2026";
+
+const article = getArticle("al-via-il-corso-autunnale-2026");
+
+if (!article) {
+  return Astro.redirect("/articoli");
+}
+---
+
+<Layout
+  title={`${article.title} · Corso Salerno 2026`}
+  activeNav="/articoli"
+  description="Inauguriamo il sito ufficiale del Corso Autunnale del Territorio Salerno 2026, in programma dal 9 all'11 ottobre all'Happy Village di Marina di Camerota."
+>
+  <main class="page">
+    <ArticleHeader article={article} />
+
+    <article class="article-body">
+      <p class="article-intro">
+        Benvenuti nel sito ufficiale del Corso Autunnale del Territorio Salerno
+        2026. Da oggi questo spazio accompagnerà tutti noi fino al corso,
+        raccogliendo informazioni, materiali e aggiornamenti.
+      </p>
+
+      <p>
+        Dal 9 all'11 ottobre 2026, presso l'Happy Village di Marina di Camerota,
+        si terrà il Corso Autunnale del Territorio Salerno.
+      </p>
+      <p>
+        Con questo primo articolo desideriamo condividere le principali
+        informazioni e dare ufficialmente il via alla preparazione del corso.
+      </p>
+
+      <h2>Le prime scadenze</h2>
+
+      <p>Per partecipare sarà necessario seguire alcune semplici tappe:</p>
+
+      <ul class="scadenze">
+        <li class="scadenza-item">
+          <span class="scadenza-icon">📅</span>
+          <div class="scadenza-body">
+            <span class="scadenza-data">Entro il 15 luglio 2026</span>
+            <span class="scadenza-desc"
+              >Compilazione della scheda di adesione.</span
+            >
+          </div>
+        </li>
+        <li class="scadenza-item">
+          <span class="scadenza-icon">💳</span>
+          <div class="scadenza-body">
+            <span class="scadenza-data">Entro il 31 luglio 2026</span>
+            <span class="scadenza-desc"
+              >Versamento dell'acconto pari al 40% della quota di
+              partecipazione.</span
+            >
+          </div>
+        </li>
+      </ul>
+
+      <p>
+        Nelle prossime settimane saranno pubblicate tutte le informazioni
+        relative al programma, all'organizzazione e ai servizi del corso.
+      </p>
+
+      <h2>Come ci prepareremo</h2>
+
+      <p>
+        Nei mesi che ci separano dal corso desideriamo condividere alcuni
+        obiettivi comuni che accompagneranno tutto il Territorio.
+      </p>
+
+      <ul class="prep-list">
+        <li class="prep-item">
+          <span class="prep-icon">📖</span>
+          <div class="prep-body">
+            <span class="prep-label">Studio</span>
+            <p class="prep-desc">
+              Approfondiremo il Gosho <em
+                >"Il raggiungimento della Buddità in questa esistenza"</em
+              >, accompagnato dalla lettura della <strong
+                >Nuova Rivoluzione Umana – Volume 6</strong
+              >, con particolare attenzione al capitolo <em>"Accelerazione"</em>.
+            </p>
+          </div>
+        </li>
+        <li class="prep-item">
+          <span class="prep-icon">📿</span>
+          <div class="prep-body">
+            <span class="prep-label">Daimoku</span>
+            <p class="prep-desc">
+              L'obiettivo proposto è di recitare <strong
+                >90 minuti di daimoku al giorno</strong
+              >, pregando per la riuscita del corso, per la propria rivoluzione
+              umana e per la felicità delle persone.
+            </p>
+          </div>
+        </li>
+        <li class="prep-item">
+          <span class="prep-icon">🤝</span>
+          <div class="prep-body">
+            <span class="prep-label">Dialogo</span>
+            <p class="prep-desc">
+              Vogliamo aumentare le occasioni di dialogo, condividendo il
+              Buddismo con quante più persone possibile e incoraggiando amici,
+              familiari e conoscenti.
+            </p>
+          </div>
+        </li>
+      </ul>
+
+      <h2>Un sito per restare sempre aggiornati</h2>
+
+      <p>
+        Questo sito sarà il punto di riferimento del Corso Autunnale. Qui
+        troverete:
+      </p>
+
+      <ul class="site-list">
+        <li><span class="s-icon">📰</span> Notizie e aggiornamenti</li>
+        <li><span class="s-icon">📖</span> Materiali di studio e approfondimenti</li>
+        <li><span class="s-icon">🎤</span> Interviste e testimonianze</li>
+        <li><span class="s-icon">📸</span> Racconti del lavoro degli staff</li>
+        <li><span class="s-icon">📿</span> Il contadaimoku</li>
+        <li><span class="s-icon">ℹ️</span> Informazioni utili per i partecipanti</li>
+      </ul>
+
+      <p>
+        L'obiettivo è offrire uno spazio semplice da consultare, sempre
+        aggiornato e ricco di contenuti che ci accompagneranno fino al corso.
+      </p>
+
+      <h2>Anche un canale WhatsApp</h2>
+
+      <div class="whatsapp-card">
+        <span class="wa-icon">💬</span>
+        <div class="whatsapp-body">
+          <p>
+            Per ricevere rapidamente tutte le novità è attivo il <strong
+              >Canale WhatsApp del Corso</strong
+            >, attraverso il quale condividiamo gli aggiornamenti principali e i
+            collegamenti ai nuovi contenuti pubblicati sul sito.
+          </p>
+          <a
+            href={course2026.whatsappChannelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="whatsapp-link"
+          >
+            Segui il canale WhatsApp →
+          </a>
+        </div>
+      </div>
+
+      <p>
+        Vi invitiamo a seguire entrambi gli strumenti: saranno un modo semplice
+        per rimanere informati e vivere insieme la preparazione del Corso
+        Autunnale.
+      </p>
+
+      <p>
+        Nei prossimi giorni presenteremo il tema del corso, lo slogan, gli
+        obiettivi e i primi approfondimenti dedicati allo studio.
+      </p>
+
+      <div class="firma">
+        <p>
+          <strong>Il Territorio Salerno</strong><br />
+          e il Comitato Organizzatore del Corso Autunnale 2026 📿🪷
+        </p>
+      </div>
+
+      <div class="end-mark">
+        <span></span><span></span><span></span>
+      </div>
+    </article>
+
+    <ArticleFooter />
+  </main>
+</Layout>

@@ -1,0 +1,150 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { articles } from "../../data/articles";
+---
+
+<Layout title="Articoli · Corso Salerno 2026" activeNav="/articoli">
+  <main class="page">
+    <span class="page-eyebrow">Notizie dal corso</span>
+    <h1 class="page-title">Articoli</h1>
+    <p class="page-lead">
+      Aggiornamenti, approfondimenti e notizie sulla preparazione al Corso
+      Autunnale 2026.
+    </p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="articles-list">
+      {
+        articles.map((article) => (
+          <a href={`/articoli/${article.slug}`} class="article-card">
+            <span class="article-card-eyebrow">{article.eyebrow}</span>
+            <h2 class="article-card-title">{article.title}</h2>
+            <p class="article-card-excerpt">{article.excerpt}</p>
+            <div class="article-card-meta">
+              <span>{article.date}</span>
+              <span class="sep">·</span>
+              <span>{article.readTime} di lettura</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .page-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--viola);
+    background: rgba(124, 63, 168, 0.1);
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    margin-bottom: 1.2rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.75rem;
+  }
+
+  .page-lead {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--testo-light);
+    margin-bottom: 2rem;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--viola) 0%, var(--arancio) 100%);
+    opacity: 0.35;
+  }
+
+  .divider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--viola), var(--arancio));
+  }
+
+  .articles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .article-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 1.6rem 1.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .article-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .article-card-eyebrow {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--viola);
+    margin-bottom: 0.6rem;
+  }
+
+  .article-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .article-card-excerpt {
+    font-size: 0.97rem;
+    line-height: 1.65;
+    color: var(--testo-light);
+    margin-bottom: 1rem;
+  }
+
+  .article-card-meta {
+    font-size: 0.8rem;
+    color: var(--testo-light);
+  }
+
+  .article-card-meta .sep {
+    opacity: 0.4;
+    margin: 0 0.4rem;
+  }
+</style>

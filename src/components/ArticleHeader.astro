@@ -1,0 +1,89 @@
+---
+import type { Article } from "../data/articles";
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+---
+
+<header class="article-header">
+  <span class="article-eyebrow">{article.eyebrow}</span>
+  <h1 class="article-title">{article.title}</h1>
+  <div class="article-meta">
+    <span>{article.date}</span>
+    <span class="sep">·</span>
+    <span>{article.author}</span>
+    <span class="sep">·</span>
+    <span>Lettura: {article.readTime}</span>
+  </div>
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot"></div>
+    <div class="divider-line"></div>
+  </div>
+</header>
+
+<style>
+  .article-header {
+    margin-bottom: 0;
+  }
+
+  .article-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--viola);
+    background: rgba(124, 63, 168, 0.1);
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    margin-bottom: 1.4rem;
+  }
+
+  .article-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.18;
+    color: var(--viola-dark);
+    margin-bottom: 1rem;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-size: 0.82rem;
+    color: var(--testo-light);
+    margin-bottom: 2.4rem;
+    flex-wrap: wrap;
+  }
+
+  .article-meta .sep {
+    opacity: 0.4;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 2.8rem;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--viola) 0%, var(--arancio) 100%);
+    opacity: 0.35;
+  }
+
+  .divider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--viola), var(--arancio));
+  }
+</style>

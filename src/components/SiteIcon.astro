@@ -1,0 +1,27 @@
+---
+interface Props {
+  width?: number;
+  height?: number;
+  class?: string;
+}
+
+const { width = 36, height = 36, class: className = "" } = Astro.props;
+---
+
+<img
+  src="/icon.png"
+  alt="Corso Salerno 2026"
+  width={width}
+  height={height}
+  class:list={["site-icon", className]}
+  loading="eager"
+  decoding="async"
+/>
+
+<style>
+  .site-icon {
+    display: block;
+    background: transparent;
+    object-fit: contain;
+  }
+</style>

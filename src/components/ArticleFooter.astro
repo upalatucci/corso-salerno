@@ -1,0 +1,72 @@
+---
+import { course2026 } from "../data/course2026";
+---
+
+<div class="article-footer">
+  <a href="/articoli" class="btn-back">← Tutti gli articoli</a>
+  <a
+    href={course2026.registrationUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="btn-iscriviti"
+  >
+    Iscriviti al corso →
+  </a>
+</div>
+
+<style>
+  .article-footer {
+    margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--viola);
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border: 1.5px solid rgba(124, 63, 168, 0.3);
+    border-radius: 100px;
+    transition: all 0.2s;
+  }
+
+  .btn-back:hover {
+    background: rgba(124, 63, 168, 0.07);
+    border-color: var(--viola);
+  }
+
+  .btn-iscriviti {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--bianco);
+    text-decoration: none;
+    padding: 0.7rem 1.6rem;
+    border-radius: 100px;
+    background: linear-gradient(135deg, var(--viola) 0%, var(--arancio) 100%);
+    box-shadow: 0 4px 16px rgba(124, 63, 168, 0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-iscriviti:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(124, 63, 168, 0.32);
+  }
+
+  @media (max-width: 600px) {
+    .article-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

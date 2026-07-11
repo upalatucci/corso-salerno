@@ -4,6 +4,9 @@ interface Props {
   activeNav: string;
 }
 
+import SiteHead from "../components/SiteHead.astro";
+import SiteIcon from "../components/SiteIcon.astro";
+
 const { title, activeNav } = Astro.props;
 
 const menuitems = [
@@ -44,12 +47,8 @@ const menuitems = [
       content="27, 28 e 29 settembre si terra' a Marina di Camerota il corso del Territorio Salerno"
     />
     <meta name="viewport" content="width=device-width" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ffffff" />
+    <SiteHead />
+    <meta name="theme-color" content="#8B5CF6" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
@@ -68,9 +67,12 @@ const menuitems = [
       class="navbar navbar-expand-lg bg-body-tertiary fixed-bottom fixed-md-top"
     >
       <nav class="d-flex mx-md-5 w-100">
-        <a class="navbar-brand text-primary d-none d-md-inline" href="/2024/"
-          ><span>Corso Salerno</span><span class="fw-bold">2024</span></a
-        >
+        <a class="navbar-brand text-primary d-flex align-items-center gap-2" href="/2024/">
+          <SiteIcon width={32} height={32} class="brand-icon" />
+          <span class="d-none d-md-inline">
+            <span>Corso Salerno</span><span class="fw-bold">2024</span>
+          </span>
+        </a>
         <ul
           class="navbar-nav d-flex flex-row justify-content-evenly justify-content-md-end w-100"
         >
@@ -117,6 +119,9 @@ const menuitems = [
   html {
     font-family: system-ui, sans-serif;
     background-size: 224px;
+  }
+  .brand-icon {
+    object-fit: contain;
   }
   code {
     font-family:
