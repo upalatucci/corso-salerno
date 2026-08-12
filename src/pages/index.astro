@@ -64,6 +64,52 @@ const latestArticle = articles[0];
       )
     }
 
+    <section class="page-wide home-section" id="materiali-studio">
+      <h2 class="section-title">Materiali di studio</h2>
+      <p class="section-lead">
+        Inizia a prepararti: ecco i testi che approfondiremo durante il corso.
+      </p>
+
+      <div class="study-cards">
+        {
+          course2026.studyMaterials.map((material) => (
+            <article class="study-card">
+              <span class="study-card-icon">
+                {material.type === "gosho" ? "📜" : "📖"}
+              </span>
+              <h3 class="study-card-title">{material.title}</h3>
+              {"chapter" in material && material.chapter && (
+                <p class="study-card-chapter">
+                  Capitolo: <em>{material.chapter}</em>
+                </p>
+              )}
+              <p class="study-card-desc">{material.description}</p>
+              <div class="study-card-links">
+                {material.links.map((link) => (
+                  <a
+                    href={link.href}
+                    target={link.href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      link.href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    class="study-card-link"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="study-more">
+        <a href="/info#materiali-studio">Tutti i dettagli →</a>
+      </p>
+    </section>
+
     <section class="page-wide home-section">
       <h2 class="section-title">Cosa ti serve</h2>
       <p class="section-lead">
@@ -102,6 +148,13 @@ const latestArticle = articles[0];
           <span class="quick-body">
             <span class="quick-title">Info e quote</span>
             <span class="quick-desc">Date, costi e contatti</span>
+          </span>
+        </a>
+        <a href="#materiali-studio" class="quick-link">
+          <span class="quick-icon">📖</span>
+          <span class="quick-body">
+            <span class="quick-title">Materiali di studio</span>
+            <span class="quick-desc">Gosho e Nuova Rivoluzione Umana</span>
           </span>
         </a>
         <a href="/daimoku" class="quick-link">
@@ -379,6 +432,88 @@ const latestArticle = articles[0];
   }
 
   .deadline-link:hover {
+    text-decoration: underline;
+  }
+
+  .study-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .study-cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .study-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 1.4rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .study-card-icon {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .study-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--viola-dark);
+    line-height: 1.35;
+    margin-bottom: 0.35rem;
+  }
+
+  .study-card-chapter {
+    font-size: 0.88rem;
+    color: var(--testo-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .study-card-desc {
+    font-size: 0.9rem;
+    color: var(--testo-light);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .study-card-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .study-card-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--viola);
+    text-decoration: none;
+  }
+
+  .study-card-link:hover {
+    text-decoration: underline;
+  }
+
+  .study-more {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .study-more a {
+    color: var(--viola);
+    text-decoration: none;
+  }
+
+  .study-more a:hover {
     text-decoration: underline;
   }
 </style>

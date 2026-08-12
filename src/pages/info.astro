@@ -40,6 +40,47 @@ import { course2026 } from "../data/course2026";
         </ul>
       </div>
 
+      <div class="card" id="materiali-studio">
+        <h2 class="card-heading">Materiali di studio</h2>
+        <p class="card-subtext">
+          Durante il corso approfondiremo i seguenti testi. Puoi iniziare a
+          prepararti già da ora.
+        </p>
+        <ul class="study-list">
+          {
+            course2026.studyMaterials.map((material) => (
+              <li class="study-item">
+                <div class="study-body">
+                  <h3 class="study-title">{material.title}</h3>
+                  {"chapter" in material && material.chapter && (
+                    <p class="study-chapter">
+                      Capitolo: <em>{material.chapter}</em>
+                    </p>
+                  )}
+                  <p class="study-desc">{material.description}</p>
+                  <div class="study-links">
+                    {material.links.map((link) => (
+                      <a
+                        href={link.href}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                        rel={
+                          link.href.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        class="study-link"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
       <div class="card">
         <h2 class="card-heading">Chi può partecipare</h2>
         <ul class="card-list">
@@ -358,5 +399,68 @@ import { course2026 } from "../data/course2026";
 
   .register-button {
     margin-top: 0.5rem;
+  }
+
+  .study-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .study-item {
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(124, 63, 168, 0.1);
+  }
+
+  .study-item:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .study-title {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.35rem;
+    line-height: 1.35;
+  }
+
+  .study-chapter {
+    font-size: 0.9rem;
+    color: var(--testo-light);
+    margin-bottom: 0.35rem;
+  }
+
+  .study-desc {
+    font-size: 0.92rem;
+    color: var(--testo-light);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .study-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .study-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--viola);
+    text-decoration: none;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(124, 63, 168, 0.08);
+    border: 1px solid rgba(124, 63, 168, 0.15);
+    transition: background 0.2s;
+  }
+
+  .study-link:hover {
+    background: rgba(124, 63, 168, 0.14);
+    text-decoration: none;
   }
 </style>

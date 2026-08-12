@@ -77,4 +77,36 @@ export const course2026 = {
     "Bambini da 0 a 3 anni: soggiorno gratuito, nessun pagamento richiesto",
     "Bambini fino a 12 anni (non compiuti) che occupano il 3° o 4° letto in camera: sconto del 50% sulla tariffa della camera",
   ],
+
+  studyMaterials: [
+    {
+      type: "gosho",
+      title: "Il raggiungimento della Buddità in questa esistenza",
+      description:
+        "Gosho di Nichiren Daishonin che approfondiremo durante il corso.",
+      links: [
+        {
+          label: "Leggi nella Biblioteca di Nichiren",
+          href: "https://biblioteca.sgi-italia.org/rsnd/il-conseguimento-della-buddita-in-questa-esistenza",
+        },
+      ],
+    },
+    {
+      type: "nru",
+      title: "Nuova Rivoluzione Umana — Volume 6",
+      chapter: "Accelerazione",
+      description:
+        "Capitolo «Accelerazione» del volume 6 della Nuova Rivoluzione Umana di Daisaku Ikeda.",
+      links: [
+        {
+          label: "Scarica il capitolo (PDF)",
+          href: "/materiale-studio/accelerazione.pdf",
+        },
+        {
+          label: "Acquista il volume su Esperia",
+          href: "https://esperiashop.it/products/libri-e-riviste-la-nuova-rivoluzione-umana-voll-5-6",
+        },
+      ],
+    },
+  ],
 };
