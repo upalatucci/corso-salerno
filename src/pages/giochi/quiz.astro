@@ -1,0 +1,646 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SiteIcon from "../../components/SiteIcon.astro";
+import {
+  GOSHO_URL,
+  NRU_PDF,
+  STUDY_INFO,
+  quizzes,
+  quizResults,
+} from "../../data/games";
+
+const studyByQuiz = {
+  gosho: { href: GOSHO_URL, label: "Leggi il gosho" },
+  accelerazione: { href: NRU_PDF, label: "Apri il capitolo (PDF)" },
+  corso: { href: STUDY_INFO, label: "Materiali di studio" },
+};
+---
+
+<Layout
+  title="Quiz · Corso Salerno 2026"
+  activeNav="/giochi"
+  description="Quiz sul gosho Il conseguimento della Buddità in questa esistenza e sul capitolo Accelerazione della Nuova Rivoluzione Umana."
+>
+  <main class="page">
+    <header class="page-header">
+      <SiteIcon width={64} height={64} class="page-icon" />
+      <p class="page-eyebrow">Giochi</p>
+      <h1 class="page-title">Quiz</h1>
+      <p class="page-subtitle">
+        Completa i passi, rispondi senza paura e usa ogni spiegazione come
+        spunto per aprire il testo. Poi portalo al corso.
+      </p>
+    </header>
+
+    <section id="picker" class="picker">
+      {
+        quizzes.map((quiz) => (
+          <button type="button" class="pick-card" data-quiz={quiz.id}>
+            <span class="pick-kicker">{quiz.eyebrow}</span>
+            <span class="pick-title">{quiz.title}</span>
+            <span class="pick-desc">{quiz.lead}</span>
+            <span class="pick-meta">
+              {quiz.questions.length} domande ·{" "}
+              {quiz.questions.filter((q) => q.type === "complete").length} da
+              completare
+            </span>
+          </button>
+        ))
+      }
+      <p class="back-row">
+        <a href="/giochi">← Tutti i giochi</a>
+      </p>
+    </section>
+
+    <section id="play" class="play hidden" hidden>
+      <div class="play-top">
+        <p id="play-source" class="play-source"></p>
+        <p id="play-progress-label" class="play-progress-label"></p>
+      </div>
+      <div
+        class="progress"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        id="progress-bar"
+      >
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+
+      <div class="question-card">
+        <h2 id="question-text" class="question-text"></h2>
+        <p id="passage" class="passage hidden" hidden></p>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback hidden" hidden>
+          <p id="feedback-title" class="feedback-title"></p>
+          <p id="feedback-text" class="feedback-text"></p>
+          <a id="feedback-deepen" class="feedback-deepen" href="#">Approfondisci</a>
+        </div>
+        <button type="button" id="next-btn" class="cta-button next-btn hidden" hidden>
+          Prossima domanda
+        </button>
+      </div>
+    </section>
+
+    <section id="result" class="result hidden" hidden>
+      <p id="result-score" class="result-score"></p>
+      <h2 id="result-title" class="result-title"></h2>
+      <p id="result-text" class="result-text"></p>
+      <div class="result-actions">
+        <a id="result-study" class="cta-button" href="#">Approfondisci il testo</a>
+        <button type="button" id="retry-btn" class="cta-button-secondary">
+          Rifai il quiz
+        </button>
+        <a
+          id="result-share"
+          class="cta-button-secondary"
+          href="/giochi"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Sfida un amico su WhatsApp
+        </a>
+        <a href="/giochi/ruota" class="cta-button-secondary">Gira la ruota</a>
+        <a href="/giochi" class="text-link">Altri giochi</a>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script define:vars={{ quizzes, resultBands: quizResults, studyByQuiz }}>
+  const STORAGE_KEY = "cs2026-giochi";
+  const picker = document.getElementById("picker");
+  const play = document.getElementById("play");
+  const result = document.getElementById("result");
+  const optionsEl = document.getElementById("options");
+  const questionText = document.getElementById("question-text");
+  const passageEl = document.getElementById("passage");
+  const playSource = document.getElementById("play-source");
+  const progressLabel = document.getElementById("play-progress-label");
+  const progressFill = document.getElementById("progress-fill");
+  const progressBar = document.getElementById("progress-bar");
+  const feedback = document.getElementById("feedback");
+  const feedbackTitle = document.getElementById("feedback-title");
+  const feedbackText = document.getElementById("feedback-text");
+  const feedbackDeepen = document.getElementById("feedback-deepen");
+  const nextBtn = document.getElementById("next-btn");
+  const resultScore = document.getElementById("result-score");
+  const resultTitle = document.getElementById("result-title");
+  const resultText = document.getElementById("result-text");
+  const resultStudy = document.getElementById("result-study");
+  const resultShare = document.getElementById("result-share");
+  const retryBtn = document.getElementById("retry-btn");
+
+  let quiz = null;
+  let deck = [];
+  let index = 0;
+  let score = 0;
+  let answered = false;
+
+  function shuffle(list) {
+    const copy = [...list];
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function setExternalLink(anchor, href) {
+    if (!anchor) return;
+    anchor.href = href;
+    if (href.startsWith("http")) {
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+    } else {
+      anchor.removeAttribute("target");
+      anchor.removeAttribute("rel");
+    }
+  }
+
+  function renderPassage(passage, fill) {
+    if (!passageEl) return;
+    if (!passage) {
+      passageEl.hidden = true;
+      passageEl.classList.add("hidden");
+      passageEl.textContent = "";
+      return;
+    }
+    passageEl.hidden = false;
+    passageEl.classList.remove("hidden");
+    const parts = passage.split("{blank}");
+    passageEl.replaceChildren();
+    passageEl.append(document.createTextNode(parts[0] ?? ""));
+    const blank = document.createElement("span");
+    blank.className = fill ? "blank is-filled" : "blank";
+    blank.textContent = fill || "______";
+    passageEl.append(blank);
+    passageEl.append(document.createTextNode(parts[1] ?? ""));
+  }
+
+  function show(section) {
+    [picker, play, result].forEach((el) => {
+      if (!el) return;
+      const on = el === section;
+      el.hidden = !on;
+      el.classList.toggle("hidden", !on);
+    });
+  }
+
+  function startQuiz(id) {
+    quiz = quizzes.find((item) => item.id === id);
+    if (!quiz) return;
+    deck = shuffle(
+      quiz.questions.map((question) => ({
+        ...question,
+        options: shuffle(question.options),
+      })),
+    );
+    index = 0;
+    score = 0;
+    if (playSource) playSource.textContent = quiz.eyebrow;
+    const url = new URL(window.location.href);
+    url.searchParams.set("tema", id);
+    window.history.replaceState({}, "", url);
+    renderQuestion();
+    show(play);
+  }
+
+  function renderQuestion() {
+    const current = deck[index];
+    answered = false;
+    if (questionText) questionText.textContent = current.prompt;
+    renderPassage(current.passage, "");
+    if (progressLabel) {
+      progressLabel.textContent = `Domanda ${index + 1} di ${deck.length}`;
+    }
+    const pct = Math.round((index / deck.length) * 100);
+    if (progressFill) progressFill.style.width = `${pct}%`;
+    if (progressBar) progressBar.setAttribute("aria-valuenow", String(pct));
+    if (optionsEl) {
+      optionsEl.replaceChildren();
+      current.options.forEach((option) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.textContent = option;
+        btn.addEventListener("click", () => choose(option));
+        optionsEl.appendChild(btn);
+      });
+    }
+    if (feedback) {
+      feedback.hidden = true;
+      feedback.classList.add("hidden");
+    }
+    if (nextBtn) {
+      nextBtn.hidden = true;
+      nextBtn.classList.add("hidden");
+      nextBtn.textContent =
+        index === deck.length - 1 ? "Vedi il risultato" : "Prossima domanda";
+    }
+  }
+
+  function choose(option) {
+    if (answered) return;
+    answered = true;
+    const current = deck[index];
+    const correct = option === current.answer;
+    if (correct) score += 1;
+    if (current.passage) renderPassage(current.passage, current.answer);
+    const buttons = optionsEl ? [...optionsEl.querySelectorAll(".option")] : [];
+    buttons.forEach((btn) => {
+      btn.disabled = true;
+      if (btn.textContent === current.answer) btn.classList.add("is-correct");
+      if (btn.textContent === option && !correct) btn.classList.add("is-wrong");
+    });
+    if (feedbackTitle) {
+      feedbackTitle.textContent = correct
+        ? "Proprio così"
+        : "Quasi: ecco il passaggio";
+    }
+    if (feedbackText) feedbackText.textContent = current.explain;
+    if (feedbackDeepen) {
+      feedbackDeepen.textContent = current.deepenLabel;
+      setExternalLink(feedbackDeepen, current.deepenHref);
+    }
+    if (feedback) {
+      feedback.hidden = false;
+      feedback.classList.remove("hidden");
+    }
+    if (nextBtn) {
+      nextBtn.hidden = false;
+      nextBtn.classList.remove("hidden");
+      nextBtn.focus();
+    }
+  }
+
+  function finish() {
+    const ratio = deck.length === 0 ? 0 : score / deck.length;
+    const band = [...resultBands]
+      .reverse()
+      .find((item) => ratio >= item.minRatio);
+    if (resultScore) resultScore.textContent = `${score}/${deck.length}`;
+    if (resultShare) {
+      const shareUrl = `${window.location.origin}/giochi/quiz?tema=${quiz.id}`;
+      const shareText = `Ho fatto il quiz «${quiz.title}» del Corso Salerno 2026: ${score}/${deck.length}! Tu quanto fai? 🪷\n${shareUrl}`;
+      resultShare.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    }
+    if (resultTitle) resultTitle.textContent = band.title;
+    if (resultText) resultText.textContent = band.text;
+    const study = studyByQuiz[quiz.id];
+    if (resultStudy && study) {
+      resultStudy.textContent = study.label;
+      setExternalLink(resultStudy, study.href);
+    }
+    if (progressFill) progressFill.style.width = "100%";
+    if (progressBar) progressBar.setAttribute("aria-valuenow", "100");
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const state = raw ? JSON.parse(raw) : {};
+      state.scores = state.scores ?? {};
+      const prev = Number(state.scores[quiz.id] ?? 0);
+      state.scores[quiz.id] = Math.max(prev, score);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      /* ignore */
+    }
+    show(result);
+  }
+
+  picker?.querySelectorAll("[data-quiz]").forEach((btn) => {
+    btn.addEventListener("click", () => startQuiz(btn.getAttribute("data-quiz")));
+  });
+
+  nextBtn?.addEventListener("click", () => {
+    if (index >= deck.length - 1) {
+      finish();
+      return;
+    }
+    index += 1;
+    renderQuestion();
+  });
+
+  retryBtn?.addEventListener("click", () => {
+    if (quiz) startQuiz(quiz.id);
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const tema = params.get("tema") || params.get("id");
+  if (tema && quizzes.some((item) => item.id === tema)) {
+    startQuiz(tema);
+  }
+</script>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+  }
+
+  .page-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--viola);
+    background: rgba(124, 63, 168, 0.1);
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.6rem;
+  }
+
+  .page-subtitle {
+    color: var(--testo-light);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .picker {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pick-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    cursor: pointer;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 1.4rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-sm);
+    font: inherit;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .pick-card:hover,
+  .pick-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    outline: none;
+  }
+
+  .pick-kicker {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--viola);
+    margin-bottom: 0.35rem;
+  }
+
+  .pick-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.35rem;
+  }
+
+  .pick-desc {
+    font-size: 0.92rem;
+    color: var(--testo-light);
+    line-height: 1.5;
+  }
+
+  .pick-meta {
+    margin-top: 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--viola);
+  }
+
+  .back-row {
+    text-align: center;
+    margin-top: 0.4rem;
+  }
+
+  .back-row a,
+  .text-link {
+    color: var(--viola);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .back-row a:hover,
+  .text-link:hover {
+    text-decoration: underline;
+  }
+
+  .play-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+
+  .play-source {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--viola);
+  }
+
+  .play-progress-label {
+    font-size: 0.8rem;
+    color: var(--testo-light);
+  }
+
+  .progress {
+    height: 8px;
+    border-radius: 100px;
+    background: rgba(124, 63, 168, 0.12);
+    margin-bottom: 1.1rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--gradient-primary);
+    transition: width 0.35s ease;
+  }
+
+  .question-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: clamp(1.3rem, 4vw, 1.8rem);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-md);
+  }
+
+  .question-text {
+    font-family: var(--font-serif);
+    font-size: 1.22rem;
+    line-height: 1.35;
+    color: var(--viola-dark);
+    margin-bottom: 0.85rem;
+  }
+
+  .passage {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--testo);
+    background: rgba(124, 63, 168, 0.06);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.05rem;
+  }
+
+  .blank {
+    display: inline;
+    font-weight: 700;
+    color: var(--viola);
+    letter-spacing: 0.04em;
+  }
+
+  .blank.is-filled {
+    color: #2f9d63;
+    letter-spacing: 0;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .option {
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    padding: 0.9rem 1.05rem;
+    border-radius: 14px;
+    border: 1.5px solid rgba(124, 63, 168, 0.18);
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--testo);
+    line-height: 1.45;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+
+  .option:hover:not(:disabled),
+  .option:focus-visible:not(:disabled) {
+    border-color: var(--viola);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  .option:disabled {
+    cursor: default;
+  }
+
+  .option.is-correct {
+    border-color: #2f9d63;
+    background: rgba(47, 157, 99, 0.12);
+  }
+
+  .option.is-wrong {
+    border-color: #c44b4b;
+    background: rgba(196, 75, 75, 0.1);
+  }
+
+  .feedback {
+    margin-top: 1.15rem;
+    padding-top: 1.05rem;
+    border-top: 1px solid rgba(124, 63, 168, 0.14);
+  }
+
+  .feedback-title {
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.4rem;
+  }
+
+  .feedback-text {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--testo);
+    margin-bottom: 0.75rem;
+  }
+
+  .feedback-deepen {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--viola);
+    text-decoration: none;
+  }
+
+  .feedback-deepen:hover {
+    text-decoration: underline;
+  }
+
+  .next-btn {
+    margin-top: 1rem;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .result {
+    text-align: center;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: clamp(1.6rem, 5vw, 2.2rem);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-md);
+  }
+
+  .result-score {
+    font-family: var(--font-serif);
+    font-size: clamp(2.6rem, 10vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--viola-dark);
+    margin-bottom: 0.75rem;
+  }
+
+  .result-title {
+    font-family: var(--font-serif);
+    font-size: 1.7rem;
+    color: var(--viola-dark);
+    margin-bottom: 0.8rem;
+  }
+
+  .result-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--testo-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .result-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .result-actions .cta-button,
+  .result-actions .cta-button-secondary {
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+</style>

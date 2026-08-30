@@ -14,6 +14,7 @@ const { title, activeNav, description } = Astro.props;
 const menuitems = [
   { title: "Home", path: "/" },
   { title: "Articoli", path: "/articoli" },
+  { title: "Giochi", path: "/giochi" },
   { title: "Info", path: "/info" },
   { title: "Daimoku", path: "/daimoku" },
 ];
@@ -225,7 +226,7 @@ const menuitems = [
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 1.8rem;
+    gap: 1.35rem;
     margin: 0;
     padding: 0;
   }
@@ -283,7 +284,7 @@ const menuitems = [
   .mobile-nav-links {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     height: 100%;
     margin: 0;
     padding: 0;
@@ -300,11 +301,11 @@ const menuitems = [
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 0.72rem;
+    font-size: 0.64rem;
     font-weight: 600;
     color: var(--testo-light);
     text-decoration: none;
-    padding: 0.5rem 0.25rem;
+    padding: 0.5rem 0.15rem;
     transition: color 0.2s;
   }
 
