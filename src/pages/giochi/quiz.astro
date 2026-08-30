@@ -220,11 +220,17 @@ const studyByQuiz = {
     if (progressBar) progressBar.setAttribute("aria-valuenow", String(pct));
     if (optionsEl) {
       optionsEl.replaceChildren();
-      current.options.forEach((option) => {
+      current.options.forEach((option, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "option";
-        btn.textContent = option;
+        btn.className = "quiz-choice";
+        const letter = document.createElement("span");
+        letter.className = "quiz-choice-letter";
+        letter.textContent = String.fromCharCode(65 + i);
+        const label = document.createElement("span");
+        label.className = "quiz-choice-label";
+        label.textContent = option;
+        btn.append(letter, label);
         btn.addEventListener("click", () => choose(option));
         optionsEl.appendChild(btn);
       });
@@ -248,11 +254,15 @@ const studyByQuiz = {
     const correct = option === current.answer;
     if (correct) score += 1;
     if (current.passage) renderPassage(current.passage, current.answer);
-    const buttons = optionsEl ? [...optionsEl.querySelectorAll(".option")] : [];
+    const buttons = optionsEl
+      ? [...optionsEl.querySelectorAll(".quiz-choice")]
+      : [];
     buttons.forEach((btn) => {
       btn.disabled = true;
-      if (btn.textContent === current.answer) btn.classList.add("is-correct");
-      if (btn.textContent === option && !correct) btn.classList.add("is-wrong");
+      const text =
+        btn.querySelector(".quiz-choice-label")?.textContent ?? btn.textContent;
+      if (text === current.answer) btn.classList.add("is-correct");
+      if (text === option && !correct) btn.classList.add("is-wrong");
     });
     if (feedbackTitle) {
       feedbackTitle.textContent = correct
@@ -507,14 +517,14 @@ const studyByQuiz = {
     margin-bottom: 1.05rem;
   }
 
-  .blank {
+  :global(.blank) {
     display: inline;
     font-weight: 700;
     color: var(--viola);
     letter-spacing: 0.04em;
   }
 
-  .blank.is-filled {
+  :global(.blank.is-filled) {
     color: #2f9d63;
     letter-spacing: 0;
   }
@@ -522,42 +532,7 @@ const studyByQuiz = {
   .options {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
-  }
-
-  .option {
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-    width: 100%;
-    padding: 0.9rem 1.05rem;
-    border-radius: 14px;
-    border: 1.5px solid rgba(124, 63, 168, 0.18);
-    background: rgba(255, 255, 255, 0.88);
-    color: var(--testo);
-    line-height: 1.45;
-    transition: border-color 0.15s, background 0.15s, transform 0.15s;
-  }
-
-  .option:hover:not(:disabled),
-  .option:focus-visible:not(:disabled) {
-    border-color: var(--viola);
-    transform: translateY(-1px);
-    outline: none;
-  }
-
-  .option:disabled {
-    cursor: default;
-  }
-
-  .option.is-correct {
-    border-color: #2f9d63;
-    background: rgba(47, 157, 99, 0.12);
-  }
-
-  .option.is-wrong {
-    border-color: #c44b4b;
-    background: rgba(196, 75, 75, 0.1);
+    gap: 0.7rem;
   }
 
   .feedback {
@@ -642,5 +617,86 @@ const studyByQuiz = {
     border: 0;
     cursor: pointer;
     font: inherit;
+  }
+</style>
+
+<style is:global>
+  .quiz-choice {
+    appearance: none;
+    -webkit-appearance: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    width: 100%;
+    margin: 0;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.97rem;
+    font-weight: 500;
+    line-height: 1.45;
+    padding: 0.9rem 1.05rem;
+    border-radius: 16px;
+    border: 1.5px solid rgba(124, 63, 168, 0.16);
+    background: #fff;
+    color: var(--testo);
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(124, 63, 168, 0.06);
+    transition:
+      border-color 0.15s,
+      background 0.15s,
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .quiz-choice:hover:not(:disabled),
+  .quiz-choice:focus-visible:not(:disabled) {
+    border-color: var(--viola);
+    background: rgba(124, 63, 168, 0.07);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(124, 63, 168, 0.12);
+    outline: none;
+  }
+
+  .quiz-choice:disabled {
+    cursor: default;
+    transform: none;
+  }
+
+  .quiz-choice-letter {
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: rgba(124, 63, 168, 0.1);
+    color: var(--viola);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .quiz-choice-label {
+    padding-top: 0.2rem;
+  }
+
+  .quiz-choice.is-correct {
+    border-color: #2f9d63;
+    background: rgba(47, 157, 99, 0.12);
+  }
+
+  .quiz-choice.is-correct .quiz-choice-letter {
+    background: #2f9d63;
+    color: #fff;
+  }
+
+  .quiz-choice.is-wrong {
+    border-color: #c44b4b;
+    background: rgba(196, 75, 75, 0.1);
+  }
+
+  .quiz-choice.is-wrong .quiz-choice-letter {
+    background: #c44b4b;
+    color: #fff;
   }
 </style>
