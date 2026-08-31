@@ -6,10 +6,16 @@ import { wheelChallenges } from "../../data/games";
 const palette = [
   { color: "#7c3fa8", textColor: "#ffffff" },
   { color: "#e8823a", textColor: "#ffffff" },
-  { color: "#4a1f6e", textColor: "#ffffff" },
-  { color: "#c45c2a", textColor: "#ffffff" },
+  { color: "#3d1a5c", textColor: "#ffffff" },
+  { color: "#f0a35a", textColor: "#4a1f6e" },
   { color: "#5b2d8e", textColor: "#ffffff" },
+  { color: "#c45c2a", textColor: "#ffffff" },
+  { color: "#9b6bc4", textColor: "#ffffff" },
+  { color: "#a63d12", textColor: "#ffffff" },
+  { color: "#4a1f6e", textColor: "#ffffff" },
   { color: "#d46b2c", textColor: "#ffffff" },
+  { color: "#6e3aa0", textColor: "#ffffff" },
+  { color: "#e8c07a", textColor: "#4a1f6e" },
 ];
 
 const painted = wheelChallenges.map((challenge, i) => ({
@@ -59,7 +65,9 @@ const painted = wheelChallenges.map((challenge, i) => ({
       <button type="button" id="spin-btn" class="cta-button spin-btn">
         Gira la ruota
       </button>
-      <p class="spin-hint">Una sfida alla volta, da portare al corso.</p>
+      <p class="spin-hint">
+        Gira quando vuoi: non ricapita la stessa finché non le hai viste tutte.
+      </p>
     </div>
 
     <section
@@ -223,11 +231,40 @@ const painted = wheelChallenges.map((challenge, i) => ({
     }
   }
 
+  function randInt(max) {
+    if (max <= 1) return 0;
+    const buf = new Uint32Array(1);
+    const limit = Math.floor(0x100000000 / max) * max;
+    do {
+      crypto.getRandomValues(buf);
+    } while (buf[0] >= limit);
+    return buf[0] % max;
+  }
+
+  function pickIndex() {
+    const state = readState();
+    const seen = Array.isArray(state.wheelSeen) ? state.wheelSeen : [];
+    const lastId = current?.id ?? seen[seen.length - 1];
+    const unused = challenges.filter(
+      (item) => !seen.includes(item.id) && item.id !== lastId,
+    );
+    const pool =
+      unused.length > 0
+        ? unused
+        : challenges.filter((item) => item.id !== lastId);
+    const safePool = pool.length > 0 ? pool : challenges;
+    const picked = safePool[randInt(safePool.length)];
+    state.wheelSeen =
+      unused.length > 0 ? [...seen, picked.id] : [picked.id];
+    writeState(state);
+    return challenges.findIndex((item) => item.id === picked.id);
+  }
+
   function spin() {
     if (spinning || !wheel) return;
     spinning = true;
     spinBtn.disabled = true;
-    const index = Math.floor(Math.random() * n);
+    const index = pickIndex();
     const center = index * slice + slice / 2;
     const extra = 5 + Math.floor(Math.random() * 3);
     const targetMod = (360 - center) % 360;
