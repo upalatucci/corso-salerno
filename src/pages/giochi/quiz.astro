@@ -287,7 +287,8 @@ const studyByQuiz = {
 
   function finish() {
     const ratio = deck.length === 0 ? 0 : score / deck.length;
-    const band = [...resultBands]
+    const bands = resultBands[quiz.id] ?? resultBands.gosho;
+    const band = [...bands]
       .reverse()
       .find((item) => ratio >= item.minRatio);
     if (resultScore) resultScore.textContent = `${score}/${deck.length}`;

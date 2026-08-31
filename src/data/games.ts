@@ -27,6 +27,12 @@ export interface Quiz {
   questions: QuizQuestion[];
 }
 
+export interface QuizResultBand {
+  minRatio: number;
+  title: string;
+  text: string;
+}
+
 export interface WheelChallenge {
   id: string;
   short: string;
@@ -72,7 +78,7 @@ export const quizzes: Quiz[] = [
         type: "choice",
         source: GOSHO_SOURCE,
         prompt:
-          "Nel 1255, a Kamakura, Nichiren Daishonin indirizza questo gosho a un discepolo. Chi è?",
+          "Da Kamakura, Nichiren Daishonin indirizza questo gosho a un discepolo. Chi è?",
         options: [
           "Toki Jonin",
           "Shijo Kingo",
@@ -81,8 +87,36 @@ export const quizzes: Quiz[] = [
         ],
         answer: "Toki Jonin",
         explain:
-          "È una lettera a Toki Jonin, due anni dopo la proclamazione di Nam-myoho-renge-kyo. I cenni storici in Biblioteca di Nichiren aiutano a capire il contesto: un giovane Daishonin che già indica la pratica concreta per la Buddità in questa vita.",
+          "È una lettera a Toki Jonin, che viveva a Wakamiya e serviva il signore di Chiba. I cenni storici in Biblioteca di Nichiren aiutano a capire il contesto: un giovane Daishonin che già indica la pratica concreta per la Buddità in questa vita.",
         deepenLabel: "Leggi i cenni storici",
+        deepenHref: GOSHO_URL,
+      },
+      {
+        type: "choice",
+        source: GOSHO_SOURCE,
+        prompt: "In quale periodo fu scritto questo gosho?",
+        options: [
+          "Nel 1255, a Kamakura",
+          "Nel 1253, quando proclamò Nam-myoho-renge-kyo",
+          "Nel 1271, durante l'esilio a Sado",
+          "Nel 1962, lo stesso anno del capitolo Accelerazione",
+        ],
+        answer: "Nel 1255, a Kamakura",
+        explain:
+          "I cenni storici: settimo anno di Kencho (1255). Il Daishonin ha trentaquattro anni e vive a Kamakura, sede del governo militare. È uno scritto di princìpi, due anni dopo la proclamazione del daimoku e prima delle grandi persecuzioni.",
+        deepenLabel: "Apri i cenni storici",
+        deepenHref: GOSHO_URL,
+      },
+      {
+        type: "choice",
+        source: GOSHO_SOURCE,
+        prompt:
+          "Quanti anni aveva il Daishonin quando scrisse questa lettera?",
+        options: ["Trentaquattro", "Ventidue", "Cinquanta", "Sessantuno"],
+        answer: "Trentaquattro",
+        explain:
+          "Trentaquattro anni, a Kamakura. Non è ancora l'esilio né Minobu: è il momento in cui fissa i princìpi. Al corso studieremo proprio questo nucleo — la Legge è la tua vita — per viverlo oggi, non come storia lontana.",
+        deepenLabel: "Rileggi i cenni storici",
         deepenHref: GOSHO_URL,
       },
       {
@@ -183,8 +217,43 @@ export const quizzes: Quiz[] = [
         ],
         answer: "La meraviglia e il mistero di questa Legge",
         explain:
-          "Il loto fiorisce nel fango: causa e effetto, bellezza e difficoltà, insieme. Renge dice che la Buddità non aspetta un terreno già pulito. Le tue difficoltà di ora sono il fango da cui può spuntare il fiore — tema che al corso intrecceremo con le esperienze di Accelerazione.",
+          "Il gosho lo dice così: renge «simboleggia la meraviglia e il mistero di questa Legge». Il loto fiorisce nel fango — causa e effetto insieme — e la Buddità non aspetta un terreno già pulito. Le tue difficoltà di ora sono il fango da cui può spuntare il fiore.",
         deepenLabel: "Rileggi myo, ho, renge, kyo",
+        deepenHref: GOSHO_URL,
+      },
+      {
+        type: "complete",
+        source: GOSHO_SOURCE,
+        prompt: "Completa il passo sui Budda e sugli insegnamenti.",
+        passage:
+          "Non pensare mai che qualcuno degli ottantamila sacri insegnamenti di Shakyamuni o qualcuno dei Budda e bodhisattva delle tre esistenze e delle dieci direzioni sia {blank}.",
+        options: [
+          "al di fuori di te",
+          "dentro un tempio lontano",
+          "solo nei sutra antichi",
+          "riservato ai monaci",
+        ],
+        answer: "al di fuori di te",
+        explain:
+          "Anche i Budda non sono altrove. Se li cerchi fuori, la pratica diventa austerità infinita. È lo stesso filo di «Myoho-renge-kyo è la tua vita stessa»: al corso non si va a prendere qualcosa che manca, si rivela ciò che c'è già.",
+        deepenLabel: "Apri il gosho",
+        deepenHref: GOSHO_URL,
+      },
+      {
+        type: "choice",
+        source: GOSHO_SOURCE,
+        prompt:
+          "La pratica buddista, scrive il Daishonin, non ti solleverà dalle sofferenze di nascita e morte a meno che…",
+        options: [
+          "Tu non percepisca la vera natura della tua vita",
+          "Tu non abbandoni famiglia e lavoro",
+          "Tu non accumuli meriti per molte esistenze",
+          "Tu non viva già in una terra pura",
+        ],
+        answer: "Tu non percepisca la vera natura della tua vita",
+        explain:
+          "Senza percepire la natura della propria vita, cita T'ien-t'ai, non si sradicano le colpe gravi. Recitare e «guardare fuori» non basta. Il corso chiede proprio questa percezione: lucidare lo specchio, qui, in questa esistenza.",
+        deepenLabel: "Rileggi il passo",
         deepenHref: GOSHO_URL,
       },
     ],
@@ -194,7 +263,7 @@ export const quizzes: Quiz[] = [
     title: "Quiz Accelerazione",
     eyebrow: "Nuova Rivoluzione Umana · vol. 6",
     lead:
-      "Dokan, dialogo, unità, «quando il male è grande…»: i temi del capitolo su cui si basa il corso, per arrivare già in moto.",
+      "Dokan, dialogo, unità, «quando accade un grande male…»: i temi del capitolo su cui si basa il corso, per arrivare già in moto.",
     accent: "nru",
     questions: [
       {
@@ -210,8 +279,44 @@ export const quizzes: Quiz[] = [
         ],
         answer: "Un quartiere di baracche sulla baia di Hakata, a Fukuoka",
         explain:
-          "A Dokan, tra stenti e pregiudizi, persone comuni iniziano a praticare e a rivitalizzare la propria vita. L'accelerazione del kosen-rufu non parte dai palazzi: parte da chi soffre. Al corso chiederemo: dov'è il mio Dokan — e come ne divento protagonista?",
+          "A Dokan, tra stenti e pregiudizi, persone comuni iniziano a praticare e a rivitalizzare la propria vita. L'accelerazione di kosen-rufu non parte dai palazzi: parte da chi soffre. Al corso chiederemo: dov'è il mio Dokan — e come ne divento protagonista?",
         deepenLabel: "Apri il capitolo (PDF)",
+        deepenHref: NRU_PDF,
+      },
+      {
+        type: "choice",
+        source: NRU_SOURCE,
+        prompt:
+          "In quale periodo si svolgono i fatti del capitolo «Accelerazione»?",
+        options: [
+          "Nel 1962, verso il secondo anniversario della presidenza di Shin'ichi",
+          "Nel 1960, il giorno in cui Shin'ichi diventa presidente",
+          "Nel 1958, alla scomparsa di Josei Toda",
+          "Nel 1975, alla fondazione della SGI",
+        ],
+        answer:
+          "Nel 1962, verso il secondo anniversario della presidenza di Shin'ichi",
+        explain:
+          "Shin'ichi è presidente dal 3 maggio 1960. Il capitolo arriva al 3 maggio 1962: la 24ª riunione generale, due anni dopo. Dokan, lo studio dei nuovi membri, l'appello all'unità: tutto accade in quei primi mesi del 1962, in cui kosen-rufu prende slancio.",
+        deepenLabel: "Apri il capitolo",
+        deepenHref: NRU_PDF,
+      },
+      {
+        type: "choice",
+        source: NRU_SOURCE,
+        prompt:
+          "Perché, in quel periodo, il movimento «accelera»?",
+        options: [
+          "In due anni i membri sono raddoppiati e kosen-rufu prende slancio verso i tre milioni di famiglie",
+          "La Soka Gakkai sta riducendo le attività dopo la guerra",
+          "Shin'ichi si ritira dallo studio per dedicarsi solo all'organizzazione",
+          "Si interrompono i viaggi di incoraggiamento a Kyushu",
+        ],
+        answer:
+          "In due anni i membri sono raddoppiati e kosen-rufu prende slancio verso i tre milioni di famiglie",
+        explain:
+          "Non è fretta vuota: a Dokan vite spezzate ricominciano, i nuovi membri vengono nutriti con lo studio, l'unità diventa pilastro. L'accelerazione è l'ichinen che si fa azione — lo stesso che chiediamo al Territorio da qui a ottobre.",
+        deepenLabel: "Rileggi Accelerazione",
         deepenHref: NRU_PDF,
       },
       {
@@ -219,16 +324,16 @@ export const quizzes: Quiz[] = [
         source: NRU_SOURCE,
         prompt:
           "Al memoriale per Josei Toda, Shin'ichi cita un gosho e rinnova la determinazione. Completa il passo.",
-        passage: "Quando il male è grande, {blank}.",
+        passage: "Quando accade un grande male, {blank}.",
         options: [
-          "il bene è grande",
+          "seguirà un grande bene",
           "è meglio restare in silenzio",
           "la pratica va sospesa",
           "si deve aspettare tempi migliori",
         ],
-        answer: "il bene è grande",
+        answer: "seguirà un grande bene",
         explain:
-          "Dal gosho «Il grande male e il grande bene»: l'ostacolo non è il contrario della vittoria, è il suo segnale. Nel capitolo, critiche e attacchi non fermano Shin'ichi: diventa più determinato. Porta al corso una difficoltà con questa convinzione.",
+          "Dal gosho «Grande male e grande bene»: l'ostacolo non è il contrario della vittoria, è il suo segnale. Nel capitolo, critiche e attacchi non fermano Shin'ichi: diventa più determinato. Porta al corso una difficoltà con questa convinzione.",
         deepenLabel: "Leggi Accelerazione",
         deepenHref: NRU_PDF,
       },
@@ -275,14 +380,14 @@ export const quizzes: Quiz[] = [
         prompt:
           "Shin'ichi cita il Daishonin per spiegare che l'organizzazione riflette la determinazione dei responsabili.",
         passage:
-          "Se il generale perde il coraggio, i suoi soldati {blank}.",
+          "Se il generale si perde di coraggio, i soldati {blank}.",
         options: [
-          "diventano codardi",
+          "diventeranno codardi",
           "combattono meglio",
           "trovano un altro maestro",
           "vincono lo stesso",
         ],
-        answer: "diventano codardi",
+        answer: "diventeranno codardi",
         explain:
           "Dal gosho «La supremazia della Legge». Per ispirare bisogna prima bruciare di convinzione: preghiera, gioia, il massimo di oggi. Ognuno, al corso, è un po' «generale» della propria vita e del proprio gruppo.",
         deepenLabel: "Apri Accelerazione",
@@ -294,13 +399,13 @@ export const quizzes: Quiz[] = [
         prompt:
           "Lo scrittore Mimpei Sugiura, dopo aver visto le trasformazioni dei membri, cosa riconosce come più grande risultato della Soka Gakkai?",
         options: [
-          "Risvegliare il potere delle persone comuni e rivitalizzarne la vita",
+          "Risvegliare il potere del popolo e rivitalizzarne la vita",
           "Costruire grandi edifici",
           "Vincere dibattiti teorici",
           "Ritirarsi dalla società",
         ],
         answer:
-          "Risvegliare il potere delle persone comuni e rivitalizzarne la vita",
+          "Risvegliare il potere del popolo e rivitalizzarne la vita",
         explain:
           "Sugiura cercava di liberare chi soffriva con la sola assistenza, e si era arenato. Vide membri cambiare malattia, povertà, destino — e diventare protagonisti della società. È l'accelerazione: non «aiutare da fuori», ma risvegliare da dentro. Come il gosho: la Legge è la tua vita.",
         deepenLabel: "Leggi l'episodio",
@@ -310,7 +415,7 @@ export const quizzes: Quiz[] = [
         type: "choice",
         source: NRU_SOURCE,
         prompt:
-          "Di fronte a calunnie e menzogne, Shin'ichi definisce il kosen-rufu anche in un altro modo. Quale?",
+          "Di fronte a calunnie e menzogne, Shin'ichi definisce kosen-rufu anche in un altro modo. Quale?",
         options: [
           "Una battaglia di dialogo: spezzare la rete di bugie e far conoscere la verità",
           "Una gara a chi recita di più, senza parlare",
@@ -320,7 +425,7 @@ export const quizzes: Quiz[] = [
         answer:
           "Una battaglia di dialogo: spezzare la rete di bugie e far conoscere la verità",
         explain:
-          "«Quando è il momento di parlare, si deve parlare e lottare per la verità. Non farlo è semplicemente vigliaccheria.» Il corso si prepara anche così: un dialogo in più, una testimonianza, un invito. Il kosen-rufu accelera quando le voci sincere si moltiplicano.",
+          "«Quando è il momento di parlare, si deve parlare e lottare per la verità. Non farlo è semplicemente vigliaccheria.» Il corso si prepara anche così: un dialogo in più, una testimonianza, un invito. Kosen-rufu accelera quando le voci sincere si moltiplicano.",
         deepenLabel: "Apri il capitolo",
         deepenHref: NRU_PDF,
       },
@@ -342,6 +447,42 @@ export const quizzes: Quiz[] = [
         deepenLabel: "Rileggi Accelerazione",
         deepenHref: NRU_PDF,
       },
+      {
+        type: "complete",
+        source: NRU_SOURCE,
+        prompt: "Completa le parole di Shin'ichi sulla verità.",
+        passage:
+          "Quando è il momento di parlare, si deve parlare e lottare per la verità. Non farlo è semplicemente {blank}.",
+        options: [
+          "vigliaccheria",
+          "saggezza",
+          "pazienza",
+          "diplomazia",
+        ],
+        answer: "vigliaccheria",
+        explain:
+          "«Il silenzio è d'oro» non vale quando la menzogna corre. Kosen-rufu, in questo capitolo, è anche una battaglia di parole sincere. Un dialogo, un vocale, una testimonianza: è già parlare per la verità.",
+        deepenLabel: "Apri il capitolo",
+        deepenHref: NRU_PDF,
+      },
+      {
+        type: "choice",
+        source: NRU_SOURCE,
+        prompt:
+          "Alla riunione di Hokkaido, Shin'ichi ricorda la missione dei buddisti. Quale?",
+        options: [
+          "Contribuire alla società, non occuparsi solo della propria felicità",
+          "Ritirarsi dalla vita pubblica e praticare in solitudine",
+          "Lasciare la società a chi non ha fede",
+          "Vincere le elezioni per governare il paese",
+        ],
+        answer:
+          "Contribuire alla società, non occuparsi solo della propria felicità",
+        explain:
+          "Siamo buddisti e cittadini. Occuparsi solo del proprio beneficio, dice Shin'ichi, è egoismo. L'accelerazione è vite comuni che rivitalizzano la società — da Dokan al Territorio Salerno.",
+        deepenLabel: "Rileggi Accelerazione",
+        deepenHref: NRU_PDF,
+      },
     ],
   },
   {
@@ -349,7 +490,7 @@ export const quizzes: Quiz[] = [
     title: "Super quiz del corso",
     eyebrow: "Gosho + Accelerazione + Camerota",
     lead:
-      "Un mix per scaldare lo ichinen: testi di studio, spirito del capitolo e qualche domanda sul Corso Salerno 2026.",
+      "Un mix per scaldare l'ichinen: testi di studio, spirito del capitolo e qualche domanda sul Corso Salerno 2026.",
     accent: "mix",
     questions: [
       {
@@ -389,19 +530,37 @@ export const quizzes: Quiz[] = [
       },
       {
         type: "choice",
+        source: "Corso Salerno 2026",
+        prompt:
+          "Quale coppia di periodi corrisponde ai due testi del corso?",
+        options: [
+          "Gosho: Kamakura, 1255 · Capitolo Accelerazione: Giappone, 1962",
+          "Gosho: Giappone, 1962 · Capitolo Accelerazione: Kamakura, 1255",
+          "Gosho: Camerota, 2026 · Capitolo Accelerazione: Camerota, 2026",
+          "Gosho: India, al tempo di Shakyamuni · Capitolo Accelerazione: 1945",
+        ],
+        answer:
+          "Gosho: Kamakura, 1255 · Capitolo Accelerazione: Giappone, 1962",
+        explain:
+          "Due epoche, lo stesso filo: nel 1255 il Daishonin indica la Buddità in questa esistenza; nel 1962 Shin'ichi la vede accadere nelle vite comuni, a Dokan e in tutto il Giappone. Al corso le facciamo nostre, nel Territorio Salerno.",
+        deepenLabel: "Materiali di studio",
+        deepenHref: STUDY_INFO,
+      },
+      {
+        type: "choice",
         source: NRU_SOURCE,
         prompt:
           "Perché il capitolo si chiama «Accelerazione»?",
         options: [
-          "Perché il kosen-rufu prende slancio: vite comuni si rivitalizzano e il movimento accelera",
+          "Perché kosen-rufu prende slancio: vite comuni si rivitalizzano e il movimento accelera",
           "Perché Shin'ichi impara a guidare le automobili",
           "Perché si parla solo di economia giapponese",
           "Perché le attività vengono ridotte per andare più lenti",
         ],
         answer:
-          "Perché il kosen-rufu prende slancio: vite comuni si rivitalizzano e il movimento accelera",
+          "Perché kosen-rufu prende slancio: vite comuni si rivitalizzano e il movimento accelera",
         explain:
-          "Dokan, studio dei nuovi membri, unità, dialogo: lo slancio non è fretta vuota, è ichinen che si muove. Il corso vuole la stessa dinamica nel Territorio Salerno: da qui a ottobre, accelerare nella pratica e nell'incoraggiamento.",
+          "Dokan, studio dei nuovi membri, unità, dialogo: lo slancio non è fretta vuota, è l'ichinen che si muove. Il corso vuole la stessa dinamica nel Territorio Salerno: da qui a ottobre, accelerare nella pratica e nell'incoraggiamento.",
         deepenLabel: "Scarica il capitolo",
         deepenHref: NRU_PDF,
       },
@@ -529,6 +688,40 @@ export const quizzes: Quiz[] = [
         deepenLabel: "Rileggi il gosho",
         deepenHref: GOSHO_URL,
       },
+      {
+        type: "complete",
+        source: GOSHO_SOURCE,
+        prompt: "Come chiude il Daishonin lo scritto?",
+        passage: "Non dubitare mai {blank}.",
+        options: [
+          "minimamente",
+          "dopo il corso",
+          "se gli altri dubitano",
+          "fino alla vecchiaia",
+        ],
+        answer: "minimamente",
+        explain:
+          "Dopo aver promesso la Buddità in questa esistenza, il Daishonin chiude così. Non è uno slogan: è la fede da portare a Camerota. Mantieni la fede — e non dubitare minimamente.",
+        deepenLabel: "Leggi la chiusura",
+        deepenHref: GOSHO_URL,
+      },
+      {
+        type: "choice",
+        source: "Corso Salerno 2026",
+        prompt: "Chi può iscriversi al Corso autunnale 2026?",
+        options: [
+          "Tutti i membri (adulti e giovani), i simpatizzanti giovani e il Gruppo Futuro",
+          "Solo i responsabili di Territorio",
+          "Solo chi ha già completato i quiz",
+          "Unicamente i membri del Gruppo Giovani",
+        ],
+        answer:
+          "Tutti i membri (adulti e giovani), i simpatizzanti giovani e il Gruppo Futuro",
+        explain:
+          "Il corso è del Territorio, non di un circolo interno. Porta qualcuno: un simpatizzante, un amico del Gruppo Futuro. L'unità del capitolo Accelerazione comincia così, già da ora.",
+        deepenLabel: "Vai alle info",
+        deepenHref: "/info",
+      },
     ],
   },
 ];
@@ -585,7 +778,7 @@ export const wheelChallenges: WheelChallenge[] = [
     theme: "Accelerazione · battaglia di parole sincere",
     challenge:
       "Parla del corso, o di un passo che ti ha colpito, con una persona. Anche un vocale WhatsApp conta. Non convincere: condividi.",
-    why: "Shin'ichi chiama il kosen-rufu una battaglia di dialogo: far conoscere la verità con l'umanità. Il Territorio accelera se le voci si moltiplicano.",
+    why: "Shin'ichi chiama kosen-rufu una battaglia di dialogo: far conoscere la verità con l'umanità. Il Territorio accelera se le voci si moltiplicano.",
     deepenLabel: "Capitolo Accelerazione",
     deepenHref: NRU_PDF,
   },
@@ -596,7 +789,7 @@ export const wheelChallenges: WheelChallenge[] = [
     theme: "NRU · l'accelerazione nasce dal movimento",
     challenge:
       "Scegli un obiettivo che stai rimandando (iscrizione, studio, una telefonata, un daimoku più lungo) e fai il primo passo concreto entro 24 ore.",
-    why: "Nel capitolo lo slancio non aspetta il momento perfetto: Shin'ichi si muove, incoraggia, studia. L'accelerazione è ichinen che si fa azione.",
+    why: "Nel capitolo lo slancio non aspetta il momento perfetto: Shin'ichi si muove, incoraggia, studia. L'accelerazione è l'ichinen che si fa azione.",
     deepenLabel: "Apri il PDF",
     deepenHref: NRU_PDF,
   },
@@ -668,28 +861,62 @@ export const wheelChallenges: WheelChallenge[] = [
   },
 ];
 
-export const quizResults = [
-  {
-    minRatio: 0,
-    title: "La scintilla è accesa",
-    text: "Hai aperto la porta: è esattamente lo spirito di questi giochi. Ogni domanda “sbagliata” è un passaggio del testo che al corso diventerà tuo. Non serve arrivare preparati al millimetro — serve arrivare curiosi.",
-  },
-  {
-    minRatio: 0.4,
-    title: "Lo specchio si sta lucidando",
-    text: "Hai già afferrato il filo. Rileggi i passaggi che ti hanno fatto inciampare: sono spesso i più succosi. Da qui al corso, anche poche righe a settimana cambiano il modo in cui arriverai a Marina di Camerota.",
-  },
-  {
-    minRatio: 0.65,
-    title: "Sei in accelerazione",
-    text: "Si vede che il testo ha già iniziato a lavorarti. Ora il passo successivo non è “saperne di più”, è farne esperienza: daimoku, un dialogo, una pagina del capitolo. L’accelerazione del volume 6 è questa.",
-  },
-  {
-    minRatio: 0.85,
-    title: "Buddità in questa esistenza",
-    text: "Che gioia! Non è un diploma: è una base viva da portare agli altri. Condividi il quiz, gira la ruota, invita qualcuno a studiare con te. Il gosho finisce così: mantieni la fede, e non dubitare minimamente.",
-  },
-];
+const sparkBand: QuizResultBand = {
+  minRatio: 0,
+  title: "La scintilla è accesa",
+  text: "Hai aperto la porta: è esattamente lo spirito di questi giochi. Ogni domanda “sbagliata” è un passaggio del testo che al corso diventerà tuo. Non serve arrivare preparati al millimetro — serve arrivare curiosi.",
+};
+
+const threadBand: QuizResultBand = {
+  minRatio: 0.4,
+  title: "Lo specchio si sta lucidando",
+  text: "Hai già afferrato il filo. Rileggi i passaggi che ti hanno fatto inciampare: sono spesso i più succosi. Da qui al corso, anche poche righe a settimana cambiano il modo in cui arriverai a Marina di Camerota.",
+};
+
+export const quizResults: Record<string, QuizResultBand[]> = {
+  gosho: [
+    sparkBand,
+    threadBand,
+    {
+      minRatio: 0.65,
+      title: "Lo specchio riflette",
+      text: "Si vede che il testo ha già iniziato a lavorarti. Ora il passo successivo non è “saperne di più”, è farne esperienza: daimoku, lucidare lo specchio. Il gosho chiede proprio questo: cogliere la verità già inerente a questa esistenza.",
+    },
+    {
+      minRatio: 0.85,
+      title: "Buddità in questa esistenza",
+      text: "Che gioia! Non è un diploma: è una base viva da portare agli altri. Condividi il quiz, gira la ruota, invita qualcuno a studiare con te. Il gosho finisce così: mantieni la fede, e non dubitare minimamente.",
+    },
+  ],
+  accelerazione: [
+    sparkBand,
+    threadBand,
+    {
+      minRatio: 0.65,
+      title: "Sei in accelerazione",
+      text: "Si vede che il capitolo ha già iniziato a lavorarti. Ora il passo successivo non è “saperne di più”, è farne esperienza: daimoku, un dialogo, una pagina. L’accelerazione del volume 6 è questa.",
+    },
+    {
+      minRatio: 0.85,
+      title: "Unità indistruttibile",
+      text: "Che gioia! Non è un diploma: è una base viva da portare agli altri. Condividi il quiz, gira la ruota, invita qualcuno a studiare con te. Shin’ichi, nel capitolo, lancia: avanziamo con un’unità indistruttibile per la felicità del popolo e la prosperità della società.",
+    },
+  ],
+  corso: [
+    sparkBand,
+    threadBand,
+    {
+      minRatio: 0.65,
+      title: "Sei in accelerazione",
+      text: "Si vede che i testi hanno già iniziato a lavorarti. Ora il passo successivo non è “saperne di più”, è farne esperienza: daimoku, un dialogo, una pagina del capitolo. L’accelerazione del volume 6 è questa.",
+    },
+    {
+      minRatio: 0.85,
+      title: "Buddità in questa esistenza",
+      text: "Che gioia! Non è un diploma: è una base viva da portare agli altri. Condividi il quiz, gira la ruota, invita qualcuno a studiare con te. Il gosho finisce così: mantieni la fede, e non dubitare minimamente.",
+    },
+  ],
+};
 
 export function getQuiz(id: string) {
   return quizzes.find((quiz) => quiz.id === id);
