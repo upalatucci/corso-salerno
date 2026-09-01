@@ -1,0 +1,252 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SiteIcon from "../../components/SiteIcon.astro";
+import { quizzes } from "../../data/games";
+---
+
+<Layout
+  title="Giochi · Corso Salerno 2026"
+  activeNav="/giochi"
+  description="Quiz sul gosho e sul capitolo Accelerazione, e la ruota delle esperienze: sfide personali per arrivare incoraggiati al Corso Salerno 2026."
+>
+  <main class="page">
+    <header class="page-header">
+      <SiteIcon width={72} height={72} class="page-icon" />
+      <p class="page-eyebrow">Preparati giocando</p>
+      <h1 class="page-title">Giochi</h1>
+      <p class="page-subtitle">
+        Per accendere la curiosità sui testi del corso, allenare l'ichinen e
+        arrivare a Camerota già in accelerazione. Simpatici, un po' sfidanti, da
+        condividere.
+      </p>
+    </header>
+
+    <p id="hub-stats" class="hub-stats hidden"></p>
+
+    <div class="game-grid">
+      <a href="/giochi/quiz" class="game-card">
+        <span class="game-card-icon" aria-hidden="true">✍️</span>
+        <p class="game-card-kicker">Tre quiz</p>
+        <h2 class="game-card-title">Quiz</h2>
+        <p class="game-card-text">
+          Completa i passi del gosho <em>Il conseguimento della Buddità in
+          questa esistenza</em> e del capitolo <em>Accelerazione</em>. Sbagliare
+          è già studiare: ogni risposta apre una porta al testo.
+        </p>
+        <span class="game-card-cta">Scegli un quiz →</span>
+      </a>
+
+      <a href="/giochi/ruota" class="game-card game-card--wheel">
+        <span class="game-card-icon" aria-hidden="true">🎡</span>
+        <p class="game-card-kicker">Sfide verso il corso</p>
+        <h2 class="game-card-title">Ruota delle esperienze</h2>
+        <p class="game-card-text">
+          Pesca una sfida concreta — daimoku, un dialogo, una pagina, un
+          incoraggiamento — e vivila da oggi, per arrivare a Camerota già
+          incoraggiati.
+        </p>
+        <span class="game-card-cta">Gira la ruota →</span>
+      </a>
+    </div>
+
+    <section class="glass-card hub-note">
+      <h2 class="card-heading">Perché questi giochi</h2>
+      <p>
+        Il corso si basa su due testi: il gosho che promette la Buddità
+        <strong>in questa esistenza</strong>, e il capitolo in cui vite comuni
+        — a Dokan, nel dialogo, nell'unità — <strong>accelerano</strong>
+        kosen-rufu. I giochi non sostituiscono lo studio: lo avvicinano.
+        Servono a far entrare quelle parole nella giornata, così a Camerota
+        non si arriva da zero, ma già con una domanda, una determinazione,
+        un passo fatto.
+      </p>
+      <p>
+        Nei quiz si completa un passo, si sbaglia, si legge il perché. È già
+        studio: la curiosità nata da una domanda è spesso il modo più vero di
+        aprire il gosho o <em>Accelerazione</em>, da soli o insieme. La ruota
+        delle esperienze porta lo stesso spirito fuori dalla pagina: una sfida
+        concreta — daimoku, un dialogo, un incoraggiamento — per allenare
+        l'ichinen e arrivare a ottobre già in cammino, non solo informati. Usare
+        il sito insieme è già un pezzo di quella unità.
+      </p>
+      <p class="hub-links">
+        <a href="/info#materiali-studio">Materiali di studio</a>
+        <a href="/daimoku">Conta daimoku</a>
+        {
+          quizzes.map((quiz) => (
+            <a href={`/giochi/quiz?tema=${quiz.id}`}>{quiz.title}</a>
+          ))
+        }
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const STORAGE_KEY = "cs2026-giochi";
+
+  try {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const scores = state.scores ?? {};
+    const quizCount = Object.keys(scores).length;
+    const sfida = state.sfida;
+    const el = document.getElementById("hub-stats");
+    if (el && (quizCount || sfida)) {
+      const bits = [];
+      if (quizCount) bits.push(`${quizCount} quiz giocati`);
+      if (sfida?.done) bits.push(`sfida «${sfida.title}» portata a termine`);
+      else if (sfida?.title) bits.push(`sfida in corso: ${sfida.title}`);
+      el.textContent = bits.join(" · ");
+      el.classList.remove("hidden");
+    }
+  } catch {
+    // ignore
+  }
+</script>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--viola);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    color: var(--testo-light);
+    font-size: 1.02rem;
+    max-width: 36rem;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  .hub-stats {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--viola);
+    margin-bottom: 1.25rem;
+  }
+
+  .hub-stats.hidden {
+    display: none;
+  }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .game-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .game-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 1.5rem 1.45rem 1.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 100%;
+  }
+
+  .game-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .game-card--wheel {
+    background: linear-gradient(
+      160deg,
+      rgba(216, 201, 240, 0.55) 0%,
+      rgba(250, 217, 193, 0.45) 100%
+    );
+  }
+
+  .game-card-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .game-card-kicker {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--viola);
+    margin-bottom: 0.35rem;
+  }
+
+  .game-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.6rem;
+    line-height: 1.25;
+  }
+
+  .game-card-text {
+    font-size: 0.94rem;
+    line-height: 1.65;
+    color: var(--testo);
+    margin-bottom: 1.1rem;
+    flex: 1;
+  }
+
+  .game-card-cta {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--viola);
+  }
+
+  .hub-note p {
+    font-size: 0.97rem;
+    line-height: 1.7;
+    margin-bottom: 0.9rem;
+    color: var(--testo);
+  }
+
+  .hub-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.85rem;
+    margin-bottom: 0 !important;
+  }
+
+  .hub-links a {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--viola);
+    text-decoration: none;
+  }
+
+  .hub-links a:hover {
+    text-decoration: underline;
+  }
+</style>

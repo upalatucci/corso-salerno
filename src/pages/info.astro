@@ -79,6 +79,11 @@ import { course2026 } from "../data/course2026";
             ))
           }
         </ul>
+        <p class="games-cta">
+          Vuoi metterti alla prova? C'è una sezione
+          <a href="/giochi">Giochi</a> con quiz (anche «completa il passo») e
+          la ruota delle esperienze, per arrivare al corso già in moto.
+        </p>
       </div>
 
       <div class="card">
@@ -462,5 +467,24 @@ import { course2026 } from "../data/course2026";
   .study-link:hover {
     background: rgba(124, 63, 168, 0.14);
     text-decoration: none;
+  }
+
+  .games-cta {
+    margin-top: 1.25rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(124, 63, 168, 0.1);
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--testo);
+  }
+
+  .games-cta a {
+    color: var(--viola);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .games-cta a:hover {
+    text-decoration: underline;
   }
 </style>

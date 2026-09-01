@@ -44,6 +44,7 @@ const latestArticle = articles[0];
           </a>
           <div class="hero-actions-row">
             <a href="/articoli" class="cta-button-secondary">Leggi gli articoli</a>
+            <a href="/giochi" class="cta-button-secondary">Giochi</a>
             <a href="/daimoku" class="cta-button-secondary">Conta Daimoku</a>
           </div>
         </div>
@@ -107,6 +108,31 @@ const latestArticle = articles[0];
 
       <p class="study-more">
         <a href="/info#materiali-studio">Tutti i dettagli →</a>
+        ·
+        <a href="/giochi">Metti alla prova lo studio →</a>
+      </p>
+    </section>
+
+    <section class="page-wide home-section" id="giochi">
+      <h2 class="section-title">Giochi</h2>
+      <p class="section-lead">
+        Quiz e ruota delle esperienze per accendere la curiosità sui testi del
+        corso — e arrivare a ottobre già in accelerazione.
+      </p>
+      <div class="games-teasers">
+        <a href="/giochi/quiz" class="games-teaser">
+          <span class="games-teaser-kicker">Studio giocando</span>
+          <strong class="games-teaser-title">Quiz</strong>
+          <span class="games-teaser-desc">Gosho e capitolo Accelerazione</span>
+        </a>
+        <a href="/giochi/ruota" class="games-teaser">
+          <span class="games-teaser-kicker">Sfide verso il 9 ottobre</span>
+          <strong class="games-teaser-title">Ruota delle esperienze</strong>
+          <span class="games-teaser-desc">Pesca una sfida e arriva incoraggiato</span>
+        </a>
+      </div>
+      <p class="study-more">
+        <a href="/giochi">Vai ai giochi →</a>
       </p>
     </section>
 
@@ -155,6 +181,13 @@ const latestArticle = articles[0];
           <span class="quick-body">
             <span class="quick-title">Materiali di studio</span>
             <span class="quick-desc">Gosho e Nuova Rivoluzione Umana</span>
+          </span>
+        </a>
+        <a href="/giochi" class="quick-link">
+          <span class="quick-icon">🎯</span>
+          <span class="quick-body">
+            <span class="quick-title">Giochi</span>
+            <span class="quick-desc">Quiz e ruota delle esperienze</span>
           </span>
         </a>
         <a href="/daimoku" class="quick-link">
@@ -515,5 +548,61 @@ const latestArticle = articles[0];
 
   .study-more a:hover {
     text-decoration: underline;
+  }
+
+  .games-teasers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 600px) {
+    .games-teasers {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .games-teaser {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    color: inherit;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 1.3rem 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .games-teaser:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .games-teaser-kicker {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--viola);
+    margin-bottom: 0.4rem;
+  }
+
+  .games-teaser-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.3rem;
+  }
+
+  .games-teaser-desc {
+    font-size: 0.9rem;
+    color: var(--testo-light);
+    line-height: 1.5;
   }
 </style>

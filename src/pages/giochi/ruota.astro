@@ -1,0 +1,593 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SiteIcon from "../../components/SiteIcon.astro";
+import { wheelChallenges } from "../../data/games";
+
+const palette = [
+  { color: "#7c3fa8", textColor: "#ffffff" },
+  { color: "#e8823a", textColor: "#ffffff" },
+  { color: "#3d1a5c", textColor: "#ffffff" },
+  { color: "#f0a35a", textColor: "#4a1f6e" },
+  { color: "#5b2d8e", textColor: "#ffffff" },
+  { color: "#c45c2a", textColor: "#ffffff" },
+  { color: "#9b6bc4", textColor: "#ffffff" },
+  { color: "#a63d12", textColor: "#ffffff" },
+  { color: "#4a1f6e", textColor: "#ffffff" },
+  { color: "#d46b2c", textColor: "#ffffff" },
+  { color: "#6e3aa0", textColor: "#ffffff" },
+  { color: "#e8c07a", textColor: "#4a1f6e" },
+];
+
+const painted = wheelChallenges.map((challenge, i) => ({
+  ...challenge,
+  ...palette[i % palette.length],
+}));
+---
+
+<Layout
+  title="Ruota delle esperienze · Corso Salerno 2026"
+  activeNav="/giochi"
+  description="Gira la ruota e pesca una sfida personale per arrivare incoraggiato al Corso Autunnale 2026."
+>
+  <main class="page">
+    <header class="page-header">
+      <SiteIcon width={64} height={64} class="page-icon" />
+      <p class="page-eyebrow">Verso il 9 ottobre</p>
+      <h1 class="page-title">Ruota delle esperienze</h1>
+      <p class="page-subtitle">
+        Non è un premio: è una <strong>sfida</strong>. Gira, pescane una, e
+        vivila da oggi — daimoku, dialogo, studio, un passo concreto — per
+        arrivare a Camerota già incoraggiati.
+      </p>
+    </header>
+
+    <div class="wheel-wrap">
+      <div class="pointer" aria-hidden="true"></div>
+      <div
+        id="wheel"
+        class="wheel"
+        style={`--slots: ${painted.length}; transform: rotate(${-180 / painted.length}deg);`}
+      >
+        {
+          painted.map((challenge, i) => (
+            <div
+              class="slice-label"
+              style={`--i: ${i}; color: ${challenge.textColor};`}
+            >
+              <span>{challenge.short}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="spin-row">
+      <button type="button" id="spin-btn" class="cta-button spin-btn">
+        Gira la ruota
+      </button>
+      <p class="spin-hint">
+        Gira quando vuoi: non ricapita la stessa finché non le hai viste tutte.
+      </p>
+    </div>
+
+    <section
+      id="challenge-card"
+      class="challenge-card hidden"
+      hidden
+      aria-live="polite"
+    >
+      <p class="challenge-badge">La tua sfida verso il corso</p>
+      <p id="challenge-kicker" class="challenge-kicker"></p>
+      <h2 id="challenge-title" class="challenge-title"></h2>
+      <p id="challenge-action" class="challenge-action"></p>
+      <p id="challenge-why" class="challenge-why"></p>
+      <p class="challenge-to-course">
+        Vivila ora: è così che si arriva a ottobre già incoraggiati.
+      </p>
+      <div class="challenge-actions">
+        <button type="button" id="accept-btn" class="cta-button">
+          Accetto la sfida
+        </button>
+        <a id="deepen-link" class="cta-button-secondary" href="#">Approfondisci</a>
+        <a
+          id="share-challenge"
+          class="cta-button-secondary"
+          href="/giochi/ruota"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Condividi su WhatsApp
+        </a>
+        <button type="button" id="done-btn" class="cta-button-secondary hidden" hidden>
+          L’ho vissuta
+        </button>
+      </div>
+      <p id="saved-note" class="saved-note hidden" hidden></p>
+    </section>
+
+    <p class="back-row">
+      <a href="/giochi">← Tutti i giochi</a>
+      ·
+      <a href="/giochi/quiz">Fai un quiz</a>
+    </p>
+  </main>
+</Layout>
+
+<script define:vars={{ challenges: painted }}>
+  const STORAGE_KEY = "cs2026-giochi";
+  const wheel = document.getElementById("wheel");
+  const spinBtn = document.getElementById("spin-btn");
+  const card = document.getElementById("challenge-card");
+  const kickerEl = document.getElementById("challenge-kicker");
+  const titleEl = document.getElementById("challenge-title");
+  const actionEl = document.getElementById("challenge-action");
+  const whyEl = document.getElementById("challenge-why");
+  const deepenLink = document.getElementById("deepen-link");
+  const shareChallenge = document.getElementById("share-challenge");
+  const acceptBtn = document.getElementById("accept-btn");
+  const doneBtn = document.getElementById("done-btn");
+  const savedNote = document.getElementById("saved-note");
+
+  const n = challenges.length;
+  const slice = 360 / n;
+  const gradient = challenges
+    .map((challenge, i) => {
+      const start = i * slice;
+      const end = (i + 1) * slice;
+      return `${challenge.color} ${start}deg ${end}deg`;
+    })
+    .join(", ");
+
+  if (wheel) {
+    wheel.style.background = `conic-gradient(${gradient})`;
+  }
+
+  let rotation = -slice / 2;
+  let current = null;
+  let spinning = false;
+
+  if (wheel) {
+    wheel.style.transform = `rotate(${rotation}deg)`;
+  }
+
+  if (spinBtn) spinBtn.disabled = false;
+
+  function readState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function writeState(next) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function setExternalLink(anchor, href) {
+    if (!anchor) return;
+    anchor.href = href;
+    if (href.startsWith("http")) {
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+    } else {
+      anchor.removeAttribute("target");
+      anchor.removeAttribute("rel");
+    }
+  }
+
+  function showCard(challenge, { saved } = { saved: false }) {
+    current = challenge;
+    if (kickerEl) kickerEl.textContent = challenge.theme;
+    if (titleEl) titleEl.textContent = challenge.title;
+    if (actionEl) actionEl.textContent = challenge.challenge;
+    if (whyEl) whyEl.textContent = challenge.why;
+    if (deepenLink) {
+      deepenLink.textContent = challenge.deepenLabel;
+      setExternalLink(deepenLink, challenge.deepenHref);
+    }
+    if (shareChallenge) {
+      const shareUrl = `${window.location.origin}/giochi/ruota`;
+      const shareText = `La mia sfida verso il Corso Salerno 2026: «${challenge.title}». Gira la ruota e pescane una anche tu — per arrivare incoraggiati. 🪷\n${shareUrl}`;
+      shareChallenge.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    }
+    if (card) {
+      card.hidden = false;
+      card.classList.remove("hidden");
+    }
+    if (saved) {
+      if (acceptBtn) {
+        acceptBtn.hidden = true;
+        acceptBtn.classList.add("hidden");
+      }
+      if (doneBtn) {
+        doneBtn.hidden = false;
+        doneBtn.classList.remove("hidden");
+      }
+      if (savedNote) {
+        savedNote.hidden = false;
+        savedNote.classList.remove("hidden");
+        savedNote.textContent =
+          "Sfida accettata: è il tuo impegno verso il corso. Quando l’hai vissuta, segna “L’ho vissuta”.";
+      }
+    } else {
+      if (acceptBtn) {
+        acceptBtn.hidden = false;
+        acceptBtn.classList.remove("hidden");
+      }
+      if (doneBtn) {
+        doneBtn.hidden = true;
+        doneBtn.classList.add("hidden");
+      }
+      if (savedNote) {
+        savedNote.hidden = true;
+        savedNote.classList.add("hidden");
+      }
+    }
+  }
+
+  function randInt(max) {
+    if (max <= 1) return 0;
+    const buf = new Uint32Array(1);
+    const limit = Math.floor(0x100000000 / max) * max;
+    do {
+      crypto.getRandomValues(buf);
+    } while (buf[0] >= limit);
+    return buf[0] % max;
+  }
+
+  function pickIndex() {
+    const state = readState();
+    const seen = Array.isArray(state.wheelSeen) ? state.wheelSeen : [];
+    const lastId = current?.id ?? seen[seen.length - 1];
+    const unused = challenges.filter(
+      (item) => !seen.includes(item.id) && item.id !== lastId,
+    );
+    const pool =
+      unused.length > 0
+        ? unused
+        : challenges.filter((item) => item.id !== lastId);
+    const safePool = pool.length > 0 ? pool : challenges;
+    const picked = safePool[randInt(safePool.length)];
+    state.wheelSeen =
+      unused.length > 0 ? [...seen, picked.id] : [picked.id];
+    writeState(state);
+    return challenges.findIndex((item) => item.id === picked.id);
+  }
+
+  function spin() {
+    if (spinning || !wheel) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    const index = pickIndex();
+    const center = index * slice + slice / 2;
+    const extra = 5 + Math.floor(Math.random() * 3);
+    const targetMod = (360 - center) % 360;
+    const currentMod = ((rotation % 360) + 360) % 360;
+    let add = (targetMod - currentMod + 360) % 360;
+    if (add < 40) add += 360;
+    add += extra * 360;
+    rotation += add;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    wheel.style.transition = reduceMotion
+      ? "none"
+      : "transform 4.2s cubic-bezier(0.12, 0.7, 0.08, 1)";
+    wheel.style.transform = `rotate(${rotation}deg)`;
+
+    let revealed = false;
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
+      showCard(challenges[index]);
+      spinning = false;
+      if (spinBtn) {
+        spinBtn.disabled = false;
+        spinBtn.textContent = "Gira di nuovo";
+      }
+      card?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "nearest",
+      });
+    };
+
+    if (reduceMotion) {
+      reveal();
+      return;
+    }
+
+    const onEnd = (event) => {
+      if (event.propertyName && event.propertyName !== "transform") return;
+      wheel.removeEventListener("transitionend", onEnd);
+      reveal();
+    };
+    wheel.addEventListener("transitionend", onEnd);
+    window.setTimeout(() => {
+      if (!spinning) return;
+      wheel.removeEventListener("transitionend", onEnd);
+      reveal();
+    }, 4800);
+  }
+
+  spinBtn?.addEventListener("click", spin);
+
+  acceptBtn?.addEventListener("click", () => {
+    if (!current) return;
+    const state = readState();
+    state.sfida = {
+      id: current.id,
+      title: current.title,
+      acceptedAt: new Date().toISOString(),
+      done: false,
+    };
+    writeState(state);
+    showCard(current, { saved: true });
+  });
+
+  doneBtn?.addEventListener("click", () => {
+    const state = readState();
+    if (state.sfida) state.sfida.done = true;
+    writeState(state);
+    if (savedNote) {
+      savedNote.hidden = false;
+      savedNote.classList.remove("hidden");
+      savedNote.textContent =
+        "Che gioia: hai già accelerato verso il corso. Gira di nuovo quando vuoi una nuova sfida.";
+    }
+    if (doneBtn) {
+      doneBtn.hidden = true;
+      doneBtn.classList.add("hidden");
+    }
+    if (acceptBtn) {
+      acceptBtn.hidden = true;
+      acceptBtn.classList.add("hidden");
+    }
+  });
+
+  const saved = readState().sfida;
+  if (saved && !saved.done) {
+    const challenge = challenges.find((item) => item.id === saved.id);
+    if (challenge) showCard(challenge, { saved: true });
+  }
+</script>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--viola);
+    background: rgba(124, 63, 168, 0.1);
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.85rem, 5vw, 2.4rem);
+    font-weight: 700;
+    color: var(--viola-dark);
+    margin-bottom: 0.6rem;
+  }
+
+  .page-subtitle {
+    color: var(--testo-light);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .wheel-wrap {
+    position: relative;
+    width: min(320px, 86vw);
+    margin: 0 auto 1.4rem;
+  }
+
+  .pointer {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    z-index: 3;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 22px solid var(--viola-dark);
+    transform: translateX(-50%);
+    filter: drop-shadow(0 2px 4px rgba(74, 31, 110, 0.25));
+  }
+
+  .wheel {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid rgba(255, 255, 255, 0.92);
+    box-shadow:
+      var(--shadow-md),
+      inset 0 0 0 4px rgba(74, 31, 110, 0.12);
+    overflow: hidden;
+  }
+
+  .wheel::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 16%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border: 4px solid rgba(124, 63, 168, 0.2);
+    box-shadow: 0 2px 10px rgba(74, 31, 110, 0.15);
+  }
+
+  .slice-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    padding-top: 9%;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-align: center;
+    transform: rotate(calc((var(--i) + 0.5) * (360deg / var(--slots))));
+    pointer-events: none;
+  }
+
+  .slice-label span {
+    display: block;
+    max-width: 4.6rem;
+    line-height: 1.15;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.22);
+  }
+
+  .spin-row {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .spin-btn {
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .spin-btn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+    transform: none;
+  }
+
+  .spin-hint {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    color: var(--testo-light);
+  }
+
+  .challenge-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: clamp(1.4rem, 4vw, 1.9rem);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .challenge-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--arancio);
+    background: rgba(232, 130, 58, 0.12);
+    padding: 0.28rem 0.75rem;
+    border-radius: 100px;
+    margin-bottom: 0.75rem;
+  }
+
+  .challenge-kicker {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--viola);
+    margin-bottom: 0.4rem;
+  }
+
+  .challenge-title {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    color: var(--viola-dark);
+    margin-bottom: 0.85rem;
+  }
+
+  .challenge-action {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--testo);
+    margin-bottom: 0.9rem;
+  }
+
+  .challenge-why {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--testo-light);
+    font-style: italic;
+    margin-bottom: 0.85rem;
+  }
+
+  .challenge-to-course {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--viola-dark);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  .challenge-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .challenge-actions .cta-button,
+  .challenge-actions .cta-button-secondary {
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .saved-note {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--viola-dark);
+    font-weight: 600;
+  }
+
+  .back-row {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--testo-light);
+  }
+
+  .back-row a {
+    color: var(--viola);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .back-row a:hover {
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wheel {
+      transition: none !important;
+    }
+  }
+</style>
