@@ -34,14 +34,9 @@ const latestArticle = articles[0];
         </div>
 
         <div class="hero-actions">
-          <a
-            href={course2026.registrationUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cta-button"
-          >
-            Iscriviti al corso
-          </a>
+          <button type="button" class="cta-button" data-waitlist-open>
+            Lista d'attesa
+          </button>
           <div class="hero-actions-row">
             <a href="/articoli" class="cta-button-secondary">Leggi gli articoli</a>
             <a href="/giochi" class="cta-button-secondary">Giochi</a>
@@ -143,11 +138,11 @@ const latestArticle = articles[0];
       </p>
 
       <div class="quick-links">
-        <a href={course2026.registrationUrl} target="_blank" rel="noopener noreferrer" class="quick-link">
-          <span class="quick-icon">✓</span>
+        <a href="#" class="quick-link" data-waitlist-open>
+          <span class="quick-icon">✉️</span>
           <span class="quick-body">
-            <span class="quick-title">Iscriviti al corso</span>
-            <span class="quick-desc">Compila la scheda online</span>
+            <span class="quick-title">Lista d'attesa</span>
+            <span class="quick-desc">Richiedi partecipazione via email</span>
           </span>
         </a>
         <a href="/articoli" class="quick-link">

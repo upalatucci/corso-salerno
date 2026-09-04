@@ -8,6 +8,7 @@ interface Props {
 import SiteHead from "../components/SiteHead.astro";
 import SiteIcon from "../components/SiteIcon.astro";
 import AuroraBg from "../components/AuroraBg.astro";
+import WaitlistDialog from "../components/WaitlistDialog.astro";
 
 const { title, activeNav, description } = Astro.props;
 
@@ -101,6 +102,8 @@ const menuitems = [
     <footer class="site-footer">
       <a href="/2024/" class="archive-link">Archivio Corso 2024 →</a>
     </footer>
+
+    <WaitlistDialog />
   </body>
 </html>
 
@@ -440,6 +443,10 @@ const menuitems = [
     font-size: 0.9rem;
     box-shadow: 0 4px 16px rgba(124, 63, 168, 0.25);
     transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
   }
 
   .cta-button:hover {

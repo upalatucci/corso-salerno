@@ -5,7 +5,13 @@ export const course2026 = {
   locationAddress:
     "Happy Village — Località Arconte snc, 84059 Marina di Camerota (SA)",
   locationWebsite: "https://www.happyvillage.it/",
-  registrationUrl: "https://form.jotform.com/261656134013348",
+  waitlist: {
+    email: "corsoterritoriosalerno@gmail.com",
+    requiredFields: ["Nome", "Cognome", "Capitolo", "Membro o simpatizzante"],
+    mailtoSubject: "Lista d'attesa - Corso Salerno 2026",
+    mailtoBody:
+      "Nome:\nCognome:\nCapitolo:\nMembro o simpatizzante:\n",
+  },
   whatsappChannelUrl: "https://whatsapp.com/channel/0029Vb83cr4KwqSXbUE9yP1o",
   startNote:
     "Check-in venerdì 9 ottobre dalle 13:00 alle 15:00 · Corso dalle 14:00 · Conclusione domenica 11 ottobre alle 12:30, a seguire il pranzo",

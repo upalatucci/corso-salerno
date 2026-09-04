@@ -1,17 +1,8 @@
----
-import { course2026 } from "../data/course2026";
----
-
 <div class="article-footer">
   <a href="/articoli" class="btn-back">← Tutti gli articoli</a>
-  <a
-    href={course2026.registrationUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="btn-iscriviti"
-  >
-    Iscriviti al corso →
-  </a>
+  <button type="button" class="btn-iscriviti" data-waitlist-open>
+    Lista d'attesa →
+  </button>
 </div>
 
 <style>
@@ -56,6 +47,9 @@ import { course2026 } from "../data/course2026";
     background: linear-gradient(135deg, var(--viola) 0%, var(--arancio) 100%);
     box-shadow: 0 4px 16px rgba(124, 63, 168, 0.25);
     transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
   }
 
   .btn-iscriviti:hover {
