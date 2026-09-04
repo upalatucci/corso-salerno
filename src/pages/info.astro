@@ -205,21 +205,26 @@ import { course2026 } from "../data/course2026";
         </div>
       </div>
 
-      <div class="card register-card">
-        <h2 class="card-heading">Iscrizione</h2>
+      <div class="card register-card" id="lista-attesa">
+        <h2 class="card-heading">Lista d'attesa</h2>
         <p>
-          Compila la scheda di iscrizione online per registrarti al corso.
-          Dopo la conferma riceverai una mail con il riepilogo dei dati e le
-          informazioni per il pagamento.
+          Qualora qualcuno avesse desiderio di partecipare al corso può
+          richiedere di essere inserito in lista d'attesa inviando una mail a
+          <a href={`mailto:${course2026.waitlist.email}`} class="contact-link">
+            {course2026.waitlist.email}
+          </a>,
+          specificando:
         </p>
-        <a
-          href={course2026.registrationUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="cta-button register-button"
-        >
-          Iscriviti al corso
-        </a>
+        <ul class="card-list waitlist-fields">
+          {
+            course2026.waitlist.requiredFields.map((field) => (
+              <li>{field}</li>
+            ))
+          }
+        </ul>
+        <button type="button" class="cta-button register-button" data-waitlist-open>
+          Richiedi lista d'attesa
+        </button>
       </div>
     </section>
   </main>
@@ -404,6 +409,12 @@ import { course2026 } from "../data/course2026";
 
   .register-button {
     margin-top: 0.5rem;
+  }
+
+  .waitlist-fields {
+    text-align: left;
+    max-width: 20rem;
+    margin: 0 auto 1rem;
   }
 
   .study-list {
