@@ -11,13 +11,13 @@ export interface Article {
 export const articles: Article[] = [
   {
     slug: "lettura-gosho-volume-i",
-    title: "Lettura della Raccolta degli Scritti di Nichiren Daishonin – Volume I",
+    title: "Lettura del Gosho «Il raggiungimento della Buddità in questa esistenza»",
     eyebrow: "Materiali di studio",
     date: "Settembre 2026",
     author: "Redazione Corso Salerno 2026",
     readTime: "2 min",
     excerpt:
-      "Una lettura della Raccolta degli Scritti di Nichiren Daishonin, Volume I, pubblicata dall'Istituto Buddista Italiano Soka Gakkai.",
+      "Una lettura del Gosho «Il raggiungimento della Buddità in questa esistenza», tratto dalla Raccolta degli Scritti di Nichiren Daishonin, Volume I.",
   },
   {
     slug: "al-via-il-corso-autunnale-2026",
