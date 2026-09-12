@@ -10,6 +10,16 @@ export interface Article {
 
 export const articles: Article[] = [
   {
+    slug: "lettura-gosho-volume-i",
+    title: "Lettura della Raccolta degli Scritti di Nichiren Daishonin – Volume I",
+    eyebrow: "Materiali di studio",
+    date: "Settembre 2026",
+    author: "Redazione Corso Salerno 2026",
+    readTime: "2 min",
+    excerpt:
+      "Una lettura della Raccolta degli Scritti di Nichiren Daishonin, Volume I, pubblicata dall'Istituto Buddista Italiano Soka Gakkai.",
+  },
+  {
     slug: "al-via-il-corso-autunnale-2026",
     title: "Al via il Corso Autunnale del Territorio Salerno 2026",
     eyebrow: "Notizie dal corso",
