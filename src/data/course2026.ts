@@ -95,6 +95,10 @@ export const course2026 = {
           label: "Leggi nella Biblioteca di Nichiren",
           href: "https://biblioteca.sgi-italia.org/rsnd/il-conseguimento-della-buddita-in-questa-esistenza",
         },
+        {
+          label: "Ascolta la lettura video",
+          href: "/articoli/lettura-gosho-volume-i",
+        },
       ],
     },
     {
