@@ -1,0 +1,175 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleHeader from "../../components/ArticleHeader.astro";
+import ArticleFooter from "../../components/ArticleFooter.astro";
+import { getArticle } from "../../data/articles";
+
+const article = getArticle("una-vittoria-per-kosen");
+
+if (!article) {
+  return Astro.redirect("/articoli");
+}
+---
+
+<Layout
+  title={`${article.title} · Corso Salerno 2026`}
+  activeNav="/articoli"
+  description="Giuseppe Palatucci, Responsabile Nazionale del Gruppo Uomini, ci invita a realizzare una grande esperienza di fede per il Corso del Territorio Salerno."
+>
+  <main class="page">
+    <ArticleHeader article={article} />
+
+    <article class="article-body">
+      <p class="article-intro">
+        Giuseppe Palatucci, Responsabile Nazionale del Gruppo Uomini, attraverso
+        le parole di Sensei ci invita a realizzare una grande esperienza di fede
+        per il Corso del Territorio Salerno.
+      </p>
+
+      <figure class="article-figure article-figure--portrait">
+        <img
+          src="/articoli/giuseppe-palatucci.jpg"
+          alt="Giuseppe Palatucci, Responsabile Nazionale del Gruppo Uomini"
+          width={419}
+          height={316}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+
+      <p>
+        Vorrei innanzitutto ringraziare di cuore tutti voi che vi state
+        impegnando nell'organizzazione del Corso Territorio Salerno.
+      </p>
+
+      <p>
+        Il Presidente Ikeda ci ha insegnato in numerose occasioni che, per
+        ottenere una grande vittoria, è fondamentale fare una buona
+        preparazione. Nella tradizione della Soka Gakkai, infatti, arrivare al
+        corso significa portare con sé una vittoria, un cambiamento, una prova
+        concreta della propria pratica buddista. Questo vale per tutti: per chi
+        è impegnato nell'organizzazione e per chi partecipa, anche per la prima
+        volta.
+      </p>
+
+      <p>
+        Per questo, mentre fervono i preparativi e le tante attività che
+        accompagnano il corso, vorrei incoraggiare ciascuno di noi a fermarsi
+        davanti al Gohonzon e a chiarire profondamente i propri obiettivi.
+      </p>
+
+      <p>
+        Decidiamo di realizzare una vittoria, grande o piccola che sia, entro la
+        data del corso. Decidiamo un cambiamento concreto nella nostra vita
+        quotidiana, e allo stesso tempo, rinnoviamo la nostra determinazione
+        per kosen-rufu.
+      </p>
+
+      <p>
+        Facciamo del corso un punto di arrivo, ma soprattutto un nuovo punto di
+        partenza: una tappa della nostra rivoluzione umana, nella quale poter
+        dimostrare concretamente il grande potere del Gohonzon e la forza della
+        nostra fede.
+      </p>
+
+      <p>Come ci incoraggia il Presidente Ikeda:</p>
+
+      <blockquote class="article-quote">
+        <p class="article-quote-title">
+          L'aspetto fondamentale per far progredire kosen-rufu
+        </p>
+        <p>
+          «L'unico modo per aprire la strada di kosen-rufu è mostrare la prova
+          concreta della pratica buddista. Ciò che accade ai membri della Soka
+          Gakkai costituisce la prova di tutto, per questo sono così importanti
+          le esperienze di fede.
+        </p>
+        <p>
+          Partendo da questo presupposto, la cosa più importante in assoluto è
+          quanto ogni singolo membro della Gakkai contribuisce al benessere della
+          sua comunità, e quanta fiducia riesce a conquistare come essere umano.
+          Alla fine, è questo l'aspetto fondamentale per far progredire
+          kosen-rufu. [...] La condizione necessaria per promuovere la
+          comprensione nei confronti della Soka Gakkai tra la gente è riuscire a
+          conquistarne la fiducia nella vita di tutti i giorni».
+        </p>
+        <cite>
+          (<em>Nuova Rivoluzione Umana</em>, vol. 28, cap. 4 «Isole vittoriose»,
+          pp. 25-26) — NR 665, 15 gennaio 2020
+        </cite>
+      </blockquote>
+
+      <p>
+        Facciamo quindi di questa preparazione un'occasione per pregare con
+        ancora più forza, incoraggiarci a vicenda e decidere una vittoria
+        personale.
+      </p>
+
+      <p>
+        Arriviamo quindi al Corso del Territorio Salerno con il cuore pieno di
+        gioia, portando con sé una propria esperienza, una vittoria da
+        condividere.
+      </p>
+
+      <div class="firma">
+        <p>
+          <strong>Giuseppe Palatucci</strong><br />
+          Responsabile Nazionale del Gruppo Uomini
+        </p>
+      </div>
+
+      <div class="end-mark">
+        <span></span><span></span><span></span>
+      </div>
+    </article>
+
+    <ArticleFooter />
+  </main>
+</Layout>
+
+<style>
+  .article-figure--portrait {
+    max-width: 420px;
+    margin-inline: auto;
+  }
+
+  .article-quote {
+    margin: 1.6rem 0 2rem;
+    padding: 1.4rem 1.6rem;
+    border-left: 4px solid var(--viola);
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(
+      135deg,
+      rgba(216, 201, 240, 0.25) 0%,
+      rgba(249, 200, 220, 0.15) 100%
+    );
+  }
+
+  .article-quote p {
+    font-size: 1.02rem;
+    line-height: 1.78;
+    color: var(--testo);
+    margin-bottom: 1rem;
+  }
+
+  .article-quote p:last-of-type {
+    margin-bottom: 0.8rem;
+  }
+
+  .article-quote-title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem !important;
+    font-weight: 700;
+    color: var(--viola-dark) !important;
+    font-style: normal !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .article-quote cite {
+    display: block;
+    font-size: 0.88rem;
+    font-style: normal;
+    color: var(--testo-light);
+    line-height: 1.6;
+  }
+</style>

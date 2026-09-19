@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleHeader from "../../components/ArticleHeader.astro";
+import ArticleFooter from "../../components/ArticleFooter.astro";
+import { getArticle } from "../../data/articles";
+
+const article = getArticle("video-19-settembre-2026");
+
+if (!article) {
+  return Astro.redirect("/articoli");
+}
+---
+
+<Layout
+  title={`${article.title} · Corso Salerno 2026`}
+  activeNav="/articoli"
+  description="Video della seconda parte della lettura del Gosho «Il raggiungimento della Buddità in questa esistenza»."
+>
+  <main class="page">
+    <ArticleHeader article={article} />
+
+    <article class="article-body">
+      <p class="article-intro">
+        Condividiamo la seconda parte della lettura del Gosho <em
+          >«Il raggiungimento della Buddità in questa esistenza»</em
+        >, tratto dalla <em>Raccolta degli Scritti di Nichiren Daishonin</em>,
+        Volume I, pubblicato dalla Redazione Corso Salerno 2026.
+      </p>
+
+      <figure class="article-figure article-figure--video">
+        <video
+          controls
+          playsinline
+          preload="metadata"
+          poster="/articoli/video-19-settembre-2026-thumb.jpg"
+          width={1000}
+          height={1734}
+        >
+          <source
+            src="/articoli/video-19-settembre-2026.mp4"
+            type="video/mp4"
+          />
+          Il tuo browser non supporta la riproduzione video.
+        </video>
+      </figure>
+
+      <p>
+        Questo materiale può accompagnare lo studio per il corso in
+        preparazione al Corso Autunnale del Territorio Salerno 2026. Trovi
+        altri materiali nella pagina <a href="/info">Informazioni</a>.
+      </p>
+
+      <div class="firma">
+        <p>
+          <strong>Redazione Corso Salerno 2026</strong>
+        </p>
+      </div>
+
+      <div class="end-mark">
+        <span></span><span></span><span></span>
+      </div>
+    </article>
+
+    <ArticleFooter />
+  </main>
+</Layout>

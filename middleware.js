@@ -4,7 +4,7 @@ import {
 } from "./lib/access-config.js";
 import { renderLoginPage } from "./lib/login-page.js";
 
-const PROTECTED_PREFIXES = ["/articoli", "/daimoku", "/info"];
+const PROTECTED_PREFIXES = ["/articoli", "/video", "/daimoku", "/info"];
 const PUBLIC_PREFIXES = ["/2024", "/_vercel"];
 const PUBLIC_API_PATH = "/api/access";
 
@@ -125,6 +125,9 @@ export const config = {
     "/articoli",
     "/articoli/",
     "/articoli/:path*",
+    "/video",
+    "/video/",
+    "/video/:path*",
     "/api/:path*",
   ],
 };
