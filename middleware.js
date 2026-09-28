@@ -2,20 +2,14 @@ import {
   ACCESS_COOKIE_NAME,
   ACCESS_COOKIE_VALUE,
 } from "./lib/access-config.js";
+import { buildAccessCookie } from "./lib/access-cookie.js";
+import { getStoredPassword } from "./lib/access-store.js";
+import { isLinkPreviewBot } from "./lib/link-preview.js";
 import { renderLoginPage } from "./lib/login-page.js";
 
 const PROTECTED_PREFIXES = ["/articoli", "/video", "/daimoku", "/info"];
 const PUBLIC_PREFIXES = ["/2024", "/_vercel"];
 const PUBLIC_API_PATH = "/api/access";
-
-function escapeHtml(value) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
 
 function getCookie(request, name) {
   const cookieHeader = request.headers.get("cookie") || "";
@@ -70,6 +64,13 @@ function unauthorizedApiResponse() {
   });
 }
 
+function stripPwdFromUrl(url) {
+  const clean = new URL(url);
+  clean.searchParams.delete("pwd");
+  const search = clean.searchParams.toString();
+  return `${clean.pathname}${search ? `?${search}` : ""}`;
+}
+
 function getReturnPath(url) {
   const redirect = url.searchParams.get("redirect");
   if (redirect?.startsWith("/") && !redirect.startsWith("//")) {
@@ -80,7 +81,7 @@ function getReturnPath(url) {
     return "/";
   }
 
-  return `${url.pathname}${url.search}`;
+  return stripPwdFromUrl(url);
 }
 
 function getLoginError(url) {
@@ -97,7 +98,82 @@ function getLoginError(url) {
   return "";
 }
 
-export default function middleware(request) {
+async function handlePasswordQuery(request, url) {
+  const pwd = url.searchParams.get("pwd");
+  if (!pwd) return null;
+
+  try {
+    const storedPassword = await getStoredPassword();
+
+    if (!storedPassword) {
+      if (isApiPath(url.pathname)) {
+        return new Response(
+          JSON.stringify({ error: "Accesso non configurato" }),
+          {
+            status: 503,
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-store",
+            },
+          },
+        );
+      }
+
+      return renderLoginPage(
+        getReturnPath(url),
+        "Accesso temporaneamente non disponibile. Riprova più tardi.",
+      );
+    }
+
+    if (pwd !== storedPassword) {
+      if (isApiPath(url.pathname)) {
+        return unauthorizedApiResponse();
+      }
+
+      return renderLoginPage(
+        getReturnPath(url),
+        "Password non corretta. Riprova.",
+      );
+    }
+
+    const userAgent = request.headers.get("user-agent") || "";
+
+    if (isLinkPreviewBot(userAgent) || isApiPath(url.pathname)) {
+      return;
+    }
+
+    const cleanUrl = new URL(url);
+    cleanUrl.searchParams.delete("pwd");
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: `${cleanUrl.pathname}${cleanUrl.search}`,
+        "Set-Cookie": buildAccessCookie(request),
+        "Cache-Control": "no-store",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    if (isApiPath(url.pathname)) {
+      return new Response(JSON.stringify({ error: "Qualcosa e' andato storto" }), {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      });
+    }
+
+    return renderLoginPage(
+      getReturnPath(url),
+      "Accesso temporaneamente non disponibile. Riprova più tardi.",
+    );
+  }
+}
+
+export default async function middleware(request) {
   const url = new URL(request.url);
 
   if (!isProtectedPath(url.pathname) || isPublicPath(url.pathname)) {
@@ -106,6 +182,11 @@ export default function middleware(request) {
 
   if (isAuthenticated(request)) {
     return;
+  }
+
+  const passwordResponse = await handlePasswordQuery(request, url);
+  if (passwordResponse !== null) {
+    return passwordResponse;
   }
 
   if (isApiPath(url.pathname)) {

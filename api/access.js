@@ -1,18 +1,5 @@
-import {
-  ACCESS_COOKIE_MAX_AGE,
-  ACCESS_COOKIE_NAME,
-  ACCESS_COOKIE_VALUE,
-} from "../lib/access-config.js";
+import { buildAccessCookie } from "../lib/access-cookie.js";
 import { getStoredPassword } from "../lib/access-store.js";
-
-const buildAccessCookie = (request) => {
-  const proto =
-    request.headers["x-forwarded-proto"] ||
-    request.headers.get?.("x-forwarded-proto");
-  const secure = proto === "https" ? "; Secure" : "";
-
-  return `${ACCESS_COOKIE_NAME}=${ACCESS_COOKIE_VALUE}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${ACCESS_COOKIE_MAX_AGE}${secure}`;
-};
 
 export default async function handler(request, response) {
   if (request.method === "OPTIONS") {
