@@ -3,6 +3,7 @@ interface Props {
   title: string;
   activeNav: string;
   description?: string;
+  image?: string;
 }
 
 import SiteHead from "../components/SiteHead.astro";
@@ -10,7 +11,14 @@ import SiteIcon from "../components/SiteIcon.astro";
 import AuroraBg from "../components/AuroraBg.astro";
 import WaitlistDialog from "../components/WaitlistDialog.astro";
 
-const { title, activeNav, description } = Astro.props;
+const { title, activeNav, description, image } = Astro.props;
+
+const siteUrl = Astro.site ?? new URL(Astro.url);
+const pageDescription =
+  description ??
+  "9, 10 e 11 ottobre 2026 si terrà a Marina di Camerota il corso autunnale del Territorio Salerno";
+const pageImage = new URL(image ?? "/icon.png", siteUrl).href;
+const pageUrl = new URL(Astro.url.pathname + Astro.url.search, siteUrl).href;
 
 const menuitems = [
   { title: "Home", path: "/" },
@@ -25,11 +33,17 @@ const menuitems = [
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="description"
-      content={description ??
-        "9, 10 e 11 ottobre 2026 si terrà a Marina di Camerota il corso autunnale del Territorio Salerno"}
-    />
+    <meta name="description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Corso Salerno 2026" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={pageImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={pageImage} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <SiteHead />
     <meta name="theme-color" content="#7C3FA8" />
