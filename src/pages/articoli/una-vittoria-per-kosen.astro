@@ -1,5 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import ArticleLayout from "../../components/ArticleLayout.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
 import ArticleFooter from "../../components/ArticleFooter.astro";
 import { getArticle } from "../../data/articles";
@@ -11,12 +11,7 @@ if (!article) {
 }
 ---
 
-<Layout
-  title={`${article.title} · Corso Salerno 2026`}
-  activeNav="/articoli"
-  description="Giuseppe Palatucci, Responsabile Nazionale del Gruppo Uomini, ci invita a realizzare una grande esperienza di fede per il Corso del Territorio Salerno."
-  image="/articoli/giuseppe-palatucci.jpg"
->
+<ArticleLayout article={article}>
   <main class="page">
     <ArticleHeader article={article} />
 
@@ -126,7 +121,7 @@ if (!article) {
 
     <ArticleFooter />
   </main>
-</Layout>
+</ArticleLayout>
 
 <style>
   .article-figure--portrait {

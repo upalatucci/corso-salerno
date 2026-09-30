@@ -1,5 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import ArticleLayout from "../../components/ArticleLayout.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
 import ArticleFooter from "../../components/ArticleFooter.astro";
 import { getArticle } from "../../data/articles";
@@ -11,11 +11,7 @@ if (!article) {
 }
 ---
 
-<Layout
-  title={`${article.title} · Corso Salerno 2026`}
-  activeNav="/articoli"
-  description="Video incoraggiamento di Loris Andrea Giardini."
->
+<ArticleLayout article={article}>
   <main class="page">
     <ArticleHeader article={article} />
 
@@ -60,4 +56,4 @@ if (!article) {
 
     <ArticleFooter />
   </main>
-</Layout>
+</ArticleLayout>

@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+import type { Article } from "../data/articles";
+
+interface Props {
+  article: Article;
+  description?: string;
+}
+
+const { article, description } = Astro.props;
+---
+
+<Layout
+  title={`${article.title} · Corso Salerno 2026`}
+  activeNav="/articoli"
+  description={description ?? article.excerpt}
+  image={article.image}
+  imageAlt={article.imageAlt ?? article.title}
+>
+  <slot />
+</Layout>

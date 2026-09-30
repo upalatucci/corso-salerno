@@ -1,0 +1,162 @@
+---
+import ArticleLayout from "../../components/ArticleLayout.astro";
+import ArticleHeader from "../../components/ArticleHeader.astro";
+import ArticleFooter from "../../components/ArticleFooter.astro";
+import { getArticle } from "../../data/articles";
+
+const article = getArticle("insegnare-agli-altri-al-100");
+
+if (!article) {
+  return Astro.redirect("/articoli");
+}
+---
+
+<ArticleLayout article={article}>
+  <main class="page">
+    <ArticleHeader article={article} />
+
+    <article class="article-body">
+      <p class="article-intro">
+        Franco Gregorio, Responsabile Uomini di Regione, ci invita a
+        manifestare la fede e a sfidarci nei tre pilastri fondamentali di fede,
+        pratica e studio, per un'esistenza di valore, con una preghiera per sé
+        e per gli altri, studiando gli insegnamenti e condividendo le
+        esperienze.
+      </p>
+
+      <figure class="article-figure article-figure--portrait">
+        <img
+          src="/articoli/franco-gregorio.jpg"
+          alt="Franco Gregorio, Responsabile Uomini di Regione"
+          width={1024}
+          height={768}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+
+      <p>
+        A prescindere dalla condizione vitale che stiamo attraversando, abbiamo
+        la possibilità di offrire sempre una parte della nostra vita,
+        indipendentemente dalle circostanze in cui ci troviamo.
+      </p>
+
+      <p>Nel Gosho «La vera entità della vita» si legge:</p>
+
+      <blockquote class="article-quote">
+        <p>
+          «Esercitati nelle due vie della pratica e dello studio. Senza pratica
+          e studio, non può esservi Buddismo. Devi non solo perseverare tu, ma
+          anche insegnare agli altri. Sia la pratica che lo studio devono
+          sorgere dalla fede. Insegna agli altri come meglio puoi, anche una
+          sola frase o una sola parola».
+        </p>
+        <cite>
+          (RSND, <em>Raccolta degli Scritti di Nichiren Daishonin</em>)
+        </cite>
+      </blockquote>
+
+      <p>
+        Nichiren ci esorta, quindi, ad insegnare agli altri, al cento per cento
+        delle proprie capacità. È importante riuscire a dare sempre il 100% di
+        quello che si ha in quel momento, aspirando ad aumentare le proprie
+        abilità e competenze grazie al potere di Nam Myo Ho Renge Kyo.
+      </p>
+
+      <p>
+        Un invito a manifestare il potenziale infinito della natura di Budda
+        insita in sé stessi e in ogni essere umano.
+      </p>
+
+      <p>
+        Il Corso è un'opportunità per mettersi in gioco: la sfida è non solo
+        partecipare alle attività di preparazione, ma essere presenti e
+        partecipare concretamente ai tre giorni di Corso con consapevolezza. È
+        molto importante come si arriva al corso: è fondamentale studiare i
+        contenuti, gli argomenti di approfondimento, recitare daimoku, preparare
+        la propria vita ad accogliere gli incoraggiamenti e, allo stesso tempo,
+        essere disponibili ad incoraggiare gli altri.
+      </p>
+
+      <p>
+        Il valore del corso sta in questo scambio, nella relazione tra persone e
+        nell'incoraggiamento.
+      </p>
+
+      <p>
+        Altrettanto rilevante è il «dopo corso», ovvero decidere di
+        sperimentare nella propria vita anche uno solo degli incoraggiamenti
+        ascoltati che ci permettono di approfondire la nostra rivoluzione
+        umana.
+      </p>
+
+      <p>
+        Il Corso del Territorio Salerno è un'occasione per rinnovare la propria
+        fede, per confrontarsi e conoscere altre realtà. In alternativa, però,
+        c'è un luogo in cui poter fare attività in continuità: è il nostro
+        Kaikan, dove poter incontrare persone, incoraggiare e condividere le
+        proprie esperienze.
+      </p>
+
+      <p>
+        Fare attività, nel buddismo di Nichiren Daishonin, ci permette di
+        manifestare il potere della nostra pratica, per cui poter avere uno
+        spazio dove potersi allenare diventa di vitale importanza.
+      </p>
+
+      <p>
+        Non è importante quale attività si decida di donare, perché la cosa più
+        importante è lo spirito con cui si svolge, che è lo stesso spirito del
+        maestro Daisaku Ikeda. Fondamentale è l'ichinen, il cuore che c'è dietro
+        le nostre intenzioni.
+      </p>
+
+      <div class="firma">
+        <p>
+          <strong>Franco Gregorio</strong><br />
+          Responsabile Uomini di Regione
+        </p>
+      </div>
+
+      <div class="end-mark">
+        <span></span><span></span><span></span>
+      </div>
+    </article>
+
+    <ArticleFooter />
+  </main>
+</ArticleLayout>
+
+<style>
+  .article-figure--portrait {
+    max-width: 420px;
+    margin-inline: auto;
+  }
+
+  .article-quote {
+    margin: 1.6rem 0 2rem;
+    padding: 1.4rem 1.6rem;
+    border-left: 4px solid var(--viola);
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(
+      135deg,
+      rgba(216, 201, 240, 0.25) 0%,
+      rgba(249, 200, 220, 0.15) 100%
+    );
+  }
+
+  .article-quote p {
+    font-size: 1.02rem;
+    line-height: 1.78;
+    color: var(--testo);
+    margin-bottom: 0.8rem;
+  }
+
+  .article-quote cite {
+    display: block;
+    font-size: 0.88rem;
+    font-style: normal;
+    color: var(--testo-light);
+    line-height: 1.6;
+  }
+</style>

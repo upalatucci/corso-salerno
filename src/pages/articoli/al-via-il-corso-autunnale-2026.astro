@@ -1,5 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import ArticleLayout from "../../components/ArticleLayout.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
 import ArticleFooter from "../../components/ArticleFooter.astro";
 import { getArticle } from "../../data/articles";
@@ -12,9 +12,8 @@ if (!article) {
 }
 ---
 
-<Layout
-  title={`${article.title} · Corso Salerno 2026`}
-  activeNav="/articoli"
+<ArticleLayout
+  article={article}
   description="Inauguriamo il sito ufficiale del Corso Autunnale del Territorio Salerno 2026, in programma dal 9 all'11 ottobre all'Happy Village di Marina di Camerota."
 >
   <main class="page">
@@ -196,4 +195,4 @@ if (!article) {
 
     <ArticleFooter />
   </main>
-</Layout>
+</ArticleLayout>
