@@ -2,6 +2,7 @@
 import ArticleLayout from "../../components/ArticleLayout.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
 import ArticleFooter from "../../components/ArticleFooter.astro";
+import GoshoPlaylist from "../../components/GoshoPlaylist.astro";
 import { getArticle } from "../../data/articles";
 
 const article = getArticle("lettura-gosho-volume-i");
@@ -23,6 +24,8 @@ if (!article) {
         Volume I, pubblicato dalla Redazione Corso Salerno 2026.
       </p>
 
+      <GoshoPlaylist currentSlug="lettura-gosho-volume-i" />
+
       <figure class="article-figure article-figure--video">
         <video
           controls
@@ -39,6 +42,8 @@ if (!article) {
           Il tuo browser non supporta la riproduzione video.
         </video>
       </figure>
+
+      <GoshoPlaylist currentSlug="lettura-gosho-volume-i" compact />
 
       <p>
         Questo materiale può accompagnare lo studio del Gosho del corso in

@@ -12,6 +12,32 @@ export interface Article {
 
 export const articles: Article[] = [
   {
+    slug: "lettura-gosho-parte-iv",
+    title:
+      "Lettura del Gosho, parte IV «Il raggiungimento della Buddità in questa esistenza»",
+    eyebrow: "Materiale di studio",
+    date: "Ottobre 2026",
+    author: "Redazione Corso Salerno 2026",
+    readTime: "3 min",
+    excerpt:
+      "Video della quarta parte della lettura del Gosho «Il raggiungimento della Buddità in questa esistenza».",
+    image: "/articoli/og/lettura-gosho-parte-iv.jpg",
+    imageAlt: "Lettura del Gosho, parte IV",
+  },
+  {
+    slug: "lettura-gosho-parte-iii",
+    title:
+      "Lettura del Gosho, parte III «Il raggiungimento della Buddità in questa esistenza»",
+    eyebrow: "Materiale di studio",
+    date: "Ottobre 2026",
+    author: "Redazione Corso Salerno 2026",
+    readTime: "3 min",
+    excerpt:
+      "Video della terza parte della lettura del Gosho «Il raggiungimento della Buddità in questa esistenza».",
+    image: "/articoli/og/lettura-gosho-parte-iii.jpg",
+    imageAlt: "Lettura del Gosho, parte III",
+  },
+  {
     slug: "insegnare-agli-altri-al-100",
     title: "Insegnare agli altri al 100% delle proprie capacità",
     eyebrow: "Incoraggiamento",

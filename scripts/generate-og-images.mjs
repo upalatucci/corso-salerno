@@ -35,6 +35,14 @@ const images = [
     out: "video-19-settembre-2026.jpg",
     src: "public/articoli/video-12-settembre-2026-thumb.jpg",
   },
+  {
+    out: "lettura-gosho-parte-iii.jpg",
+    src: "public/video/gosho-parte-3-thumb.jpg",
+  },
+  {
+    out: "lettura-gosho-parte-iv.jpg",
+    src: "public/video/gosho-parte-4-thumb.jpg",
+  },
 ];
 
 async function writeOgImage({ src, out }) {

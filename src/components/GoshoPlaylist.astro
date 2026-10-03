@@ -1,0 +1,298 @@
+---
+import {
+  getGoshoPlaylistNav,
+  goshoPlaylistTitle,
+} from "../data/gosho-playlist";
+
+interface Props {
+  currentSlug: string;
+  compact?: boolean;
+}
+
+const { currentSlug, compact = false } = Astro.props;
+const nav = getGoshoPlaylistNav(currentSlug);
+
+if (!nav) return;
+---
+
+<nav
+  class:list={["gosho-playlist", { "gosho-playlist--compact": compact }]}
+  aria-label="Lettura del Gosho — playlist"
+>
+  {
+    !compact && (
+      <div class="gosho-playlist__header">
+        <p class="gosho-playlist__series">Lettura del Gosho</p>
+        <p class="gosho-playlist__title">
+          <em>{goshoPlaylistTitle}</em>
+        </p>
+        <p class="gosho-playlist__progress">
+          {nav.current.label} di {nav.total}
+        </p>
+      </div>
+    )
+  }
+
+  {
+    !compact && (
+      <ol class="gosho-playlist__parts">
+    {
+      nav.parts.map((part, index) => {
+        const isCurrent = part.slug === currentSlug;
+        const isPast = index < nav.index;
+
+        return (
+          <li class="gosho-playlist__part">
+            {isCurrent ? (
+              <span
+                class="gosho-playlist__link gosho-playlist__link--current"
+                aria-current="step"
+              >
+                <span class="gosho-playlist__number">{index + 1}</span>
+                {part.label}
+              </span>
+            ) : (
+              <a
+                href={`/articoli/${part.slug}`}
+                class:list={[
+                  "gosho-playlist__link",
+                  { "gosho-playlist__link--past": isPast },
+                ]}
+              >
+                <span class="gosho-playlist__number">{index + 1}</span>
+                {part.label}
+              </a>
+            )}
+          </li>
+        );
+      })
+    }
+      </ol>
+    )
+  }
+
+  <div class="gosho-playlist__nav">
+    {
+      nav.previous ? (
+        <a
+          href={`/articoli/${nav.previous.slug}`}
+          class="gosho-playlist__nav-btn gosho-playlist__nav-btn--prev"
+        >
+          <span class="gosho-playlist__nav-arrow" aria-hidden="true">←</span>
+          <span class="gosho-playlist__nav-text">
+            <span class="gosho-playlist__nav-label">Precedente</span>
+            {nav.previous.label}
+          </span>
+        </a>
+      ) : (
+        <span class="gosho-playlist__nav-spacer" aria-hidden="true"></span>
+      )
+    }
+
+    {
+      nav.next ? (
+        <a
+          href={`/articoli/${nav.next.slug}`}
+          class="gosho-playlist__nav-btn gosho-playlist__nav-btn--next"
+        >
+          <span class="gosho-playlist__nav-text">
+            <span class="gosho-playlist__nav-label">Successiva</span>
+            {nav.next.label}
+          </span>
+          <span class="gosho-playlist__nav-arrow" aria-hidden="true">→</span>
+        </a>
+      ) : (
+        <span class="gosho-playlist__nav-spacer" aria-hidden="true"></span>
+      )
+    }
+  </div>
+</nav>
+
+<style>
+  .gosho-playlist {
+    margin-bottom: 2rem;
+    padding: 1.4rem 1.5rem;
+    border-radius: 14px;
+    border: 1px solid rgba(124, 63, 168, 0.18);
+    background: linear-gradient(
+      135deg,
+      rgba(216, 201, 240, 0.22) 0%,
+      rgba(249, 200, 220, 0.14) 100%
+    );
+  }
+
+  .gosho-playlist--compact {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.9rem 1rem;
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .gosho-playlist__header {
+    margin-bottom: 1.2rem;
+  }
+
+  .gosho-playlist__series {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--viola);
+    margin-bottom: 0.35rem;
+  }
+
+  .gosho-playlist__title {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--testo);
+    margin-bottom: 0.4rem;
+  }
+
+  .gosho-playlist__progress {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--viola-dark);
+  }
+
+  .gosho-playlist__parts {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin: 0 0 1.2rem;
+    padding: 0;
+  }
+
+  .gosho-playlist__part {
+    min-width: 0;
+  }
+
+  .gosho-playlist__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.65rem 0.4rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--viola);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1.5px solid rgba(124, 63, 168, 0.15);
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      transform 0.2s;
+    text-align: center;
+  }
+
+  .gosho-playlist__link:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(124, 63, 168, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .gosho-playlist__link--past {
+    color: var(--viola-dark);
+    border-color: rgba(124, 63, 168, 0.25);
+  }
+
+  .gosho-playlist__link--current {
+    color: var(--bianco);
+    background: linear-gradient(135deg, var(--viola) 0%, var(--arancio) 100%);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(124, 63, 168, 0.25);
+    cursor: default;
+  }
+
+  .gosho-playlist__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: rgba(124, 63, 168, 0.1);
+  }
+
+  .gosho-playlist__link--current .gosho-playlist__number {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .gosho-playlist__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .gosho-playlist__nav-spacer {
+    display: block;
+  }
+
+  .gosho-playlist__nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid rgba(124, 63, 168, 0.18);
+    color: var(--viola-dark);
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      transform 0.2s;
+  }
+
+  .gosho-playlist__nav-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(124, 63, 168, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .gosho-playlist__nav-btn--next {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .gosho-playlist__nav-arrow {
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--viola);
+  }
+
+  .gosho-playlist__nav-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .gosho-playlist__nav-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--testo-light);
+  }
+
+  @media (max-width: 600px) {
+    .gosho-playlist__parts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gosho-playlist__nav {
+      grid-template-columns: 1fr;
+    }
+
+    .gosho-playlist__nav-btn--next {
+      justify-content: flex-start;
+      text-align: left;
+    }
+  }
+</style>
