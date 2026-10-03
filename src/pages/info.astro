@@ -40,6 +40,30 @@ import { course2026 } from "../data/course2026";
         </ul>
       </div>
 
+      <div class="card" id="scaletta">
+        <h2 class="card-heading">{course2026.program.title}</h2>
+        <p class="card-subtext">{course2026.program.description}</p>
+        <div class="program-actions">
+          <a
+            href={course2026.program.href}
+            class="cta-button program-download"
+            download={course2026.program.downloadName}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Scarica PDF
+          </a>
+          <a
+            href={course2026.program.href}
+            class="program-view"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Apri nel browser →
+          </a>
+        </div>
+      </div>
+
       <div class="card" id="materiali-studio">
         <h2 class="card-heading">Materiali di studio</h2>
         <p class="card-subtext">
@@ -388,6 +412,28 @@ import { course2026 } from "../data/course2026";
   }
 
   .contact-link:hover {
+    text-decoration: underline;
+  }
+
+  .program-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .program-download {
+    text-decoration: none;
+  }
+
+  .program-view {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--viola);
+    text-decoration: none;
+  }
+
+  .program-view:hover {
     text-decoration: underline;
   }
 

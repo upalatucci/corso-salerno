@@ -17,6 +17,14 @@ export const course2026 = {
     "Check-in venerdì 9 ottobre dalle 13:00 alle 15:00 · Corso dalle 14:00 · Conclusione domenica 11 ottobre alle 12:30, a seguire il pranzo",
   courseDate: new Date(2026, 9, 9, 14, 0),
 
+  program: {
+    title: "Scaletta del corso",
+    description:
+      "Programma completo del Corso Autunnale: orari, sessioni e attività dal 9 all'11 ottobre.",
+    href: "/materiale-studio/programma-corso.pdf",
+    downloadName: "Programma_corso.pdf",
+  },
+
   schedule: [
     "Check-in: venerdì 9 ottobre, dalle 13:00 alle 15:00",
     "Inizio corso: venerdì 9 ottobre alle 14:00",

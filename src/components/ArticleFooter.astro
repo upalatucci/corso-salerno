@@ -1,8 +1,14 @@
 <div class="article-footer">
   <a href="/articoli" class="btn-back">← Tutti gli articoli</a>
-  <button type="button" class="btn-iscriviti" data-waitlist-open>
-    Lista d'attesa →
-  </button>
+  <a
+    href="/materiale-studio/programma-corso.pdf"
+    class="btn-iscriviti"
+    download="Programma_corso.pdf"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Scaletta del corso →
+  </a>
 </div>
 
 <style>
@@ -50,6 +56,10 @@
     border: none;
     cursor: pointer;
     font-family: inherit;
+  }
+
+  a.btn-iscriviti {
+    cursor: pointer;
   }
 
   .btn-iscriviti:hover {
