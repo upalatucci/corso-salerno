@@ -7,8 +7,17 @@ import { getStoredPassword } from "./lib/access-store.js";
 import { isLinkPreviewBot } from "./lib/link-preview.js";
 import { renderLoginPage } from "./lib/login-page.js";
 
-const PROTECTED_PREFIXES = ["/articoli", "/video", "/daimoku", "/info"];
-const PUBLIC_PREFIXES = ["/2024", "/_vercel"];
+const PROTECTED_PREFIXES = [];
+const PUBLIC_PREFIXES = [
+  "/2024",
+  "/_vercel",
+  "/articoli",
+  "/video",
+  "/materiale-studio",
+  "/info",
+  "/giochi",
+  "/daimoku",
+];
 const PUBLIC_API_PATH = "/api/access";
 
 function getCookie(request, name) {
@@ -41,8 +50,6 @@ function isPublicPath(pathname) {
 }
 
 function isProtectedPath(pathname) {
-  if (pathname === "/") return true;
-
   if (
     PROTECTED_PREFIXES.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),

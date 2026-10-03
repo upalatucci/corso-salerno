@@ -33,7 +33,7 @@ const images = [
   },
   {
     out: "video-19-settembre-2026.jpg",
-    src: "public/articoli/video-12-settembre-2026-thumb.jpg",
+    src: "public/video/gosho-parte-2-thumb.jpg",
   },
   {
     out: "lettura-gosho-parte-iii.jpg",
