@@ -20,7 +20,7 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     <video
       class="protected-video"
       playsinline
-      preload="none"
+      preload="metadata"
       poster={poster}
       width={width}
       height={height}
@@ -29,6 +29,16 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       tabindex="0"
       data-video-src={src}
     ></video>
+    <div
+      class="protected-video-loading"
+      data-video-loading
+      hidden
+      aria-live="polite"
+      aria-busy="false"
+    >
+      <span class="protected-video-spinner" aria-hidden="true"></span>
+      <span class="protected-video-loading-text">Caricamento…</span>
+    </div>
     <button
       type="button"
       class="protected-video-play"
@@ -99,6 +109,7 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     const fullscreenBtn = shell.querySelector<HTMLButtonElement>(
       "[data-video-fullscreen]",
     );
+    const loadingEl = shell.querySelector<HTMLElement>("[data-video-loading]");
     if (
       !video ||
       !playOverlay ||
@@ -107,7 +118,8 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       !muteBtn ||
       !seekInput ||
       !timeEl ||
-      !fullscreenBtn
+      !fullscreenBtn ||
+      !loadingEl
     ) {
       return;
     }
@@ -154,7 +166,13 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
 
     let scrubbing = false;
     let seekDragging = false;
+    let seeking = false;
     let seekFallbackTimer = 0;
+    let seekGeneration = 0;
+    let playGeneration = 0;
+    let userWantsPlay = false;
+    let resumeAfterSeek = false;
+    let buffering = false;
 
     const formatTime = (seconds: number) => {
       if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -173,11 +191,40 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       bar.hidden = false;
     };
 
-    const resetSeekState = () => {
+    const setBuffering = (active: boolean) => {
+      buffering = active;
+      loadingEl.hidden = !active;
+      loadingEl.setAttribute("aria-busy", active ? "true" : "false");
+      if (active) {
+        playOverlay.hidden = true;
+      }
+    };
+
+    const syncChrome = () => {
+      const playing = !video.paused && !video.ended;
+      showControls();
+      toggleBtn.textContent = playing ? "⏸" : "▶";
+      toggleBtn.setAttribute(
+        "aria-label",
+        playing ? "Pausa" : "Riproduci",
+      );
+      if (buffering) {
+        playOverlay.hidden = true;
+        return;
+      }
+      playOverlay.hidden = playing;
+    };
+
+    const clearSeekLocks = () => {
       scrubbing = false;
       seekDragging = false;
+      seeking = false;
       window.clearTimeout(seekFallbackTimer);
       seekFallbackTimer = 0;
+    };
+
+    const finishSeek = () => {
+      clearSeekLocks();
       updateProgressUi();
     };
 
@@ -207,34 +254,41 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       );
     };
 
-    const targetFromSeekInput = () => {
-      const duration = getDuration();
-      if (!duration) return 0;
-      return Math.min(
-        Math.max(0, (parseFloat(seekInput.value) / 100) * duration),
-        duration,
-      );
-    };
-
     const commitSeek = () => {
       const duration = getDuration();
       if (!duration) {
-        resetSeekState();
+        finishSeek();
         return;
       }
 
-      const target = targetFromSeekInput();
+      const target = Math.min(
+        Math.max(0, (parseFloat(seekInput.value) / 100) * duration),
+        duration,
+      );
+
+      window.clearTimeout(seekFallbackTimer);
+      seekGeneration += 1;
+      const generation = seekGeneration;
+      seeking = true;
       scrubbing = true;
 
       const onSeekComplete = () => {
-        window.clearTimeout(seekFallbackTimer);
-        resetSeekState();
+        if (generation !== seekGeneration) return;
+        finishSeek();
+        if (resumeAfterSeek && userWantsPlay) {
+          resumeAfterSeek = false;
+          void playVideo();
+        }
       };
 
       video.addEventListener("seeked", onSeekComplete, { once: true });
-      seekFallbackTimer = window.setTimeout(onSeekComplete, 800);
+      seekFallbackTimer = window.setTimeout(onSeekComplete, 1500);
 
-      video.currentTime = target;
+      try {
+        video.currentTime = target;
+      } catch {
+        onSeekComplete();
+      }
     };
 
     const src = video.dataset.videoSrc;
@@ -243,47 +297,63 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     const attachSource = () => {
       if (video.dataset.loaded === "1") return;
       video.dataset.loaded = "1";
-      const source = document.createElement("source");
-      source.src = src;
-      source.type = "video/mp4";
-      video.appendChild(source);
+      video.src = src;
       video.load();
       showControls();
     };
 
     const waitForPlaybackReady = () =>
       new Promise<void>((resolve) => {
-        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
           resolve();
           return;
         }
-        video.addEventListener("loadeddata", () => resolve(), { once: true });
+        const done = () => resolve();
+        video.addEventListener("canplay", done, { once: true });
+        video.addEventListener("loadeddata", done, { once: true });
+        window.setTimeout(done, 10_000);
       });
 
-    const setPlayingUi = (playing: boolean) => {
-      playOverlay.hidden = playing;
-      if (video.dataset.loaded === "1") {
-        showControls();
-      }
-      toggleBtn.textContent = playing ? "⏸" : "▶";
-      toggleBtn.setAttribute(
-        "aria-label",
-        playing ? "Pausa" : "Riproduci",
-      );
-    };
-
     const playVideo = async () => {
+      playGeneration += 1;
+      const generation = playGeneration;
+      userWantsPlay = true;
+      clearSeekLocks();
       attachSource();
-      await waitForPlaybackReady();
+      setBuffering(true);
+
       try {
+        await waitForPlaybackReady();
+        if (generation !== playGeneration || !userWantsPlay) return;
+
         await video.play();
-        setPlayingUi(true);
+        if (generation !== playGeneration || !userWantsPlay) {
+          video.pause();
+          return;
+        }
+
+        setBuffering(false);
+        syncChrome();
       } catch {
-        /* autoplay policy or user gesture */
+        if (generation !== playGeneration) return;
+        setBuffering(false);
+        userWantsPlay = false;
+        syncChrome();
       }
     };
 
-    playOverlay.addEventListener("click", () => {
+    const pauseVideo = () => {
+      playGeneration += 1;
+      userWantsPlay = false;
+      resumeAfterSeek = false;
+      clearSeekLocks();
+      video.pause();
+      setBuffering(false);
+      syncChrome();
+    };
+
+    playOverlay.addEventListener("click", (event) => {
+      event.stopPropagation();
       void playVideo();
     });
 
@@ -297,15 +367,50 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       updateProgressUi();
     });
     video.addEventListener("durationchange", updateProgressUi);
-    video.addEventListener("error", resetSeekState);
-    video.addEventListener("playing", () => setPlayingUi(true));
+    video.addEventListener("error", () => {
+      finishSeek();
+      userWantsPlay = false;
+      setBuffering(false);
+      syncChrome();
+    });
+    video.addEventListener("playing", () => {
+      setBuffering(false);
+      syncChrome();
+    });
     video.addEventListener("pause", () => {
-      if (!video.ended && !scrubbing) setPlayingUi(false);
+      if (video.ended) {
+        userWantsPlay = false;
+        setBuffering(false);
+        syncChrome();
+        return;
+      }
+      window.setTimeout(() => {
+        if (seeking || scrubbing || userWantsPlay) return;
+        setBuffering(false);
+        syncChrome();
+      }, 0);
+    });
+    video.addEventListener("waiting", () => {
+      if (userWantsPlay && !video.paused) {
+        setBuffering(true);
+      }
+      showControls();
+    });
+    video.addEventListener("canplay", () => {
+      if (userWantsPlay && !video.paused) {
+        setBuffering(false);
+      }
+      updateProgressUi();
+      syncChrome();
     });
 
     const onSeekPointerDown = (event: PointerEvent) => {
       event.stopPropagation();
       attachSource();
+      resumeAfterSeek = userWantsPlay && !video.paused && !video.ended;
+      if (resumeAfterSeek) {
+        video.pause();
+      }
       seekDragging = true;
       scrubbing = true;
       seekInput.setPointerCapture(event.pointerId);
@@ -346,12 +451,13 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
 
     toggleBtn.addEventListener("click", () => {
       attachSource();
-      if (video.paused) {
+      if (video.paused || video.ended) {
+        if (video.ended) {
+          video.currentTime = 0;
+        }
         void playVideo();
       } else {
-        video.pause();
-        setPlayingUi(false);
-        playOverlay.hidden = false;
+        pauseVideo();
       }
     });
 
@@ -372,9 +478,10 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     document.addEventListener("webkitfullscreenchange", updateFullscreenUi);
 
     video.addEventListener("ended", () => {
-      setPlayingUi(false);
-      playOverlay.hidden = false;
-      resetSeekState();
+      userWantsPlay = false;
+      setBuffering(false);
+      finishSeek();
+      syncChrome();
     });
 
     shell.addEventListener("contextmenu", blockSave);
@@ -388,8 +495,8 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       }
       if (key === " " || key === "enter") {
         event.preventDefault();
-        if (video.paused) void playVideo();
-        else video.pause();
+        if (video.paused || video.ended) void playVideo();
+        else pauseVideo();
       }
       if (key === "f") {
         event.preventDefault();
@@ -459,9 +566,57 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     cursor: default;
   }
 
+  .protected-video-loading {
+    position: absolute;
+    inset: 0;
+    bottom: 3.25rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    background: rgba(26, 16, 40, 0.55);
+    color: white;
+    pointer-events: none;
+  }
+
+  .protected-video-loading[hidden] {
+    display: none;
+  }
+
+  .protected-video-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: protected-video-spin 0.75s linear infinite;
+  }
+
+  .protected-video-loading-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  @keyframes protected-video-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .protected-video-spinner {
+      animation: none;
+      border-top-color: rgba(255, 255, 255, 0.65);
+    }
+  }
+
   .protected-video-play {
     position: absolute;
     inset: 0;
+    bottom: 3.25rem;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -500,6 +655,7 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 4;
     display: flex;
     align-items: center;
     gap: 0.5rem;
