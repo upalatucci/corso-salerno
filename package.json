@@ -10,6 +10,7 @@
     "build": "astro build",
     "og:images": "node scripts/generate-og-images.mjs",
     "gallery:build": "node scripts/build-gallery.mjs",
+    "gallery:append": "GALLERY_APPEND=1 node scripts/build-gallery.mjs",
     "gallery:optimize": "node scripts/optimize-gallery.mjs",
     "preview": "astro preview",
     "astro": "astro"

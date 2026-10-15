@@ -1,4 +1,9 @@
 ---
+import ProtectedVideo from "./ProtectedVideo.astro";
+import { course2026 } from "../data/course2026";
+
+const privacyEmail = course2026.contacts.committee.email;
+
 export interface GalleryItem {
   src: string;
   thumb: string;
@@ -22,9 +27,32 @@ const { items } = Astro.props;
   <div class="gallery-header">
     <h2 class="section-title" id="gallery-title">Galleria fotografica</h2>
     <p class="section-lead gallery-lead">
-      {items.length} scatti dal corso a Marina di Camerota — clicca su una foto
-      per ingrandirla.
+      {items.length} scatti dal corso a Marina di Camerota — clicca su una foto per
+      ingrandirla.
     </p>
+  </div>
+
+  <aside
+    class="gallery-privacy"
+    aria-label="Informativa sulla privacy delle immagini"
+  >
+    <p class="gallery-privacy-text">
+      Se compare la tua immagine e non desideri essere presente in questa
+      galleria, contattaci e provvederemo a rimuoverla.
+    </p>
+    <a class="gallery-privacy-email" href={`mailto:${privacyEmail}`}>
+      {privacyEmail}
+    </a>
+  </aside>
+
+  <div class="gallery-featured gallery-protected">
+    <ProtectedVideo
+      src="/video/gallery-highlight.mp4"
+      poster="/video/gallery-highlight-thumb.jpg"
+      width={1280}
+      height={720}
+      label="Video dal corso"
+    />
   </div>
 
   <ul class="gallery-grid" role="list">
@@ -42,10 +70,7 @@ const { items } = Astro.props;
               data-index={index}
               aria-label={`Apri foto ${index + 1} di ${items.length}`}
             >
-              <span
-                class="gallery-thumb"
-                style={`aspect-ratio: ${w} / ${h}`}
-              >
+              <span class="gallery-thumb" style={`aspect-ratio: ${w} / ${h}`}>
                 <img
                   src={item.thumb}
                   alt=""
@@ -70,7 +95,12 @@ const { items } = Astro.props;
   id="gallery-lightbox"
   aria-label="Anteprima foto"
 >
-  <button type="button" class="lightbox-close" data-gallery-close aria-label="Chiudi">
+  <button
+    type="button"
+    class="lightbox-close"
+    data-gallery-close
+    aria-label="Chiudi"
+  >
     ×
   </button>
   <button
@@ -83,7 +113,13 @@ const { items } = Astro.props;
   </button>
   <div class="lightbox-stage">
     <figure class="lightbox-figure">
-      <img class="lightbox-img" src="" alt="" decoding="async" draggable="false" />
+      <img
+        class="lightbox-img"
+        src=""
+        alt=""
+        decoding="async"
+        draggable="false"
+      />
       <figcaption class="lightbox-caption"></figcaption>
     </figure>
   </div>
@@ -161,14 +197,12 @@ const { items } = Astro.props;
     event.preventDefault();
   };
 
-  document
-    .querySelectorAll(".gallery-protected")
-    .forEach((root) => {
-      root.addEventListener("contextmenu", blockImageSave);
-      root.querySelectorAll("img").forEach((image) => {
-        image.addEventListener("dragstart", blockImageSave);
-      });
+  document.querySelectorAll(".gallery-protected").forEach((root) => {
+    root.addEventListener("contextmenu", blockImageSave);
+    root.querySelectorAll("img, video").forEach((media) => {
+      media.addEventListener("dragstart", blockImageSave);
     });
+  });
 
   document.querySelectorAll("[data-gallery-open]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -177,17 +211,23 @@ const { items } = Astro.props;
     });
   });
 
-  dialog?.querySelector("[data-gallery-close]")?.addEventListener("click", () => {
-    dialog.close();
-  });
+  dialog
+    ?.querySelector("[data-gallery-close]")
+    ?.addEventListener("click", () => {
+      dialog.close();
+    });
 
-  dialog?.querySelector("[data-gallery-prev]")?.addEventListener("click", () => {
-    void show(current - 1);
-  });
+  dialog
+    ?.querySelector("[data-gallery-prev]")
+    ?.addEventListener("click", () => {
+      void show(current - 1);
+    });
 
-  dialog?.querySelector("[data-gallery-next]")?.addEventListener("click", () => {
-    void show(current + 1);
-  });
+  dialog
+    ?.querySelector("[data-gallery-next]")
+    ?.addEventListener("click", () => {
+      void show(current + 1);
+    });
 
   dialog?.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
@@ -224,6 +264,60 @@ const { items } = Astro.props;
 
   .gallery-lead {
     margin-bottom: 0.5rem;
+  }
+
+  .gallery-privacy {
+    max-width: 36rem;
+    margin: 0 auto 1.5rem;
+    padding: 1rem 1.15rem;
+    text-align: center;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(123, 79, 150, 0.22);
+    background: linear-gradient(
+      135deg,
+      rgba(216, 201, 240, 0.45) 0%,
+      rgba(249, 200, 220, 0.28) 100%
+    );
+    box-shadow: var(--shadow-sm);
+  }
+
+  .gallery-privacy-text {
+    margin: 0 0 0.65rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--testo);
+  }
+
+  .gallery-privacy-email {
+    display: inline-block;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--viola);
+    text-decoration: none;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(123, 79, 150, 0.2);
+    transition:
+      background 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .gallery-privacy-email:hover {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-sm);
+    text-decoration: underline;
+  }
+
+  .gallery-privacy-email:focus-visible {
+    outline: 2px solid var(--viola);
+    outline-offset: 2px;
+  }
+
+  .gallery-featured {
+    max-width: min(96vw, 720px);
+    margin: 0 auto 1.75rem;
+    padding-inline: 0.25rem;
   }
 
   .gallery-grid {
@@ -280,7 +374,9 @@ const { items } = Astro.props;
 
   @media (hover: hover) and (pointer: fine) {
     .gallery-cell {
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
     }
 
     .gallery-cell:hover {
@@ -318,6 +414,10 @@ const { items } = Astro.props;
     user-select: none;
     -webkit-touch-callout: none;
     pointer-events: none;
+  }
+
+  .gallery-protected .protected-video {
+    pointer-events: auto;
   }
 
   .gallery-lightbox {

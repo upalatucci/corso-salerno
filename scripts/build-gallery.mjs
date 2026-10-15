@@ -1,4 +1,4 @@
-import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -12,6 +12,8 @@ const SOURCE_DIR =
   );
 const OUT_DIR = join(root, "public/gallery");
 const MANIFEST_PATH = join(root, "src/data/gallery.json");
+const APPEND =
+  process.env.GALLERY_APPEND === "1" || process.env.GALLERY_APPEND === "true";
 
 const MAX_EDGE = 1920;
 const WEBP_QUALITY = 82;
@@ -84,6 +86,16 @@ async function processOne(sourcePath, outPath, thumbPath) {
   return { skipped: false };
 }
 
+async function loadExistingManifest() {
+  try {
+    const raw = await readFile(MANIFEST_PATH, "utf8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 async function main() {
   await mkdir(OUT_DIR, { recursive: true });
   await mkdir(dirname(MANIFEST_PATH), { recursive: true });
@@ -94,35 +106,59 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Processing ${sources.length} photos → ${OUT_DIR}`);
+  const existingManifest = APPEND ? await loadExistingManifest() : [];
+  const knownSrc = new Set(existingManifest.map((entry) => entry.src));
 
-  const manifest = [];
-  let done = 0;
+  console.log(
+    `${APPEND ? "Appending" : "Processing"} ${sources.length} photos → ${OUT_DIR}`,
+  );
+  if (APPEND && existingManifest.length > 0) {
+    console.log(`  Keeping ${existingManifest.length} existing manifest entries`);
+  }
+
+  const manifest = [...existingManifest];
+  let processed = 0;
+  let added = 0;
+  let skipped = 0;
 
   for (const sourcePath of sources) {
+    processed += 1;
     const name = outputName(sourcePath);
     const thumbName = name.replace(/\.webp$/, "-thumb.webp");
+    const src = `/gallery/${name}`;
+    const thumb = `/gallery/${thumbName}`;
+
+    if (knownSrc.has(src)) {
+      skipped += 1;
+      continue;
+    }
+
     const outPath = join(OUT_DIR, name);
     const thumbPath = join(OUT_DIR, thumbName);
 
     await processOne(sourcePath, outPath, thumbPath);
     const thumbMeta = await sharp(thumbPath).metadata();
+    const id = name.replace(/\.webp$/i, "");
     manifest.push({
-      src: `/gallery/${name}`,
-      thumb: `/gallery/${thumbName}`,
+      id,
+      src,
+      thumb,
       alt: "Corso Salerno 2026 — Marina di Camerota",
       width: thumbMeta.width ?? 480,
       height: thumbMeta.height ?? 360,
     });
+    knownSrc.add(src);
+    added += 1;
 
-    done += 1;
-    if (done % 25 === 0 || done === sources.length) {
-      console.log(`  ${done}/${sources.length}`);
+    if (processed % 25 === 0 || processed === sources.length) {
+      console.log(`  ${processed}/${sources.length}`);
     }
   }
 
   await writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n");
-  console.log(`Wrote manifest (${manifest.length} items)`);
+  console.log(
+    `Wrote manifest (${manifest.length} items, +${added} new, ${skipped} skipped)`,
+  );
 }
 
 main().catch((err) => {

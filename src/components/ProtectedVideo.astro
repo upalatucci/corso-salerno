@@ -1,0 +1,564 @@
+---
+interface Props {
+  src: string;
+  poster?: string;
+  width?: number;
+  height?: number;
+  label?: string;
+}
+
+const { src, poster, width = 1280, height = 720, label } = Astro.props;
+---
+
+<figure class="protected-video-wrap">
+  {
+    label && (
+      <figcaption class="protected-video-label">{label}</figcaption>
+    )
+  }
+  <div class="protected-video-shell" data-protected-video>
+    <video
+      class="protected-video"
+      playsinline
+      preload="none"
+      poster={poster}
+      width={width}
+      height={height}
+      disablepictureinpicture
+      disableremoteplayback
+      tabindex="0"
+      data-video-src={src}
+    ></video>
+    <button
+      type="button"
+      class="protected-video-play"
+      data-video-play
+      aria-label="Riproduci il video"
+    >
+      <span class="protected-video-play-icon" aria-hidden="true">▶</span>
+    </button>
+    <div class="protected-video-bar" data-video-bar hidden>
+      <button
+        type="button"
+        class="protected-video-btn"
+        data-video-toggle
+        aria-label="Pausa"
+      >
+        ⏸
+      </button>
+      <div class="protected-video-progress">
+        <input
+          type="range"
+          class="protected-video-seek"
+          data-video-seek
+          min="0"
+          max="100"
+          step="0.1"
+          value="0"
+          aria-label="Avanzamento video"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={0}
+        />
+        <span class="protected-video-time" data-video-time>0:00 / 0:00</span>
+      </div>
+      <button
+        type="button"
+        class="protected-video-btn"
+        data-video-mute
+        aria-label="Disattiva audio"
+      >
+        🔊
+      </button>
+      <button
+        type="button"
+        class="protected-video-btn"
+        data-video-fullscreen
+        aria-label="Schermo intero"
+        title="Schermo intero"
+      >
+        ⛶
+      </button>
+    </div>
+  </div>
+</figure>
+
+<script>
+  const blockSave = (event: Event) => {
+    event.preventDefault();
+  };
+
+  document.querySelectorAll("[data-protected-video]").forEach((shell) => {
+    const video = shell.querySelector<HTMLVideoElement>(".protected-video");
+    const playOverlay = shell.querySelector<HTMLButtonElement>("[data-video-play]");
+    const bar = shell.querySelector<HTMLElement>("[data-video-bar]");
+    const toggleBtn = shell.querySelector<HTMLButtonElement>("[data-video-toggle]");
+    const muteBtn = shell.querySelector<HTMLButtonElement>("[data-video-mute]");
+    const seekInput = shell.querySelector<HTMLInputElement>("[data-video-seek]");
+    const timeEl = shell.querySelector<HTMLElement>("[data-video-time]");
+    const fullscreenBtn = shell.querySelector<HTMLButtonElement>(
+      "[data-video-fullscreen]",
+    );
+    if (
+      !video ||
+      !playOverlay ||
+      !bar ||
+      !toggleBtn ||
+      !muteBtn ||
+      !seekInput ||
+      !timeEl ||
+      !fullscreenBtn
+    ) {
+      return;
+    }
+
+    const shellEl = shell as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void>;
+    };
+
+    const isFullscreen = () =>
+      document.fullscreenElement === shell ||
+      (document as Document & { webkitFullscreenElement?: Element })
+        .webkitFullscreenElement === shell;
+
+    const updateFullscreenUi = () => {
+      const active = isFullscreen();
+      fullscreenBtn.textContent = active ? "⤡" : "⛶";
+      fullscreenBtn.setAttribute(
+        "aria-label",
+        active ? "Esci da schermo intero" : "Schermo intero",
+      );
+      fullscreenBtn.setAttribute(
+        "title",
+        active ? "Esci da schermo intero" : "Schermo intero",
+      );
+    };
+
+    const enterFullscreen = async () => {
+      if (shellEl.requestFullscreen) {
+        await shellEl.requestFullscreen();
+        return;
+      }
+      await shellEl.webkitRequestFullscreen?.();
+    };
+
+    const exitFullscreen = async () => {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+        return;
+      }
+      await (
+        document as Document & { webkitExitFullscreen?: () => Promise<void> }
+      ).webkitExitFullscreen?.();
+    };
+
+    let scrubbing = false;
+    let seekDragging = false;
+    let seekFallbackTimer = 0;
+
+    const formatTime = (seconds: number) => {
+      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+      const total = Math.floor(seconds);
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      return `${m}:${s.toString().padStart(2, "0")}`;
+    };
+
+    const getDuration = () => {
+      const duration = video.duration;
+      return Number.isFinite(duration) && duration > 0 ? duration : 0;
+    };
+
+    const showControls = () => {
+      bar.hidden = false;
+    };
+
+    const resetSeekState = () => {
+      scrubbing = false;
+      seekDragging = false;
+      window.clearTimeout(seekFallbackTimer);
+      seekFallbackTimer = 0;
+      updateProgressUi();
+    };
+
+    const updateProgressUi = () => {
+      if (scrubbing) return;
+
+      const duration = getDuration();
+      if (!duration) {
+        timeEl.textContent = `${formatTime(video.currentTime)} / 0:00`;
+        return;
+      }
+
+      const ratio = (video.currentTime / duration) * 100;
+      seekInput.value = String(ratio);
+      seekInput.setAttribute("aria-valuenow", String(Math.round(ratio)));
+      timeEl.textContent = `${formatTime(video.currentTime)} / ${formatTime(duration)}`;
+    };
+
+    const previewScrub = () => {
+      const duration = getDuration();
+      if (!duration) return;
+      const nextTime = (parseFloat(seekInput.value) / 100) * duration;
+      timeEl.textContent = `${formatTime(nextTime)} / ${formatTime(duration)}`;
+      seekInput.setAttribute(
+        "aria-valuenow",
+        String(Math.round(parseFloat(seekInput.value))),
+      );
+    };
+
+    const targetFromSeekInput = () => {
+      const duration = getDuration();
+      if (!duration) return 0;
+      return Math.min(
+        Math.max(0, (parseFloat(seekInput.value) / 100) * duration),
+        duration,
+      );
+    };
+
+    const commitSeek = () => {
+      const duration = getDuration();
+      if (!duration) {
+        resetSeekState();
+        return;
+      }
+
+      const target = targetFromSeekInput();
+      scrubbing = true;
+
+      const onSeekComplete = () => {
+        window.clearTimeout(seekFallbackTimer);
+        resetSeekState();
+      };
+
+      video.addEventListener("seeked", onSeekComplete, { once: true });
+      seekFallbackTimer = window.setTimeout(onSeekComplete, 800);
+
+      video.currentTime = target;
+    };
+
+    const src = video.dataset.videoSrc;
+    if (!src) return;
+
+    const attachSource = () => {
+      if (video.dataset.loaded === "1") return;
+      video.dataset.loaded = "1";
+      const source = document.createElement("source");
+      source.src = src;
+      source.type = "video/mp4";
+      video.appendChild(source);
+      video.load();
+      showControls();
+    };
+
+    const waitForPlaybackReady = () =>
+      new Promise<void>((resolve) => {
+        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+          resolve();
+          return;
+        }
+        video.addEventListener("loadeddata", () => resolve(), { once: true });
+      });
+
+    const setPlayingUi = (playing: boolean) => {
+      playOverlay.hidden = playing;
+      if (video.dataset.loaded === "1") {
+        showControls();
+      }
+      toggleBtn.textContent = playing ? "⏸" : "▶";
+      toggleBtn.setAttribute(
+        "aria-label",
+        playing ? "Pausa" : "Riproduci",
+      );
+    };
+
+    const playVideo = async () => {
+      attachSource();
+      await waitForPlaybackReady();
+      try {
+        await video.play();
+        setPlayingUi(true);
+      } catch {
+        /* autoplay policy or user gesture */
+      }
+    };
+
+    playOverlay.addEventListener("click", () => {
+      void playVideo();
+    });
+
+    bar.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    video.addEventListener("timeupdate", updateProgressUi);
+    video.addEventListener("loadedmetadata", () => {
+      showControls();
+      updateProgressUi();
+    });
+    video.addEventListener("durationchange", updateProgressUi);
+    video.addEventListener("error", resetSeekState);
+    video.addEventListener("playing", () => setPlayingUi(true));
+    video.addEventListener("pause", () => {
+      if (!video.ended && !scrubbing) setPlayingUi(false);
+    });
+
+    const onSeekPointerDown = (event: PointerEvent) => {
+      event.stopPropagation();
+      attachSource();
+      seekDragging = true;
+      scrubbing = true;
+      seekInput.setPointerCapture(event.pointerId);
+    };
+
+    const onSeekPointerUp = (event: PointerEvent) => {
+      event.stopPropagation();
+      if (seekInput.hasPointerCapture(event.pointerId)) {
+        seekInput.releasePointerCapture(event.pointerId);
+      }
+      if (!seekDragging) return;
+      seekDragging = false;
+      commitSeek();
+    };
+
+    seekInput.addEventListener("pointerdown", onSeekPointerDown);
+    seekInput.addEventListener("pointerup", onSeekPointerUp);
+    seekInput.addEventListener("pointercancel", onSeekPointerUp);
+
+    seekInput.addEventListener("input", () => {
+      scrubbing = true;
+      previewScrub();
+    });
+
+    seekInput.addEventListener("change", () => {
+      if (seekDragging) return;
+      commitSeek();
+    });
+
+    seekInput.addEventListener("keydown", (event) => {
+      event.stopPropagation();
+      if (event.key === "Enter") {
+        scrubbing = true;
+        previewScrub();
+        commitSeek();
+      }
+    });
+
+    toggleBtn.addEventListener("click", () => {
+      attachSource();
+      if (video.paused) {
+        void playVideo();
+      } else {
+        video.pause();
+        setPlayingUi(false);
+        playOverlay.hidden = false;
+      }
+    });
+
+    muteBtn.addEventListener("click", () => {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? "🔇" : "🔊";
+      muteBtn.setAttribute(
+        "aria-label",
+        video.muted ? "Attiva audio" : "Disattiva audio",
+      );
+    });
+
+    fullscreenBtn.addEventListener("click", () => {
+      void (isFullscreen() ? exitFullscreen() : enterFullscreen());
+    });
+
+    document.addEventListener("fullscreenchange", updateFullscreenUi);
+    document.addEventListener("webkitfullscreenchange", updateFullscreenUi);
+
+    video.addEventListener("ended", () => {
+      setPlayingUi(false);
+      playOverlay.hidden = false;
+      resetSeekState();
+    });
+
+    shell.addEventListener("contextmenu", blockSave);
+    video.addEventListener("contextmenu", blockSave);
+    video.addEventListener("dragstart", blockSave);
+
+    video.addEventListener("keydown", (event) => {
+      const key = event.key.toLowerCase();
+      if ((event.ctrlKey || event.metaKey) && (key === "s" || key === "p")) {
+        event.preventDefault();
+      }
+      if (key === " " || key === "enter") {
+        event.preventDefault();
+        if (video.paused) void playVideo();
+        else video.pause();
+      }
+      if (key === "f") {
+        event.preventDefault();
+        void (isFullscreen() ? exitFullscreen() : enterFullscreen());
+      }
+    });
+  });
+</script>
+
+<style>
+  .protected-video-wrap {
+    margin: 0;
+  }
+
+  .protected-video-label {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--testo-light);
+    margin-bottom: 0.65rem;
+  }
+
+  .protected-video-shell {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: #1a1028;
+  }
+
+  .protected-video-shell:fullscreen,
+  .protected-video-shell:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #000;
+  }
+
+  .protected-video-shell:fullscreen .protected-video,
+  .protected-video-shell:-webkit-full-screen .protected-video {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: contain;
+  }
+
+  .protected-video-shell:fullscreen .protected-video-bar,
+  .protected-video-shell:-webkit-full-screen .protected-video-bar {
+    position: absolute;
+    flex-shrink: 0;
+  }
+
+  .protected-video {
+    display: block;
+    width: 100%;
+    height: auto;
+    vertical-align: top;
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    cursor: default;
+  }
+
+  .protected-video-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: rgba(26, 16, 40, 0.35);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .protected-video-play:hover {
+    background: rgba(26, 16, 40, 0.45);
+  }
+
+  .protected-video-play[hidden] {
+    display: none;
+  }
+
+  .protected-video-play-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--viola-dark);
+    font-size: 1.35rem;
+    padding-left: 0.2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .protected-video-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.5rem 0.65rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+  }
+
+  .protected-video-progress {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .protected-video-seek {
+    width: 100%;
+    height: 0.35rem;
+    margin: 0;
+    accent-color: var(--viola);
+    cursor: pointer;
+  }
+
+  .protected-video-seek:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  .protected-video-time {
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+  }
+
+  .protected-video-bar[hidden] {
+    display: none;
+  }
+
+  .protected-video-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .protected-video-btn:hover {
+    background: rgba(255, 255, 255, 0.32);
+  }
+
+  .protected-video-btn:focus-visible,
+  .protected-video-play:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+</style>
