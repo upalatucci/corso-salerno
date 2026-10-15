@@ -127,11 +127,25 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     const shellEl = shell as HTMLElement & {
       webkitRequestFullscreen?: () => Promise<void>;
     };
+    const videoFs = video as HTMLVideoElement & {
+      webkitEnterFullscreen?: () => void;
+      webkitExitFullscreen?: () => void;
+      webkitDisplayingFullscreen?: boolean;
+    };
 
-    const isFullscreen = () =>
+    const isIphone =
+      typeof navigator !== "undefined" &&
+      /iPhone|iPod/.test(navigator.userAgent);
+
+    const isShellFullscreen = () =>
       document.fullscreenElement === shell ||
       (document as Document & { webkitFullscreenElement?: Element })
         .webkitFullscreenElement === shell;
+
+    const isNativeVideoFullscreen = () =>
+      Boolean(videoFs.webkitDisplayingFullscreen);
+
+    const isFullscreen = () => isShellFullscreen() || isNativeVideoFullscreen();
 
     const updateFullscreenUi = () => {
       const active = isFullscreen();
@@ -146,15 +160,53 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
       );
     };
 
-    const enterFullscreen = async () => {
-      if (shellEl.requestFullscreen) {
-        await shellEl.requestFullscreen();
-        return;
+    const enterNativeVideoFullscreen = () => {
+      if (!videoFs.webkitEnterFullscreen) return false;
+      attachSource();
+      try {
+        videoFs.webkitEnterFullscreen();
+        return true;
+      } catch {
+        return false;
       }
-      await shellEl.webkitRequestFullscreen?.();
+    };
+
+    const enterFullscreen = async () => {
+      if (isIphone && enterNativeVideoFullscreen()) return;
+
+      try {
+        if (shellEl.requestFullscreen) {
+          await shellEl.requestFullscreen();
+          return;
+        }
+        if (shellEl.webkitRequestFullscreen) {
+          await shellEl.webkitRequestFullscreen();
+          return;
+        }
+      } catch {
+        /* Element fullscreen blocked or unsupported (common on iOS). */
+      }
+
+      if (enterNativeVideoFullscreen()) return;
+
+      if (video.requestFullscreen) {
+        try {
+          await video.requestFullscreen();
+        } catch {
+          /* ignore */
+        }
+      }
     };
 
     const exitFullscreen = async () => {
+      if (isNativeVideoFullscreen()) {
+        try {
+          videoFs.webkitExitFullscreen?.();
+        } catch {
+          /* User usually exits with the system “Done” control. */
+        }
+        return;
+      }
       if (document.exitFullscreen) {
         await document.exitFullscreen();
         return;
@@ -476,6 +528,8 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
 
     document.addEventListener("fullscreenchange", updateFullscreenUi);
     document.addEventListener("webkitfullscreenchange", updateFullscreenUi);
+    video.addEventListener("webkitbeginfullscreen", updateFullscreenUi);
+    video.addEventListener("webkitendfullscreen", updateFullscreenUi);
 
     video.addEventListener("ended", () => {
       userWantsPlay = false;
