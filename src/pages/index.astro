@@ -18,7 +18,7 @@ if (existsSync(manifestPath)) {
   activeNav="/"
   description="Galleria fotografica e ricordi del Corso Autunnale del Territorio Salerno, 9–11 ottobre 2026 a Marina di Camerota."
 >
-  <main>
+  <main class="home-main">
     <section class="hero page-wide">
       <div class="hero-content">
         <div class="hero-logo-wrap">
@@ -61,9 +61,7 @@ if (existsSync(manifestPath)) {
 
     {
       galleryItems.length > 0 ? (
-        <div class="page-wide">
-          <PhotoGallery items={galleryItems} />
-        </div>
+        <PhotoGallery items={galleryItems} />
       ) : (
         <section class="page-wide home-section">
           <p class="section-lead gallery-missing">
@@ -100,6 +98,10 @@ if (existsSync(manifestPath)) {
 </Layout>
 
 <style>
+  .home-main {
+    width: 100%;
+  }
+
   .hero {
     text-align: center;
     padding-top: clamp(1.5rem, 4vw, 3rem);

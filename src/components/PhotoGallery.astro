@@ -21,7 +21,6 @@ const { items } = Astro.props;
       {items.length} scatti dal corso a Marina di Camerota — clicca su una foto
       per ingrandirla.
     </p>
-    <p class="gallery-credit">Foto di Aldo e Ludovica</p>
   </div>
 
   <ul class="gallery-grid" role="list">
@@ -185,50 +184,51 @@ const { items } = Astro.props;
 
 <style>
   .gallery-section {
-    padding-top: 0;
-    padding-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1960px;
+    margin-inline: auto;
+    padding: 0 clamp(0.75rem, 2vw, 1rem) 3rem;
+    box-sizing: border-box;
   }
 
   .gallery-header {
     text-align: center;
     max-width: 36rem;
-    margin: 0 auto 2rem;
+    margin: 0 auto 1.5rem;
+    padding-inline: 0.5rem;
   }
 
   .gallery-lead {
     margin-bottom: 0.5rem;
   }
 
-  .gallery-credit {
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--viola);
-  }
-
-  /* Pinterest-style packed columns (not row-aligned grid) */
   .gallery-grid {
     list-style: none;
-    columns: 2;
-    column-gap: 0.5rem;
+    columns: 1;
+    column-gap: 0.75rem;
   }
 
   @media (min-width: 640px) {
     .gallery-grid {
-      columns: 3;
-      column-gap: 0.6rem;
+      columns: 2;
     }
   }
 
-  @media (min-width: 960px) {
+  @media (min-width: 1024px) {
+    .gallery-grid {
+      columns: 3;
+    }
+  }
+
+  @media (min-width: 1280px) {
     .gallery-grid {
       columns: 4;
-      column-gap: 0.65rem;
     }
   }
 
-  @media (min-width: 1200px) {
+  @media (min-width: 1536px) {
     .gallery-grid {
       columns: 5;
     }
@@ -238,7 +238,7 @@ const { items } = Astro.props;
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     width: 100%;
     display: inline-block;
     vertical-align: top;
