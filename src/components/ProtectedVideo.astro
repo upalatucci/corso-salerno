@@ -47,7 +47,7 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     >
       <span class="protected-video-play-icon" aria-hidden="true">▶</span>
     </button>
-    <div class="protected-video-bar" data-video-bar hidden>
+    <div class="protected-video-bar" data-video-bar>
       <button
         type="button"
         class="protected-video-btn"
@@ -188,7 +188,7 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     };
 
     const showControls = () => {
-      bar.hidden = false;
+      /* Bar is always visible in the layout. */
     };
 
     const setBuffering = (active: boolean) => {
@@ -503,6 +503,9 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
         void (isFullscreen() ? exitFullscreen() : enterFullscreen());
       }
     });
+
+    syncChrome();
+    updateProgressUi();
   });
 </script>
 
@@ -569,7 +572,6 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
   .protected-video-loading {
     position: absolute;
     inset: 0;
-    bottom: 3.25rem;
     z-index: 3;
     display: flex;
     flex-direction: column;
@@ -615,21 +617,25 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
   .protected-video-play {
     position: absolute;
     inset: 0;
-    bottom: 3.25rem;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
-    padding: 0;
+    padding: 0 0 3.5rem;
     border: none;
-    background: rgba(26, 16, 40, 0.35);
+    background: rgba(26, 16, 40, 0.28);
     cursor: pointer;
     transition: background 0.2s;
+    pointer-events: none;
   }
 
   .protected-video-play:hover {
-    background: rgba(26, 16, 40, 0.45);
+    background: rgba(26, 16, 40, 0.38);
+  }
+
+  .protected-video-play:not([hidden]) {
+    pointer-events: auto;
   }
 
   .protected-video-play[hidden] {
@@ -640,14 +646,15 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 4rem;
-    height: 4rem;
+    width: 3.25rem;
+    height: 3.25rem;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--viola-dark);
-    font-size: 1.35rem;
-    padding-left: 0.2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    font-size: 1.1rem;
+    padding-left: 0.15rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
   }
 
   .protected-video-bar {
@@ -655,12 +662,18 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 4;
+    z-index: 5;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.55rem 0.5rem 0.65rem;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+    background: linear-gradient(
+      to top,
+      rgba(26, 16, 40, 0.88) 0%,
+      rgba(26, 16, 40, 0.55) 70%,
+      transparent 100%
+    );
+    pointer-events: auto;
   }
 
   .protected-video-progress {
@@ -690,10 +703,6 @@ const { src, poster, width = 1280, height = 720, label } = Astro.props;
     font-variant-numeric: tabular-nums;
     color: rgba(255, 255, 255, 0.9);
     text-align: center;
-  }
-
-  .protected-video-bar[hidden] {
-    display: none;
   }
 
   .protected-video-btn {
