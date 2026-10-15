@@ -1,5 +1,5 @@
 import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
-import { basename, dirname, join, relative } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
@@ -43,12 +43,8 @@ function slugifySegment(segment) {
 }
 
 function outputName(sourcePath) {
-  const rel = relative(SOURCE_DIR, sourcePath);
-  const parts = rel.split(/[/\\]/).filter(Boolean);
   const fileBase = slugifySegment(basename(sourcePath));
-  const prefix =
-    parts.length > 1 ? slugifySegment(parts[0]) : "photo";
-  return `${prefix}-${fileBase}.webp`;
+  return `${fileBase}.webp`;
 }
 
 async function processOne(sourcePath, outPath, thumbPath) {

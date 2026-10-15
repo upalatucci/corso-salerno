@@ -7,7 +7,13 @@ import { manifest } from "./src/manifest";
 // https://astro.build/config
 export default defineConfig({
   site: "https://corso-salerno.vercel.app",
-  integrations: [sitemap(), compress()],
+  integrations: [
+    sitemap(),
+    compress({
+      Image: false,
+      Exclude: [/\.mp4$/i, /\.pdf$/i],
+    }),
+  ],
   vite: {
     plugins: [
       VitePWA({
