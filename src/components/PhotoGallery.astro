@@ -14,7 +14,11 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<section class="gallery-section" id="galleria" aria-labelledby="gallery-title">
+<section
+  class="gallery-section gallery-protected"
+  id="galleria"
+  aria-labelledby="gallery-title"
+>
   <div class="gallery-header">
     <h2 class="section-title" id="gallery-title">Galleria fotografica</h2>
     <p class="section-lead gallery-lead">
@@ -47,6 +51,7 @@ const { items } = Astro.props;
                   alt=""
                   width={w}
                   height={h}
+                  draggable="false"
                   loading={eager ? "eager" : "lazy"}
                   decoding={eager ? "sync" : "async"}
                   fetchpriority={eager ? "high" : "low"}
@@ -60,7 +65,11 @@ const { items } = Astro.props;
   </ul>
 </section>
 
-<dialog class="gallery-lightbox" id="gallery-lightbox" aria-label="Anteprima foto">
+<dialog
+  class="gallery-lightbox gallery-protected"
+  id="gallery-lightbox"
+  aria-label="Anteprima foto"
+>
   <button type="button" class="lightbox-close" data-gallery-close aria-label="Chiudi">
     ×
   </button>
@@ -74,7 +83,7 @@ const { items } = Astro.props;
   </button>
   <div class="lightbox-stage">
     <figure class="lightbox-figure">
-      <img class="lightbox-img" src="" alt="" decoding="async" />
+      <img class="lightbox-img" src="" alt="" decoding="async" draggable="false" />
       <figcaption class="lightbox-caption"></figcaption>
     </figure>
   </div>
@@ -147,6 +156,19 @@ const { items } = Astro.props;
     void show(index);
     dialog.showModal();
   }
+
+  const blockImageSave = (event) => {
+    event.preventDefault();
+  };
+
+  document
+    .querySelectorAll(".gallery-protected")
+    .forEach((root) => {
+      root.addEventListener("contextmenu", blockImageSave);
+      root.querySelectorAll("img").forEach((image) => {
+        image.addEventListener("dragstart", blockImageSave);
+      });
+    });
 
   document.querySelectorAll("[data-gallery-open]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -274,16 +296,28 @@ const { items } = Astro.props;
 
   .gallery-thumb {
     display: block;
+    position: relative;
     width: 100%;
     overflow: hidden;
     line-height: 0;
   }
 
-  .gallery-thumb img {
+  .gallery-thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .gallery-protected img {
     display: block;
     width: 100%;
     height: auto;
     vertical-align: top;
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    pointer-events: none;
   }
 
   .gallery-lightbox {
@@ -315,6 +349,7 @@ const { items } = Astro.props;
   }
 
   .lightbox-figure {
+    position: relative;
     margin: 0;
     width: 100%;
     max-height: min(82vh, 900px);
@@ -324,11 +359,15 @@ const { items } = Astro.props;
     background: #1a1028;
   }
 
+  .lightbox-figure::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
   .lightbox-img {
-    display: block;
-    width: 100%;
     max-height: min(82vh, 900px);
-    height: auto;
     object-fit: contain;
     background: #1a1028;
   }
