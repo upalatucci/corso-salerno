@@ -9,6 +9,7 @@
     "start": "astro dev",
     "build": "astro build",
     "og:images": "node scripts/generate-og-images.mjs",
+    "gallery:build": "node scripts/build-gallery.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

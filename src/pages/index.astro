@@ -1,18 +1,22 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Countdown2026 from "../components/Countdown2026.astro";
 import SiteIcon from "../components/SiteIcon.astro";
-import { course2026 } from "../data/course2026";
-import { articles } from "../data/articles";
+import PhotoGallery from "../components/PhotoGallery.astro";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
-const latestArticle = articles[0];
-const { program } = course2026;
+const manifestPath = join(process.cwd(), "src/data/gallery.json");
+let galleryItems: { src: string; thumb: string; alt: string }[] = [];
+
+if (existsSync(manifestPath)) {
+  galleryItems = JSON.parse(readFileSync(manifestPath, "utf8"));
+}
 ---
 
 <Layout
-  title="Corso Salerno 2026"
+  title="Corso Salerno 2026 — Ricordi"
   activeNav="/"
-  description="Materiali, scaletta e strumenti per i partecipanti al Corso Autunnale del Territorio Salerno, 9–11 ottobre 2026 a Marina di Camerota."
+  description="Galleria fotografica e ricordi del Corso Autunnale del Territorio Salerno, 9–11 ottobre 2026 a Marina di Camerota."
 >
   <main>
     <section class="hero page-wide">
@@ -20,246 +24,76 @@ const { program } = course2026;
         <div class="hero-logo-wrap">
           <SiteIcon width={200} height={200} class="hero-logo" />
         </div>
-        <p class="hero-eyebrow">Ci vediamo a Camerota</p>
+        <p class="hero-eyebrow">Grazie a tutti</p>
         <h1 class="hero-title">
-          Salerno <span class="hero-year">2026</span>
+          Un corso da <span class="hero-accent">ricordare</span>
         </h1>
-        <p class="hero-dates">{course2026.dates}</p>
-        <p class="hero-location">{course2026.location}</p>
-        <p class="hero-lead">{course2026.startNote}</p>
+        <p class="hero-dates">9, 10 e 11 ottobre 2026</p>
+        <p class="hero-location">Happy Village · Marina di Camerota</p>
+        <p class="hero-lead">
+          Tre giorni di studio, amicizia e sole sul Cilento. Qui trovi le foto del
+          corso: rivivi i momenti più belli e condividile con chi c’era con noi.
+        </p>
 
         <div class="hero-facts">
-          <span class="fact-chip">Happy Village · Camerota</span>
-          <span class="fact-chip">Check-in dalle 13:00</span>
-        </div>
-
-        <div class="hero-countdown">
-          <Countdown2026 />
+          <span class="fact-chip">Corso concluso</span>
+          {
+            galleryItems.length > 0 && (
+              <span class="fact-chip">{galleryItems.length} foto</span>
+            )
+          }
         </div>
 
         <div class="hero-actions">
-          <a
-            href={program.href}
-            class="cta-button"
-            download={program.downloadName}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Scarica la scaletta
-          </a>
+          {
+            galleryItems.length > 0 && (
+              <a href="#galleria" class="cta-button">Vai alla galleria</a>
+            )
+          }
           <div class="hero-actions-row">
-            <a href="#scaletta" class="cta-button-secondary">Vedi il programma</a>
-            <a href="#materiali-studio" class="cta-button-secondary">Materiali di studio</a>
+            <a href="/articoli" class="cta-button-secondary">Articoli</a>
+            <a href="/daimoku" class="cta-button-secondary">Conta Daimoku</a>
             <a href="/giochi" class="cta-button-secondary">Giochi</a>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="page-wide home-section" id="scaletta">
-      <h2 class="section-title">{program.title}</h2>
-      <p class="section-lead">
-        Il programma completo del corso è disponibile per tutti i partecipanti.
-        Scaricalo e portalo con te a Camerota.
-      </p>
-
-      <div class="program-card">
-        <div class="program-card-body">
-          <span class="program-card-icon" aria-hidden="true">📋</span>
-          <div>
-            <h3 class="program-card-title">Programma del corso</h3>
-            <p class="program-card-desc">{program.description}</p>
-            <p class="program-card-dates">
-              <strong>{course2026.dates}</strong> · {course2026.location}
-            </p>
-          </div>
-        </div>
-        <div class="program-card-actions">
-          <a
-            href={program.href}
-            class="cta-button program-card-download"
-            download={program.downloadName}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Scarica PDF
-          </a>
-          <a
-            href={program.href}
-            class="program-card-view"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Apri nel browser →
-          </a>
-        </div>
-      </div>
-    </section>
-
     {
-      latestArticle && (
+      galleryItems.length > 0 ? (
+        <div class="page-wide">
+          <PhotoGallery items={galleryItems} />
+        </div>
+      ) : (
         <section class="page-wide home-section">
-          <h2 class="section-title">Ultimo articolo</h2>
-          <a href={`/articoli/${latestArticle.slug}`} class="featured-article">
-            <span class="featured-eyebrow">{latestArticle.eyebrow}</span>
-            <h3 class="featured-title">{latestArticle.title}</h3>
-            <p class="featured-excerpt">{latestArticle.excerpt}</p>
-            <span class="featured-link">Leggi l'articolo →</span>
-          </a>
+          <p class="section-lead gallery-missing">
+            La galleria non è ancora pronta. Esegui <code>npm run gallery:build</code> per
+            importare le foto.
+          </p>
         </section>
       )
     }
 
-    <section class="page-wide home-section" id="materiali-studio">
-      <h2 class="section-title">Materiali di studio</h2>
+    <section class="page-wide home-section home-links">
+      <h2 class="section-title">Resta in contatto</h2>
       <p class="section-lead">
-        Preparati al meglio: ecco i testi che approfondiremo insieme durante il
-        corso.
+        Materiali, articoli e strumenti del corso restano disponibili sul sito.
       </p>
-
-      <div class="study-cards">
-        {
-          course2026.studyMaterials.map((material) => (
-            <article class="study-card">
-              <span class="study-card-icon">
-                {material.type === "gosho" ? "📜" : "📖"}
-              </span>
-              <h3 class="study-card-title">{material.title}</h3>
-              {"chapter" in material && material.chapter && (
-                <p class="study-card-chapter">
-                  Capitolo: <em>{material.chapter}</em>
-                </p>
-              )}
-              <p class="study-card-desc">{material.description}</p>
-              <div class="study-card-links">
-                {material.links.map((link) => (
-                  <a
-                    href={link.href}
-                    target={link.href.startsWith("http") ? "_blank" : undefined}
-                    rel={
-                      link.href.startsWith("http")
-                        ? "noopener noreferrer"
-                        : undefined
-                    }
-                    class="study-card-link"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            </article>
-          ))
-        }
-      </div>
-
-      <p class="study-more">
-        <a href="/info#materiali-studio">Tutti i dettagli →</a>
-        ·
-        <a href="/giochi">Metti alla prova lo studio →</a>
-      </p>
-    </section>
-
-    <section class="page-wide home-section" id="giochi">
-      <h2 class="section-title">Giochi</h2>
-      <p class="section-lead">
-        Quiz e ruota delle esperienze per accendere la curiosità sui testi del
-        corso — e arrivare a ottobre già in accelerazione.
-      </p>
-      <div class="games-teasers">
-        <a href="/giochi/quiz" class="games-teaser">
-          <span class="games-teaser-kicker">Studio giocando</span>
-          <strong class="games-teaser-title">Quiz</strong>
-          <span class="games-teaser-desc">Gosho e capitolo Accelerazione</span>
-        </a>
-        <a href="/giochi/ruota" class="games-teaser">
-          <span class="games-teaser-kicker">Sfide verso il 9 ottobre</span>
-          <strong class="games-teaser-title">Ruota delle esperienze</strong>
-          <span class="games-teaser-desc">Pesca una sfida e arriva incoraggiato</span>
-        </a>
-      </div>
-      <p class="study-more">
-        <a href="/giochi">Vai ai giochi →</a>
-      </p>
-    </section>
-
-    <section class="page-wide home-section">
-      <h2 class="section-title">Tutto per il corso</h2>
-      <p class="section-lead">
-        Strumenti e riferimenti utili per arrivare preparati e vivere al meglio
-        i tre giorni a Camerota.
-      </p>
-
-      <div class="quick-links">
-        <a
-          href={program.href}
-          class="quick-link"
-          download={program.downloadName}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="quick-icon">📋</span>
-          <span class="quick-body">
-            <span class="quick-title">Scaletta del corso</span>
-            <span class="quick-desc">Scarica il programma in PDF</span>
+      <div class="link-cards">
+        <a href="/articoli" class="link-card">
+          <span class="link-card-icon" aria-hidden="true">📰</span>
+          <span class="link-card-body">
+            <strong>Articoli</strong>
+            <span>Notizie e video dal corso</span>
           </span>
         </a>
-        <a href="/articoli" class="quick-link">
-          <span class="quick-icon">📰</span>
-          <span class="quick-body">
-            <span class="quick-title">Articoli</span>
-            <span class="quick-desc">Notizie e aggiornamenti</span>
+        <a href="/info" class="link-card">
+          <span class="link-card-icon" aria-hidden="true">ℹ️</span>
+          <span class="link-card-body">
+            <strong>Info</strong>
+            <span>Riferimenti e contatti</span>
           </span>
         </a>
-        <a
-          href={course2026.whatsappChannelUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="quick-link"
-        >
-          <span class="quick-icon">💬</span>
-          <span class="quick-body">
-            <span class="quick-title">Canale WhatsApp</span>
-            <span class="quick-desc">Novità e aggiornamenti</span>
-          </span>
-        </a>
-        <a href="/info" class="quick-link">
-          <span class="quick-icon">ℹ️</span>
-          <span class="quick-body">
-            <span class="quick-title">Info e quote</span>
-            <span class="quick-desc">Date, costi e contatti</span>
-          </span>
-        </a>
-        <a href="#materiali-studio" class="quick-link">
-          <span class="quick-icon">📖</span>
-          <span class="quick-body">
-            <span class="quick-title">Materiali di studio</span>
-            <span class="quick-desc">Gosho e Nuova Rivoluzione Umana</span>
-          </span>
-        </a>
-        <a href="/giochi" class="quick-link">
-          <span class="quick-icon">🎯</span>
-          <span class="quick-body">
-            <span class="quick-title">Giochi</span>
-            <span class="quick-desc">Quiz e ruota delle esperienze</span>
-          </span>
-        </a>
-        <a href="/daimoku" class="quick-link">
-          <span class="quick-icon">📿</span>
-          <span class="quick-body">
-            <span class="quick-title">Conta Daimoku</span>
-            <span class="quick-desc">Contatore condiviso</span>
-          </span>
-        </a>
-      </div>
-
-      <div class="deadline-banner">
-        <div class="deadline-content">
-          <p class="deadline-label">Prima di partire</p>
-          <p class="deadline-text">
-            <strong>{course2026.startNote}</strong>
-          </p>
-        </div>
-        <a href="/info" class="deadline-link">Info utili →</a>
       </div>
     </section>
   </main>
@@ -269,7 +103,7 @@ const { program } = course2026;
   .hero {
     text-align: center;
     padding-top: clamp(1.5rem, 4vw, 3rem);
-    padding-bottom: clamp(2rem, 5vw, 3rem);
+    padding-bottom: clamp(1.5rem, 4vw, 2.5rem);
   }
 
   .hero-content {
@@ -299,19 +133,19 @@ const { program } = course2026;
 
   .hero-title {
     font-family: var(--font-serif);
-    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-size: clamp(2.2rem, 7vw, 3.5rem);
     font-weight: 700;
     color: var(--viola-dark);
-    line-height: 1.1;
+    line-height: 1.12;
     margin-bottom: 0.75rem;
   }
 
-  .hero-year {
+  .hero-accent {
     color: var(--arancio);
   }
 
   .hero-dates {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--testo);
     margin-bottom: 0.3rem;
@@ -324,8 +158,8 @@ const { program } = course2026;
   }
 
   .hero-lead {
-    font-size: 0.92rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.65;
     color: var(--testo-light);
     margin-bottom: 1.25rem;
     max-width: 36rem;
@@ -337,7 +171,7 @@ const { program } = course2026;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
   }
 
   .fact-chip {
@@ -348,10 +182,6 @@ const { program } = course2026;
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(124, 63, 168, 0.12);
     color: var(--testo-light);
-  }
-
-  .hero-countdown {
-    margin-bottom: 2rem;
   }
 
   .hero-actions {
@@ -373,71 +203,34 @@ const { program } = course2026;
     padding-bottom: 3rem;
   }
 
-  .featured-article {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border-radius: var(--radius-md);
-    padding: 1.6rem 1.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-bottom: 0.5rem;
+  .gallery-missing {
+    text-align: center;
   }
 
-  .featured-article:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+  .gallery-missing code {
+    font-size: 0.88em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 6px;
+    background: rgba(124, 63, 168, 0.08);
   }
 
-  .featured-eyebrow {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--viola);
-    margin-bottom: 0.5rem;
+  .home-links {
+    padding-top: 1rem;
   }
 
-  .featured-title {
-    font-family: var(--font-serif);
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--viola-dark);
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-  }
-
-  .featured-excerpt {
-    font-size: 0.95rem;
-    line-height: 1.65;
-    color: var(--testo-light);
-    margin-bottom: 0.75rem;
-  }
-
-  .featured-link {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--viola);
-  }
-
-  .quick-links {
+  .link-cards {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.85rem;
-    margin-bottom: 1.25rem;
   }
 
-  @media (min-width: 600px) {
-    .quick-links {
+  @media (min-width: 560px) {
+    .link-cards {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  .quick-link {
+  .link-card {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -452,310 +245,30 @@ const { program } = course2026;
     transition: transform 0.2s, box-shadow 0.2s;
   }
 
-  .quick-link:hover {
+  .link-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
 
-  .quick-icon {
-    font-size: 1.3rem;
+  .link-card-icon {
+    font-size: 1.35rem;
     flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(124, 63, 168, 0.1);
-    border-radius: 10px;
   }
 
-  .quick-body {
+  .link-card-body {
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
     text-align: left;
   }
 
-  .quick-title {
-    font-weight: 600;
+  .link-card-body strong {
     font-size: 0.97rem;
     color: var(--viola-dark);
   }
 
-  .quick-desc {
+  .link-card-body span:last-child {
     font-size: 0.82rem;
     color: var(--testo-light);
-  }
-
-  .deadline-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.1rem 1.35rem;
-    background: linear-gradient(
-      135deg,
-      rgba(216, 201, 240, 0.35) 0%,
-      rgba(249, 200, 220, 0.25) 100%
-    );
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(124, 63, 168, 0.13);
-  }
-
-  .deadline-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--viola);
-    margin-bottom: 0.2rem;
-  }
-
-  .deadline-text {
-    font-size: 0.9rem;
-    color: var(--testo);
-    line-height: 1.45;
-  }
-
-  .deadline-link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--viola);
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .deadline-link:hover {
-    text-decoration: underline;
-  }
-
-  .study-cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .study-cards {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .study-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border-radius: var(--radius-md);
-    padding: 1.4rem 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .study-card-icon {
-    display: block;
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .study-card-title {
-    font-family: var(--font-serif);
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--viola-dark);
-    line-height: 1.35;
-    margin-bottom: 0.35rem;
-  }
-
-  .study-card-chapter {
-    font-size: 0.88rem;
-    color: var(--testo-light);
-    margin-bottom: 0.5rem;
-  }
-
-  .study-card-desc {
-    font-size: 0.9rem;
-    color: var(--testo-light);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-
-  .study-card-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .study-card-link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--viola);
-    text-decoration: none;
-  }
-
-  .study-card-link:hover {
-    text-decoration: underline;
-  }
-
-  .study-more {
-    text-align: center;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-
-  .study-more a {
-    color: var(--viola);
-    text-decoration: none;
-  }
-
-  .study-more a:hover {
-    text-decoration: underline;
-  }
-
-  .games-teasers {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
-  @media (min-width: 600px) {
-    .games-teasers {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .games-teaser {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-decoration: none;
-    color: inherit;
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border-radius: var(--radius-md);
-    padding: 1.3rem 1.4rem;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .games-teaser:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .games-teaser-kicker {
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--viola);
-    margin-bottom: 0.4rem;
-  }
-
-  .games-teaser-title {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--viola-dark);
-    margin-bottom: 0.3rem;
-  }
-
-  .games-teaser-desc {
-    font-size: 0.9rem;
-    color: var(--testo-light);
-    line-height: 1.5;
-  }
-
-  .program-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.5rem 1.6rem;
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: var(--shadow-md);
-  }
-
-  @media (min-width: 700px) {
-    .program-card {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-
-  .program-card-body {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .program-card-icon {
-    font-size: 1.8rem;
-    flex-shrink: 0;
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(124, 63, 168, 0.1);
-    border-radius: 12px;
-  }
-
-  .program-card-title {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--viola-dark);
-    margin-bottom: 0.35rem;
-  }
-
-  .program-card-desc {
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: var(--testo-light);
-    margin-bottom: 0.5rem;
-  }
-
-  .program-card-dates {
-    font-size: 0.85rem;
-    color: var(--testo);
-    line-height: 1.5;
-  }
-
-  .program-card-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.65rem;
-    flex-shrink: 0;
-  }
-
-  @media (min-width: 700px) {
-    .program-card-actions {
-      align-items: flex-end;
-      min-width: 11rem;
-    }
-  }
-
-  .program-card-download {
-    text-align: center;
-    text-decoration: none;
-  }
-
-  .program-card-view {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--viola);
-    text-decoration: none;
-    text-align: center;
-  }
-
-  .program-card-view:hover {
-    text-decoration: underline;
   }
 </style>

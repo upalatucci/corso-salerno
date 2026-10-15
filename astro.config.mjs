@@ -15,6 +15,7 @@ export default defineConfig({
         manifest,
         workbox: {
           globDirectory: "dist",
+          globIgnores: ["**/gallery/**"],
           globPatterns: [
             "**/*.{js,css,svg,png,jpg,jpeg,gif,webp,woff,woff2,ttf,eot,ico}",
           ],
