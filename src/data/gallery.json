@@ -434,13 +434,6 @@
     "height": 320
   },
   {
-    "src": "/gallery/t5a2164.webp",
-    "thumb": "/gallery/t5a2164-thumb.webp",
-    "alt": "Corso Salerno 2026 — Marina di Camerota",
-    "width": 480,
-    "height": 320
-  },
-  {
     "src": "/gallery/t5a2174.webp",
     "thumb": "/gallery/t5a2174-thumb.webp",
     "alt": "Corso Salerno 2026 — Marina di Camerota",
@@ -1620,14 +1613,6 @@
     "id": "img-7142",
     "src": "/gallery/img-7142.webp",
     "thumb": "/gallery/img-7142-thumb.webp",
-    "alt": "Corso Salerno 2026 — Marina di Camerota",
-    "width": 480,
-    "height": 320
-  },
-  {
-    "id": "img-7149",
-    "src": "/gallery/img-7149.webp",
-    "thumb": "/gallery/img-7149-thumb.webp",
     "alt": "Corso Salerno 2026 — Marina di Camerota",
     "width": 480,
     "height": 320
